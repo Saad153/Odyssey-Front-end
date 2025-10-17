@@ -596,7 +596,7 @@ return (
               {records?.length>0 &&
               <>
                 {records?.map((x, index) => {
-                  console.log(x)
+                  // console.log(x)
                 return (
                 <tr key={index} className='f table-row-center-singleLine' style={{lineHeight:0.5}}>
                   <td>{index + 1}</td>

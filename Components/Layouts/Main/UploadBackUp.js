@@ -25,8 +25,8 @@ const Upload_CoA = () => {
         // await importCOA()
         // await importCharges()
         // await importParties()
-        // await importVouchers()
         await importJobs()
+        await importVouchers()
         // await importAirPorts()
         // await importEmployees()
         // await importAECharges()
@@ -442,7 +442,7 @@ const importVouchers = async () => {
             console.log("🎉 All batches processed for", url);
         };
 
-        // await sendBatches(linkedVouchers, "http://localhost:8082/voucher/importVouchers", 100);
+        await sendBatches(linkedVouchers, "http://localhost:8082/voucher/importVouchers", 100);
         // await sendBatches(unlinkedVouchers, "http://localhost:8082/voucher/importV", 100);
         
 
@@ -579,7 +579,7 @@ const importAECharges = async () => {
 const importJobs = async () => {
     try{
         console.log("Fetching Air Jobs data")
-        // const { data } = await axios.get("http://localhost:8081/jobs/getAll");
+        const { data } = await axios.get("http://localhost:8081/jobs/getAll");
         console.log("Air Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -603,16 +603,12 @@ const importJobs = async () => {
             Gen_Commodity: createMap(data.Commodity, "Id"),
             Gen_DocumentType: createMap(data.DocumentType, "Id"),
             GL_PropertiesLOV: createMap(data.PropertiesLOV, "Id"),
-            Gen_ManifestHeader: createMap(data.ManifestHeader, "Id"),
             Gen_Parties_Locations: createMap(data.Parties_Locations, "Id"),
             Gen_IncoTerms: createMap(data.IncoTerms, "Id"),
             TAP_Employee: createMap(data.Employee, "Id"),
             Gen_Parties: createMap(data.Parties, "Id"),
             GL_Voucher: createMap(data.Voucher, "Id"),
             Gen_CargoTypeFile: createMap(data.CargoTypeFile, "Id"),
-            Gen_Quotation: createMap(data.Quotation, "Id"),
-            SExp_BookingRequest: createMap(data.SEBookingRequest, "Id"),
-            Gen_TaxRevDistribution: createMap(data.TaxRevDistribution, "Id"),
             Gen_DeliveryType: createMap(data.DeliveryType, "Id"),
             GL_Currencies: createMap(data.Currencies, "Id"),
             GL_COA: createMap(data.COA, "Id"),
@@ -620,19 +616,55 @@ const importJobs = async () => {
             AImp_AirImportJob: createMap(data.AirImportJob, "Id"),
             Gen_JobCancelReason: createMap(data.JobCancelReason, "Id"),
             Gen_ChargesVATCategory: createMap(data.ChargesVATCategory, "Id"),
-            Gen_Quotation_Detail: createMap(data.Quotation_Detail, "Id"),
             Gen_EquipmentSizeType: createMap(data.EquipmentSizeType, "EquipCode"),
             Gen_Charges: createMap(data.Charges, "Id"),
-            GL_TerminalInvoice_Detail: createMap(data.TerminalInvoice_Detail, "Id"),
             Gen_BLTemplate: createMap(data.BLTemplate, "Id"),
-            // SExp_ShippingInstruction: createMap(data.SEShippingInstruction, "Id"),
-            // SExp_BL_Detail: createMap(data.SEBL_Detail, "SEBLId"),
-            // SImp_BL_Detail: createMap(data.SIBL_Detail, "SIBLId"),
-            // SExp_BL_Equipment: createGroupedMap(data.SEBL_Equipment, "SEBLId"),
-            // SImp_BL_Equipment: createGroupedMap(data.SIBL_Equipment, "SIBLId"),
             GL_Invoices: createMap(data.Invoices, "Id"),
             AExp_BL_Dimension: createMap(data.AE_BL_Dimension, "AEBLId"),
+            GL_COASubCategory: createMap(data.COASubCategory, "Id"),
+            Gen_SubCompanies: createMap(data.SubCompanies, "Id"),
+            GL_VoucherType: createMap(data.VoucherType, "Id"),
+            GL_InvMode: createMap(data.InvMode, "Id"),
         };
+
+        const COA = data.COA.map((a) => ({
+            ...a,
+            GL_COA: lookupMaps.GL_COA.get(a.ParentAccountId),
+            GL_COASubCategory: lookupMaps.GL_COASubCategory.get(a.SubCategoryId)
+        }))
+
+        lookupMaps.GL_COA = createMap(COA, "Id")
+
+        const tempVoucher_Heads = data.Voucher_Detail.map((vh) => ({
+            ...vh,
+            GL_COA: lookupMaps.GL_COA.get(vh.COAAccountId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(vh.CurrencyIdVD),
+            GL_PropertiesLOV: lookupMaps.GL_PropertiesLOV.get(vh.CostCenterId),
+            Gen_SubCompanies: lookupMaps.Gen_SubCompanies.get(vh.SubCompanyId),
+        }));
+
+        lookupMaps.GL_Voucher_Detail = createMap(tempVoucher_Heads, "Id")
+        lookupMaps.GL_Voucher_Details = createGroupedMap(tempVoucher_Heads, "VoucherId")
+
+        let tempVouchers = data.Voucher.map((v) => ({
+            ...v,
+            GL_Currencies: lookupMaps.GL_Currencies.get(v.CurrencyId),
+            Gen_SubCompanies: lookupMaps.Gen_SubCompanies.get(v.SubCompanyId),
+            GL_VoucherType: lookupMaps.GL_VoucherType.get(v.VoucherTypeId),
+            GL_Voucher_Detail: lookupMaps.GL_Voucher_Details.get(v.Id),
+        }))
+
+        lookupMaps.GL_Voucher = createMap(tempVouchers, "Id")
+
+        const tempInvoices = data.Invoices.map((i) => ({
+            ...i,
+            GL_Voucher: filterVoucherData(lookupMaps.GL_Voucher, lookupMaps.GL_Voucher_Detail.get(i.GVDetailId).VoucherId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(i.CurrencyId),
+            GL_InvMode: lookupMaps.GL_InvMode.get(i.InvoiceTypeId),
+            Gen_Parties: lookupMaps.Gen_Parties.get(i.PartyId),
+        }))
+
+        lookupMaps.GL_Invoices = createMap(tempInvoices, "Id")
 
         const tempJobBill = data.JobBill.map(x => ({
             ...x,
@@ -646,8 +678,8 @@ const importJobs = async () => {
             JobBill: lookupMaps.GL_JobBill.get(x.JobBillId),
         }))
 
-        lookupMaps.SEPGL_JobBill_Charges = createMap(tempJobBill_Charges, "SEJobChargesPaybId");
-        lookupMaps.SIPGL_JobBill_Charges = createMap(tempJobBill_Charges, "SIJobChargesPaybId");
+        lookupMaps.SEPGL_JobBill_Charges = createMap(tempJobBill_Charges, "AEJobChargesPaybId");
+        lookupMaps.SIPGL_JobBill_Charges = createMap(tempJobBill_Charges, "AIJobChargesPaybId");
 
         const tempJobInvoice = data.JobInvoice.map(x => ({
             ...x,
@@ -661,8 +693,8 @@ const importJobs = async () => {
             JobInvoice: lookupMaps.GL_JobInvoice.get(x.JobInvoiceId),
         }))
 
-        lookupMaps.SERGL_JobInvoice_Charges = createMap(tempJobInvoice_Charges, "SEJobChargesRecvId");
-        lookupMaps.SIRGL_JobInvoice_Charges = createMap(tempJobInvoice_Charges, "SIJobChargesRecvId");
+        lookupMaps.SERGL_JobInvoice_Charges = createMap(tempJobInvoice_Charges, "AEJobChargesRecvId");
+        lookupMaps.SIRGL_JobInvoice_Charges = createMap(tempJobInvoice_Charges, "AIJobChargesRecvId");
 
         const tempAgentInvoice = data.Agent_Invoice.map(x => ({
             ...x,
@@ -676,18 +708,10 @@ const importJobs = async () => {
             Agent_Invoice: lookupMaps.GL_Agent_Invoice.get(x.AgentInvoiceId),
         }))
 
-        lookupMaps.SEPGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "SEJobChargesPaybId");
-        lookupMaps.SIPGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "SIJobChargesPaybId");
-        lookupMaps.SERGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "SEJobChargesRecvId");
-        lookupMaps.SIRGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "SIJobChargesRecvId");
-
-        const COA = data.COA.map((a) => ({
-            ...a,
-            GL_COA: lookupMaps.GL_COA.get(a.ParentAccountId),
-            GL_COASubCategory: lookupMaps.GL_COASubCategory.get(a.SubCategoryId)
-        }))
-
-        lookupMaps.GL_COA = createMap(COA, "Id")
+        lookupMaps.SEPGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "AEJobChargesPaybId");
+        lookupMaps.SIPGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "AIJobChargesPaybId");
+        lookupMaps.SERGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "AEJobChargesRecvId");
+        lookupMaps.SIRGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "AIJobChargesRecvId");
 
         const tempParties = data.Parties.map(x => ({
             ...x,
@@ -703,11 +727,8 @@ const importJobs = async () => {
             ConsigneeData: lookupMaps.Gen_Parties.get(x.ConsigneeId),
             NotifyParty1Data: lookupMaps.Gen_Parties.get(x.NotifyParty1Id),
             BLTemplate: lookupMaps.Gen_BLTemplate.get(x.BLTemplateId),
-            // SESIns: lookupMaps.SExp_ShippingInstruction.get(x.SESInsId),
             NotifyParty2Data: lookupMaps.Gen_Parties.get(x.NotifyParty2Id),
             AEBL_Dimension: lookupMaps.AExp_BL_Dimension.get(x.Id),
-            // SExp_BL_Detail: lookupMaps.SExp_BL_Detail.get(x.Id),
-            // SExp_BL_Equipment: lookupMaps.SExp_BL_Equipment.get(x.Id)
         }));
 
         lookupMaps.SExp_BL = createMap(tempSEBl, "AEJobId");
@@ -720,8 +741,6 @@ const importJobs = async () => {
             NotifyParty1Data: lookupMaps.Gen_Parties.get(x.NotifyParty1Id),
             BLTemplate: lookupMaps.Gen_BLTemplate.get(x.BLTemplateId),
             NotifyParty2Data: lookupMaps.Gen_Parties.get(x.NotifyParty2Id),
-            // SImp_BL_Detail: lookupMaps.SImp_BL_Detail.get(x.Id),
-            // SImp_BL_Equipment: lookupMaps.SImp_BL_Equipment.get(x.Id)
         }));
 
         lookupMaps.SImp_BL = createMap(tempSIBl, "AEJobId");
@@ -731,12 +750,9 @@ const importJobs = async () => {
             Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
             Vendor: lookupMaps.Gen_Parties.get(x.VendorId),
             Principal: lookupMaps.Gen_Parties.get(x.PrincipalId),
-            Distribution: lookupMaps.Gen_TaxRevDistribution.get(x.DistributionId),
             VatCategory: lookupMaps.Gen_ChargesVATCategory.get(x.VatCategoryId),
-            GlTerminalInvoiceDetail: lookupMaps.GL_TerminalInvoice_Detail.get(x.GlTerminalInvoiceDetailId),
             Charges: lookupMaps.Gen_Charges.get(x.ChargesId),
             Equip: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode),
-            QuotationCharges: lookupMaps.Gen_Quotation_Detail.get(x.QuotationChargesId),
             GL_AgentInvoice_Charges: lookupMaps.SEPGL_AgentInvoice_Charges.get(x.Id),
             GL_JobBill_Charges: lookupMaps.SEPGL_JobBill_Charges.get(x.Id),
         }));
@@ -748,12 +764,9 @@ const importJobs = async () => {
             Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
             Customer: lookupMaps.Gen_Parties.get(x.CustomerId),
             Principal: lookupMaps.Gen_Parties.get(x.PrincipalId),
-            Distribution: lookupMaps.Gen_TaxRevDistribution.get(x.DistributionId),
             VatCategory: lookupMaps.Gen_ChargesVATCategory.get(x.VatCategoryId),
-            GlTerminalInvoiceDetail: lookupMaps.GL_TerminalInvoice_Detail.get(x.GlTerminalInvoiceDetailId),
             Charges: lookupMaps.Gen_Charges.get(x.ChargesId),
             Equip: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode),
-            QuotationCharges: lookupMaps.Gen_Quotation_Detail.get(x.QuotationChargesId),
             GL_AgentInvoice_Charges: lookupMaps.SERGL_AgentInvoice_Charges.get(x.Id),
             GL_JobInvoice_Charges: lookupMaps.SERGL_JobInvoice_Charges.get(x.Id),
         }));
@@ -765,12 +778,9 @@ const importJobs = async () => {
             Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
             Vendor: lookupMaps.Gen_Parties.get(x.VendorId),
             Principal: lookupMaps.Gen_Parties.get(x.PrincipalId),
-            Distribution: lookupMaps.Gen_TaxRevDistribution.get(x.DistributionId),
             VatCategory: lookupMaps.Gen_ChargesVATCategory.get(x.VatCategoryId),
-            GlTerminalInvoiceDetail: lookupMaps.GL_TerminalInvoice_Detail.get(x.GlTerminalInvoiceDetailId),
             Charges: lookupMaps.Gen_Charges.get(x.ChargesId),
             Equip: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode),
-            QuotationCharges: lookupMaps.Gen_Quotation_Detail.get(x.QuotationChargesId),
             GL_AgentInvoice_Charges: lookupMaps.SIPGL_AgentInvoice_Charges.get(x.Id),
             GL_JobBill_Charges: lookupMaps.SIPGL_JobBill_Charges.get(x.Id),
         }));
@@ -782,17 +792,21 @@ const importJobs = async () => {
             Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
             Customer: lookupMaps.Gen_Parties.get(x.CustomerId),
             Principal: lookupMaps.Gen_Parties.get(x.PrincipalId),
-            Distribution: lookupMaps.Gen_TaxRevDistribution.get(x.DistributionId),
             VatCategory: lookupMaps.Gen_ChargesVATCategory.get(x.VatCategoryId),
-            GlTerminalInvoiceDetail: lookupMaps.GL_TerminalInvoice_Detail.get(x.GlTerminalInvoiceDetailId),
             Charges: lookupMaps.Gen_Charges.get(x.ChargesId),
             Equip: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode),
-            QuotationCharges: lookupMaps.Gen_Quotation_Detail.get(x.QuotationChargesId),
             GL_AgentInvoice_Charges: lookupMaps.SIRGL_AgentInvoice_Charges.get(x.Id),
             GL_JobInvoice_Charges: lookupMaps.SIRGL_JobInvoice_Charges.get(x.Id),
         }));
 
         lookupMaps.SImp_SeaImportJob_ChargesRecv = createGroupedMap(tempSIChargesRecv, "AIJobId");
+
+        console.log({
+            tempSIChargesPayb,
+            tempSIChargesRecv,
+            tempSEChargesPayb,
+            tempSEChargesRecv
+        })
 
         let SEJobs = data.AirExportJob.map(job => ({
             ...job,
@@ -802,7 +816,6 @@ const importJobs = async () => {
             OverseasAgent: lookupMaps.Gen_Parties.get(job.OverseasAgentId),
             NotifyParty1: lookupMaps.Gen_Parties.get(job.NotifyParty1Id),
             NotifyParty2: lookupMaps.Gen_Parties.get(job.NotifyParty2Id),
-            Quotation: lookupMaps.Gen_Quotation.get(job.QuotationId),
             Shipper: lookupMaps.Gen_Parties.get(job.ShipperId),
             Consignee: lookupMaps.Gen_Parties.get(job.ConsigneeId),
             CustomClearance: lookupMaps.Gen_Parties.get(job.CustomClearanceId),
@@ -810,7 +823,7 @@ const importJobs = async () => {
             PortOfReceipt: lookupMaps.Gen_UNLocation.get(job.PortOfReceiptCode),
             CostCenter: lookupMaps.GL_PropertiesLOV.get(job.CostCenterId),
             Voucher: lookupMaps.GL_Voucher.get(job.VoucherId),
-            ManifestHeader: lookupMaps.Gen_ManifestHeader.get(job.ManifestHeaderId),
+            // ManifestHeader: lookupMaps.Gen_ManifestHeader.get(job.ManifestHeaderId),
             SplittedJob: lookupMaps.AExp_AirExportJob.get(job.SplittedJobId),
             Forwarder: lookupMaps.Gen_Parties.get(job.ForwarderId),
             CargoTypeFile: lookupMaps.Gen_CargoTypeFile.get(job.CargoTypeFileId),
@@ -823,8 +836,6 @@ const importJobs = async () => {
             AirPortOfTranshipment1: lookupMaps.Gen_UNAirport.get(job.AirPortOfTranshipment1Id),
             APOT1AirLine: lookupMaps.Gen_Parties.get(job.APOT1AirLineId),
             AirPortOfTranshipment2: lookupMaps.Gen_UNAirport.get(job.AirPortOfTranshipment2Id),
-            AEBookingRequest: lookupMaps.SExp_BookingRequest.get(job.AEBookingRequestId),
-            Distribution: lookupMaps.Gen_TaxRevDistribution.get(job.DistributionId),
             IncoTerms: lookupMaps.Gen_IncoTerms.get(job.IncoTermsId),
             AirPortOfDischarge: lookupMaps.Gen_UNAirport.get(job.AirPortOfDischargeId),
             AirPortOfTranshipment: lookupMaps.Gen_UNAirport.get(job.AirPortOfTranshipmentId),
@@ -846,7 +857,6 @@ const importJobs = async () => {
             OverseasAgent: lookupMaps.Gen_Parties.get(job.OverseasAgentId),
             NotifyParty1: lookupMaps.Gen_Parties.get(job.NotifyParty1Id),
             NotifyParty2: lookupMaps.Gen_Parties.get(job.NotifyParty2Id),
-            Quotation: lookupMaps.Gen_Quotation.get(job.QuotationId),
             Shipper: lookupMaps.Gen_Parties.get(job.ShipperId),
             Consignee: lookupMaps.Gen_Parties.get(job.ConsigneeId),
             CustomClearance: lookupMaps.Gen_Parties.get(job.CustomClearanceId),
@@ -859,9 +869,8 @@ const importJobs = async () => {
             CargoPickUpLocation: lookupMaps.Gen_Parties_Locations.get(job.CargoPickUpLocationId),
             CargoDropOffLocation: lookupMaps.Gen_Parties_Locations.get(job.CargoDropOffLocationId),
             Buyer: lookupMaps.Gen_Parties.get(job.BuyerId),
-            ManifestHeader: lookupMaps.Gen_ManifestHeader.get(job.ManifestHeaderId),
+            // ManifestHeader: lookupMaps.Gen_ManifestHeader.get(job.ManifestHeaderId),
             ParentJob: lookupMaps.AImp_AirImportJob.get(job.ParentJobId),
-            Distribution: lookupMaps.Gen_TaxRevDistribution.get(job.TaxDistributionId),
             AirLine: lookupMaps.Gen_Parties.get(job.AirLineId),
             Client: lookupMaps.Gen_Parties.get(job.ClientId),
             IncoTerms: lookupMaps.Gen_IncoTerms.get(job.IncoTermsId),
@@ -880,42 +889,42 @@ const importJobs = async () => {
 
         console.log("Connected AE Jobs", SEJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,SEJobs.slice(1000, 1100));
+        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,SEJobs.slice(1000, 1010));
 
-        // for (let i = 0; i < SEJobs.length; i += 10) {
-        //     const chunk = SEJobs.slice(i, i + 10);
-        //     console.log(`Sending records ${i} - ${i + chunk.length}`);
+        for (let i = 0; i < SEJobs.length; i += 10) {
+            const chunk = SEJobs.slice(i, i + 10);
+            console.log(`Sending records ${i} - ${i + chunk.length}`);
             
-        //     try {
-        //         const result = await axios.post(
-        //         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,
-        //         chunk
-        //         );
-        //         console.log("Batch success:", result.data);
-        //     } catch (err) {
-        //         console.error("Batch error:", err.message);
-        //     }
-        // }
+            try {
+                const result = await axios.post(
+                `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,
+                chunk
+                );
+                console.log("Batch success:", result.data);
+            } catch (err) {
+                console.error("Batch error:", err.message);
+            }
+        }
 
         
         console.log("Connected AI Jobs", SIJobs)
 
         // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,SIJobs.slice(100, 110));
         
-        // for (let i = 0; i < SIJobs.length; i += 10) {
-        //     const chunk = SIJobs.slice(i, i + 10);
-        //     console.log(`Sending records ${i} - ${i + chunk.length}`);
+        for (let i = 0; i < SIJobs.length; i += 10) {
+            const chunk = SIJobs.slice(i, i + 10);
+            console.log(`Sending records ${i} - ${i + chunk.length}`);
             
-        //     try {
-        //         const result = await axios.post(
-        //         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,
-        //         chunk
-        //         );
-        //         console.log("Batch success:", result.data);
-        //     } catch (err) {
-        //         console.error("Batch error:", err.message);
-        //     }
-        // }
+            try {
+                const result = await axios.post(
+                `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,
+                chunk
+                );
+                console.log("Batch success:", result.data);
+            } catch (err) {
+                console.error("Batch error:", err.message);
+            }
+        }
 
     }catch(e){
         console.error(e)
@@ -979,13 +988,13 @@ const importJobs = async () => {
             Gen_EquipmentSizeType: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode)
         }))
 
-        lookupMaps.SExp_SeaExportJob_Equipment = createGroupedMap(tempEquip, "SEJobId");
+        lookupMaps.SExp_SeaExportJob_Equipment = createGroupedMap(tempEquip, "SIJobId");
 
         
         const tempCOA = data.COA.map(x => ({
             ...x,
             GL_COA: lookupMaps.GL_COA.get(x.ParentAccountId),
-            GL_COASubCategory: lookupMaps.GL_COASubCategory.get(x.COASubCategoryId),
+            GL_COASubCategory: lookupMaps.GL_COASubCategory.get(x.CategoryId),
 
         }));
 
@@ -1121,15 +1130,35 @@ const importJobs = async () => {
 
         console.log("Connected SE Jobs", SEJobs)
 
-        const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,SEJobs.slice(1000, 1100));
+        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,SEJobs.slice(1000, 1010));
 
-        // for (let i = 0; i < SEJobs.length; i += 10) {
-        //     const chunk = SEJobs.slice(i, i + 10);
+        for (let i = 0; i < SEJobs.length; i += 10) {
+            const chunk = SEJobs.slice(i, i + 10);
+            console.log(`Sending records ${i} - ${i + chunk.length}`);
+            
+            try {
+                const result = await axios.post(
+                `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,
+                chunk
+                );
+                console.log("Batch success:", result.data);
+            } catch (err) {
+                console.error("Batch error:", err.message);
+            }
+        }
+
+        
+        // console.log("Connected SI Jobs", SIJobs)
+
+        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 200));
+        
+        // for (let i = 0; i < SIJobs.length; i += 10) {
+        //     const chunk = SIJobs.slice(i, i + 10);
         //     console.log(`Sending records ${i} - ${i + chunk.length}`);
             
         //     try {
         //         const result = await axios.post(
-        //         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,
+        //         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,
         //         chunk
         //         );
         //         console.log("Batch success:", result.data);
@@ -1137,6 +1166,227 @@ const importJobs = async () => {
         //         console.error("Batch error:", err.message);
         //     }
         // }
+
+    }catch(e){
+        console.error(e)
+    }
+
+    try{
+        console.log("Fetching SI Job data")
+        const { data } = await axios.get("http://localhost:8081/jobs/getAllSI");
+        console.log("SI Job Data:", data)
+
+        const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
+
+        const createGroupedMap = (arr, key) => {
+            const map = new Map();
+            arr.forEach(item => {
+                if (!map.has(item[key])) {
+                map.set(item[key], []);
+                }
+                map.get(item[key]).push(item);
+            });
+            return map;
+        };
+
+        const lookupMaps = {
+            UNPacking: createMap(data.Packing, "PackCode"),
+            GL_PropertiesLOV: createMap(data.PropertiesLOV, "Id"),
+            Gen_Parties_Locations: createMap(data.Parties_Locations, "Id"),
+            Gen_IncoTerms: createMap(data.IncoTerms, "Id"),
+            Gen_Parties: createMap(data.Parties, "Id"),
+            GL_Currencies: createMap(data.Currencies, "Id"),
+            GL_COA: createMap(data.COA, "Id"),
+            // SExp_SeaExportJob: createMap(data.SeaExportJob, "Id"),
+            Gen_EquipmentSizeType: createMap(data.EquipmentSizeType, "EquipCode"),
+            Gen_Charges: createMap(data.Charges, "Id"),
+            SImp_BL_Detail: createMap(data.SIBL_Detail, "SIBLId"),
+            GL_Invoices: createMap(data.Invoices, "Id"),
+            // Gen_Stamps: createMap(data.Stamps, "Id"),
+            GL_COASubCategory: createMap(data.COASubCategory, "Id"),
+            Gen_SubCompanies: createMap(data.SubCompanies, "Id"),
+            GL_VoucherType: createMap(data.VoucherType, "Id"),
+            GL_InvMode: createMap(data.InvMode, "Id"),
+        };
+
+
+        // const tempSEBL_Stamp = data.SEBL_Stamp.map(x => ({
+        //     ...x,
+        //     Gen_Stamps: lookupMaps.Gen_Stamps.get(x.StampId),
+        // }))
+
+        // lookupMaps.SExp_BL_Stamp = createGroupedMap(tempSEBL_Stamp, "SEBLId");
+
+        // const tempSEBLE = data.SEBL_Equipment.map(x => ({
+        //     ...x,
+        //     UNPacking: lookupMaps.UNPacking.get(x.PackagesCode),
+        // }))
+
+        // lookupMaps.SExp_BL_Equipment = createGroupedMap(tempSEBLE, "SEBLId");
+
+        const tempEquip = data.SeaImportJob_Equipment.map(x => ({
+            ...x,
+            Gen_EquipmentSizeType: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode)
+        }))
+
+        lookupMaps.SImp_SeaImportJob_Equipment = createGroupedMap(tempEquip, "SIJobId");
+
+        
+        const tempCOA = data.COA.map(x => ({
+            ...x,
+            GL_COA: lookupMaps.GL_COA.get(x.ParentAccountId),
+            GL_COASubCategory: lookupMaps.GL_COASubCategory.get(x.CategoryId),
+
+        }));
+
+        lookupMaps.GL_COA = createMap(tempCOA, "Id");
+        
+        const tempParties = data.Parties.map(x => ({
+            ...x,
+            GL_COA: lookupMaps.GL_COA.get(x.AccountId),
+        }));
+        
+        lookupMaps.Gen_Parties = createMap(tempParties, "Id");
+        
+
+        const tempVoucher_Heads = data.Voucher_Detail.map((vh) => ({
+            ...vh,
+            GL_COA: lookupMaps.GL_COA.get(vh.COAAccountId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(vh.CurrencyIdVD),
+            GL_PropertiesLOV: lookupMaps.GL_PropertiesLOV.get(vh.CostCenterId),
+            Gen_SubCompanies: lookupMaps.Gen_SubCompanies.get(vh.SubCompanyId),
+        }));
+
+        lookupMaps.GL_Voucher_Detail = createMap(tempVoucher_Heads, "Id")
+        lookupMaps.GL_Voucher_Details = createGroupedMap(tempVoucher_Heads, "VoucherId")
+
+        let tempVouchers = data.Voucher.map((v) => ({
+            ...v,
+            GL_Currencies: lookupMaps.GL_Currencies.get(v.CurrencyId),
+            Gen_SubCompanies: lookupMaps.Gen_SubCompanies.get(v.SubCompanyId),
+            GL_VoucherType: lookupMaps.GL_VoucherType.get(v.VoucherTypeId),
+            GL_Voucher_Detail: lookupMaps.GL_Voucher_Details.get(v.Id),
+        }))
+
+        lookupMaps.GL_Voucher = createMap(tempVouchers, "Id")
+
+        const tempInvoices = data.Invoices.map((i) => ({
+            ...i,
+            GL_Voucher: filterVoucherData(lookupMaps.GL_Voucher, lookupMaps.GL_Voucher_Detail.get(i.GVDetailId).VoucherId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(i.CurrencyId),
+            GL_InvMode: lookupMaps.GL_InvMode.get(i.InvoiceTypeId),
+            Gen_Parties: lookupMaps.Gen_Parties.get(i.PartyId),
+        }))
+
+        lookupMaps.GL_Invoices = createMap(tempInvoices, "Id")
+
+        const tempJobBill = data.JobBill.map(x => ({
+            ...x,
+            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+        }))
+
+        lookupMaps.GL_JobBill = createMap(tempJobBill, "Id");
+
+        const tempJobBill_Charges = data.JobBill_Charges.map(x => ({
+            ...x,
+            JobBill: lookupMaps.GL_JobBill.get(x.JobBillId),
+        }))
+
+        lookupMaps.SEPGL_JobBill_Charges = createMap(tempJobBill_Charges, "SIJobChargesPaybId");
+
+        const tempJobInvoice = data.JobInvoice.map(x => ({
+            ...x,
+            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+        }))
+
+        lookupMaps.GL_JobInvoice = createMap(tempJobInvoice, "Id");
+
+        const tempJobInvoice_Charges = data.JobInvoice_Charges.map(x => ({
+            ...x,
+            JobInvoice: lookupMaps.GL_JobInvoice.get(x.JobInvoiceId),
+        }))
+
+        lookupMaps.SERGL_JobInvoice_Charges = createMap(tempJobInvoice_Charges, "SIJobChargesRecvId");
+
+        const tempAgentInvoice = data.Agent_Invoice.map(x => ({
+            ...x,
+            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+        }))
+
+        lookupMaps.GL_Agent_Invoice = createMap(tempAgentInvoice, "Id");
+
+        const tempAgentInvoice_Charges = data.AgentInvoice_Charges.map(x => ({
+            ...x,
+            Agent_Invoice: lookupMaps.GL_Agent_Invoice.get(x.AgentInvoiceId),
+        }))
+
+        lookupMaps.SEPGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "SIJobChargesPaybId");
+        lookupMaps.SERGL_AgentInvoice_Charges = createMap(tempAgentInvoice_Charges, "SIJobChargesRecvId");
+
+        const tempSEBl = data.SI_BL.map(x => ({
+            ...x,
+            SImp_BL_Detail: lookupMaps.SImp_BL_Detail.get(x.Id),
+            // SExp_BL_Equipment: lookupMaps.SExp_BL_Equipment.get(x.Id),
+            // SExp_BL_Stamp: lookupMaps.SExp_BL_Stamp.get(x.Id)
+        }));
+
+        lookupMaps.SImp_BL = createMap(tempSEBl, "SIJobId");
+
+        const tempSEChargesPayb = data.SeaExportJob_ChargesPayb.map(x => ({
+            ...x,
+            Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
+            Vendor: lookupMaps.Gen_Parties.get(x.VendorId),
+            Charges: lookupMaps.Gen_Charges.get(x.ChargesId),
+            Equip: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode),
+            GL_AgentInvoice_Charges: lookupMaps.SEPGL_AgentInvoice_Charges.get(x.Id),
+            GL_JobBill_Charges: lookupMaps.SEPGL_JobBill_Charges.get(x.Id),
+        }));
+
+        lookupMaps.SImp_SeaExportJob_ChargesPayb = createGroupedMap(tempSEChargesPayb, "SIJobId");
+
+        const tempSEChargesRecv = data.SeaExportJob_ChargesRecv.map(x => ({
+            ...x,
+            Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
+            Customer: lookupMaps.Gen_Parties.get(x.CustomerId),
+            Charges: lookupMaps.Gen_Charges.get(x.ChargesId),
+            Equip: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode),
+            GL_AgentInvoice_Charges: lookupMaps.SERGL_AgentInvoice_Charges.get(x.Id),
+            GL_JobInvoice_Charges: lookupMaps.SERGL_JobInvoice_Charges.get(x.Id),
+        }));
+
+        lookupMaps.SImp_SeaExportJob_ChargesRecv = createGroupedMap(tempSEChargesRecv, "SIJobId");
+
+        let SIJobs = data.SeaImportJob.map(job => ({
+            ...job,
+            Packages: lookupMaps.UNPacking.get(job.PackagesCode),
+            CostCenter: lookupMaps.GL_PropertiesLOV.get(job.CostCenterId),
+            Terminal: lookupMaps.Gen_Parties_Locations.get(job.TerminalId),
+            IncoTerms: lookupMaps.Gen_IncoTerms.get(job.IncoTermsId),
+            SeaExportJob_ChargesPayb: lookupMaps.SImp_SeaExportJob_ChargesPayb.get(job.Id),
+            SeaExportJob_ChargesRecv: lookupMaps.SImp_SeaExportJob_ChargesRecv.get(job.Id),
+            SImp_BL: lookupMaps.SImp_BL.get(job.Id),
+            SImp_SeaImportJob_Equipment: lookupMaps.SImp_SeaImportJob_Equipment.get(job.Id),
+            
+        }))
+
+        console.log("Connected SI Jobs", SIJobs)
+
+        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 110));
+
+        for (let i = 0; i < SIJobs.length; i += 10) {
+            const chunk = SIJobs.slice(i, i + 10);
+            console.log(`Sending records ${i} - ${i + chunk.length}`);
+            
+            try {
+                const result = await axios.post(
+                `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,
+                chunk
+                );
+                console.log("Batch success:", result.data);
+            } catch (err) {
+                console.error("Batch error:", err.message);
+            }
+        }
 
         
         // console.log("Connected SI Jobs", SIJobs)

@@ -43,6 +43,8 @@ import { Tabs } from 'antd';
     getHeadsNew(state.selectedRecord.id, dispatch, reset)
   }, [chargesData])
 
+  // console.log(chargeList)
+
   // useEffect(() => {
   //   let obj = { charges:chargeList, payble:state.payble, reciveable:state.reciveable };
   //   queryClient.setQueryData(['charges', {id:state.selectedRecord.id}], (x)=>x?{...obj}:x);

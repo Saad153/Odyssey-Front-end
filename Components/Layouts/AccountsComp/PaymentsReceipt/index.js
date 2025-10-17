@@ -27,88 +27,150 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.paymentReciept);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+
   const [loading, setLoading] = useState(false);
 
-  const fetchOldVouchers = async (page = 1) => {
-    if (loading) return; // Prevent multiple calls
+  // const fetchOldVouchers = async (page = 1) => {
+  //   if (loading) return; // Prevent multiple calls
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS, {
+  //       headers: { companyid: Cookies.get('companyId'), page: page, limit: 50 }
+  //     });
+
+  //     const result = response.data.result;
+  //     // console.log("Old Vouchers", result)
+  //     if (result.length === 0) {
+  //       console.log("No more vouchers to fetch.");
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     const temp = [];
+  //     result.forEach((x) => {
+  //       // console.log("Old Vouchers::", x.voucher_Id)
+  //       x.invoice.forEach((y) => {
+  //         if (y.payType === "Payble") {
+  //           // y.receiving = x.Invoice_Transactions[0].amount;
+  //           y.receiving = 0
+  //           x.Invoice_Transactions.forEach((z) => {
+  //             if(z.InvoiceId == y.id){
+  //               y.receiving += parseFloat(z.amount)
+  //             }
+  //           })
+  //         } else {
+  //           // y.receiving = x.Invoice_Transactions[0].amount;
+  //           y.receiving = 0
+  //           x.Invoice_Transactions.forEach((z, i) => {
+  //             if(z.InvoiceId == y.id){
+  //               // console.log(z)
+  //               y.receiving += parseFloat(z.amount)
+  //             }
+  //           })
+  //         }
+  //         y.constReceiving = y.receiving
+  //         // console.log("Const Receiving:", y.constReceiving)
+  //         // console.log("RECEIVING: ", y.receiving, y.payType, y.invoice_No, x.voucher_Id)
+  //       });
+  //     });
+
+  //     if (result.length > 0) {
+  //       temp.push(
+  //         result.map((x) => {
+  //           return {
+  //             id: x.id,
+  //             voucherNo: x.voucher_Id,
+  //             name: x.partyName,
+  //             party: x.partyType,
+  //             type: x.vType,
+  //             data: x.createdAt,
+  //             currency: x.currency,
+  //             amount: x.Voucher_Heads.find((y) => y.accountType === 'partyAccount' || y.accountType === 'General' || y.accountType === 'Admin Expense')
+  //               ? x.Voucher_Heads.find((y) => y.accountType === 'partyAccount' || y.accountType === 'General' || y.accountType === 'Admin Expense').amount
+  //               : 0.0,
+  //             partyId: x.partyId,
+  //             x: x
+  //           };
+  //         })
+  //       );
+  //     }
+
+  //     if (temp.length > 0) {
+  //       // console.log("Old Vouchers", temp[0])
+  //       dispatch(setField({ field: 'oldVouchers', value: temp[0] }));
+  //     }
+
+  //     if (result.length === 50) {
+  //       await fetchOldVouchers(page + 1);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching old vouchers:", error);
+  //   } finally {
+  //     setLoading(false); // Reset loading state
+  //   }
+  // };
+
+  const fetchOldVouchers = async (pageNum = 1) => {
+    if (loading) return;
     setLoading(true);
-
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS, {
-        headers: { companyid: Cookies.get('companyId'), page: page, limit: 50 }
-      });
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS,
+        { headers: { companyid: Cookies.get("companyId"), page: pageNum, limit: 50 } }
+      );
 
-      const result = response.data.result;
-      // console.log("Old Vouchers", result)
-      if (result.length === 0) {
-        console.log("No more vouchers to fetch.");
-        setLoading(false);
-        return;
-      }
+      const { result, totalPages, total } = response.data;
+      setTotalPages(totalPages);
+      setPage(pageNum);
 
       const temp = [];
       result.forEach((x) => {
-        // console.log("Old Vouchers::", x.voucher_Id)
         x.invoice.forEach((y) => {
-          if (y.payType === "Payble") {
-            // y.receiving = x.Invoice_Transactions[0].amount;
-            y.receiving = 0
-            x.Invoice_Transactions.forEach((z) => {
-              if(z.InvoiceId == y.id){
-                y.receiving += parseFloat(z.amount)
-              }
-            })
-          } else {
-            // y.receiving = x.Invoice_Transactions[0].amount;
-            y.receiving = 0
-            x.Invoice_Transactions.forEach((z, i) => {
-              if(z.InvoiceId == y.id){
-                console.log(z)
-                y.receiving += parseFloat(z.amount)
-              }
-            })
-          }
-          y.constReceiving = y.receiving
-          console.log("Const Receiving:", y.constReceiving)
-          console.log("RECEIVING: ", y.receiving, y.payType, y.invoice_No, x.voucher_Id)
+          y.receiving = 0;
+          x.Invoice_Transactions.forEach((z) => {
+            if (z.InvoiceId == y.id) y.receiving += parseFloat(z.amount);
+          });
+          y.constReceiving = y.receiving;
         });
       });
 
       if (result.length > 0) {
         temp.push(
-          result.map((x) => {
-            return {
-              id: x.id,
-              voucherNo: x.voucher_Id,
-              name: x.partyName,
-              party: x.partyType,
-              type: x.vType,
-              data: x.createdAt,
-              currency: x.currency,
-              amount: x.Voucher_Heads.find((y) => y.accountType === 'partyAccount' || y.accountType === 'General' || y.accountType === 'Admin Expense')
-                ? x.Voucher_Heads.find((y) => y.accountType === 'partyAccount' || y.accountType === 'General' || y.accountType === 'Admin Expense').amount
-                : 0.0,
-              partyId: x.partyId,
-              x: x
-            };
-          })
+          result.map((x) => ({
+            id: x.id,
+            voucherNo: x.voucher_Id,
+            name: x.partyName,
+            party: x.partyType,
+            type: x.vType,
+            data: x.createdAt,
+            currency: x.currency,
+            amount:
+              x.Voucher_Heads.find(
+                (y) =>
+                  y.accountType === "partyAccount" ||
+                  y.accountType === "General" ||
+                  y.accountType === "Admin Expense"
+              )?.amount || 0.0,
+            partyId: x.partyId,
+            x: x,
+          }))
         );
       }
 
       if (temp.length > 0) {
-        // console.log("Old Vouchers", temp[0])
-        dispatch(setField({ field: 'oldVouchers', value: temp[0] }));
-      }
-
-      if (result.length === 50) {
-        await fetchOldVouchers(page + 1);
+        dispatch(setField({ field: "oldVouchers", value: temp[0] }));
       }
     } catch (error) {
       console.error("Error fetching old vouchers:", error);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
+
 
     const [first, setFirst] = useState(false)
   useEffect(() => {
@@ -471,22 +533,22 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         <tbody>
           {state.oldVouchers.length > 0 && state.oldVouchers.filter((x) => {
             if(state.search.length > 0){
-              if(x.name.toLowerCase().includes(state.search.toLowerCase())){
+              if(x?.name?.toLowerCase().includes(state.search.toLowerCase())){
                 return x
               }
-              if(x.party.toLowerCase().includes(state.search.toLowerCase())){
+              if(x?.party?.toLowerCase().includes(state.search.toLowerCase())){
                 return x
               }
-              if(x.type.toLowerCase().includes(state.search.toLowerCase())){
+              if(x?.type?.toLowerCase().includes(state.search.toLowerCase())){
                 return x
               }
-              if(x.data.toLowerCase().includes(state.search.toLowerCase())){
+              if(x?.data?.toLowerCase().includes(state.search.toLowerCase())){
                 return x
               }
-              if(x.currency.toLowerCase().includes(state.search.toLowerCase())){
+              if(x?.currency?.toLowerCase().includes(state.search.toLowerCase())){
                 return x
               }
-              if(x.amount.toString().toLowerCase().includes(state.search.toLowerCase())){
+              if(x?.amount?.toString().toLowerCase().includes(state.search.toLowerCase())){
                 return x
               }
             }else{
@@ -509,6 +571,29 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
             )
           })}
         </tbody>
+        {state.oldVouchers.length > 0 && (
+          <tfoot>
+            <tr>
+              <td colSpan="7" style={{ textAlign: "center", padding: "10px" }}>
+                <button
+                  disabled={page <= 1}
+                  onClick={() => fetchOldVouchers(page - 1)}
+                  style={{ marginRight: 10 }}
+                >
+                  Prev
+                </button>
+                Page {page} of {totalPages}
+                <button
+                  disabled={page >= totalPages}
+                  onClick={() => fetchOldVouchers(page + 1)}
+                  style={{ marginLeft: 10 }}
+                >
+                  Next
+                </button>
+              </td>
+            </tr>
+          </tfoot>
+        )}
       </table>}
       {!(state.selectedAccount==""||state.selectedAccount==undefined)&&<BillComp back={back} companyId={Cookies.get('companyId')} state={state} dispatch={dispatch} />}
       <Modal 

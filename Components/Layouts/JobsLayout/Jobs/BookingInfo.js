@@ -144,15 +144,16 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
   };
 
   useEffect(()=>{
-    console.log("Shipping Line ID:", shippingLineId, typeof(shippingLineId))
+    console.log("Shipping Line ID:", shippingLineId, typeof(shippingLineId), state.selectedRecord.shippingLineId, typeof(state.selectedRecord.shippingLineId))
     if(typeof(shippingLineId)=='number'){
       console.log("Running Dispatch")
-      dispatch({
-        type: "set", payload: {
-          shippingLineId: shippingLineId.toString(),
-        }
-      })
     }
+    dispatch({
+      type: "set", payload: {
+        shippingLineId: parseInt(state.selectedRecord.shippingLineId),
+        selectedRecord: {...state.selectedRecord, shippingLineId: parseInt(state.selectedRecord.shippingLineId)}
+      }
+    })
   },[shippingLineId])
 
   console.log(state)

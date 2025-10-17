@@ -22,8 +22,6 @@ const SeJob = ({id, type}) => {
   }, [dataSuccess, isSuccess])
   
   const getData = async() => {
-
-
     if(dataSuccess && newdata) {
       console.log("index: ",data.result)
       console.log("index: ",newdata)
@@ -34,7 +32,6 @@ const SeJob = ({id, type}) => {
       if(dataSuccess){
         temp = {
           ...newdata.result,
-          shippingLineId: newdata?.result?.shippingLineId?.toString()
         }
       }
       console.log("Temp", temp)
@@ -54,7 +51,7 @@ const SeJob = ({id, type}) => {
   <div className='base-page-layout'>
     {state.fetched && 
       <CreateOrEdit
-        jobData={isSuccess?{...newdata.result, shippingLineId: newdata.result.shippingLineId?newdata.result.shippingLineId.toString():null}:{}}
+        jobData={isSuccess?{...newdata.result}:{}}
         companyId={companyId}
         dispatch={dispatch}
         refetch={refetch}

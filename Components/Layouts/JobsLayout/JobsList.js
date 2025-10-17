@@ -43,6 +43,7 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
 
   useEffect(() => {
     if (jobsData.status == "success") {
+      // console.log(jobsData)
       setRecords(jobsData.result);
     }
   }, [])
@@ -55,7 +56,7 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
 
   useEffect(() => {
     if (currentRecords.length > 0 && !firstCall) {
-      console.log("Records: ", currentRecords);
+      // console.log("Records: ", currentRecords);
       getCounts(records);
       setFirstCall(true);
     }
@@ -63,7 +64,7 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
   
 
   const getCounts = async (data) => {
-    console.log("Job IDs", data);
+    // console.log("Job IDs", data);
     if (data.length > 0) {
       const result = await axios.post(
         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getCounts`,

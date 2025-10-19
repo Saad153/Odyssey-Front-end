@@ -6,6 +6,7 @@ export function getJobValues() {
     .then((x)=>x.data)
 }
 export async function getJobById({id, type}) {
+  console.log("getJobById is running")
     if(id=="new"){
         return {status:"success", result:{}}
     } else {
@@ -65,6 +66,7 @@ export async function getJobById({id, type}) {
 // }
 
 export async function getChargeHeads ({id}) {
+  console.log("getChargeHeads from apis is running")
   let charges = [];
   await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
     headers:{"id": `${id}`}

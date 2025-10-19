@@ -29,7 +29,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) => {
   const queryClient = useQueryClient();
-  const {register, control, handleSubmit, reset, formState:{errors}, watch } = useForm({
+  const {register, control, handleSubmit, reset, formState:{errors}, watch, getValues } = useForm({
     resolver:yupResolver(SignupSchema), defaultValues:state.values
   });
   const approved = useWatch({control, name:"approved"});
@@ -39,58 +39,155 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
   const tabs = useSelector((state)=>state.tabs.tabs)
   const [ deleteAccess, setDeleteAccess ] = useState(false);
 
-  useEffect(() => {
-    let tempState = {...baseValues, ...jobData};
-    let tempVoyageList = [...state.voyageList];
-    tempVoyageList.length>0?null:tempVoyageList.push(tempState.Voyage);
-    tempState = {
-      ...tempState,
-      eta: tempState.eta==""?"":moment(tempState.eta),
-      etd: tempState.etd==""?"":moment(tempState.etd),
-      approved: tempState.approved=="true"||tempState.approved[0]=='1'?["1"]:[],
-      arrivalDate: tempState.arrivalDate==""?"":moment(tempState.arrivalDate),
-      arrivalTime: tempState.arrivalTime==""?"":moment(tempState.arrivalTime),
-      departureDate: tempState.departureDate==""?"":moment(tempState.departureDate),
-      departureTime: tempState.departureTime==""?"":moment(tempState.departureTime),
-      polDate: tempState.polDate==""?"":moment(tempState.polDate),
-      podDate: tempState.podDate==""?"":moment(tempState.podDate),
-      aesDate: tempState.aesDate==""?"":moment(tempState.aesDate),
-      aesTime: tempState.aesTime==""?"":moment(tempState.aesTime),
-      eRcDate: tempState.eRcDate==""?"":moment(tempState.eRcDate),
-      eRcTime: tempState.eRcTime==""?"":moment(tempState.eRcTime),
-      eRlDate: tempState.eRlDate==""?"":moment(tempState.eRlDate),
-      eRlTime: tempState.eRlTime==""?"":moment(tempState.eRlTime),
-      jobDate: tempState.jobDate==""?"":moment(tempState.jobDate),
-      shipDate:tempState.shipDate==""?"":moment(tempState.shipDate),
-      doorMove:tempState.doorMove==""?"":moment(tempState.doorMove),
-      cutOffDate:tempState.cutOffDate==""?"":moment(tempState.cutOffDate),
-      cutOffTime:tempState.cutOffTime==""?"":moment(tempState.cutOffTime),
-      siCutOffDate:tempState.siCutOffDate==""?"":moment(tempState.siCutOffDate),
-      siCutOffTime:tempState.siCutOffTime==""?"":moment(tempState.siCutOffTime),
-      vgmCutOffDate:tempState.vgmCutOffDate==""?"":moment(tempState.vgmCutOffDate),
-      vgmCutOffTime:tempState.vgmCutOffTime==""?"":moment(tempState.vgmCutOffTime)
-    }
-    let tempEquipments = [];
-    if(tempState.SE_Equipments?.length>0){
-      tempEquipments = tempState.SE_Equipments
-    }else{
-      tempEquipments = [{id:'', size:'', qty:'', dg:tempState.dg=="Mix"?"DG":tempState.dg, gross:'', teu:''}]
-    }
-    dispatch({type:"set",payload:{
-      exRate:tempState.exRate,
-      equipments:tempEquipments,
-      voyageList:tempVoyageList,
-    }});
-    getInvoices(tempState.id, dispatch);
-    reset({...tempState});
-    if(allValues.approved!=1 && checkEmployeeAccess()){
-      setDeleteAccess(true)
-    }else{
-      // console.log("Not Approved")
-      // console.log(deleteAccess)
-    }
+  // useEffect(() => {
+  //   console.log("This is running")
+  //   let tempState = {...baseValues, ...jobData};
+  //   let tempVoyageList = [...state.voyageList];
+  //   tempVoyageList.length>0?null:tempVoyageList.push(tempState.Voyage);
+  //   tempState = {
+  //     ...tempState,
+  //     eta: tempState.eta==""?"":moment(tempState.eta),
+  //     etd: tempState.etd==""?"":moment(tempState.etd),
+  //     approved: tempState.approved=="true"||tempState.approved[0]=='1'?["1"]:[],
+  //     arrivalDate: tempState.arrivalDate==""?"":moment(tempState.arrivalDate),
+  //     arrivalTime: tempState.arrivalTime==""?"":moment(tempState.arrivalTime),
+  //     departureDate: tempState.departureDate==""?"":moment(tempState.departureDate),
+  //     departureTime: tempState.departureTime==""?"":moment(tempState.departureTime),
+  //     polDate: tempState.polDate==""?"":moment(tempState.polDate),
+  //     podDate: tempState.podDate==""?"":moment(tempState.podDate),
+  //     aesDate: tempState.aesDate==""?"":moment(tempState.aesDate),
+  //     aesTime: tempState.aesTime==""?"":moment(tempState.aesTime),
+  //     eRcDate: tempState.eRcDate==""?"":moment(tempState.eRcDate),
+  //     eRcTime: tempState.eRcTime==""?"":moment(tempState.eRcTime),
+  //     eRlDate: tempState.eRlDate==""?"":moment(tempState.eRlDate),
+  //     eRlTime: tempState.eRlTime==""?"":moment(tempState.eRlTime),
+  //     jobDate: tempState.jobDate==""?"":moment(tempState.jobDate),
+  //     shipDate:tempState.shipDate==""?"":moment(tempState.shipDate),
+  //     doorMove:tempState.doorMove==""?"":moment(tempState.doorMove),
+  //     cutOffDate:tempState.cutOffDate==""?"":moment(tempState.cutOffDate),
+  //     cutOffTime:tempState.cutOffTime==""?"":moment(tempState.cutOffTime),
+  //     siCutOffDate:tempState.siCutOffDate==""?"":moment(tempState.siCutOffDate),
+  //     siCutOffTime:tempState.siCutOffTime==""?"":moment(tempState.siCutOffTime),
+  //     vgmCutOffDate:tempState.vgmCutOffDate==""?"":moment(tempState.vgmCutOffDate),
+  //     vgmCutOffTime:tempState.vgmCutOffTime==""?"":moment(tempState.vgmCutOffTime)
+  //   }
+  //   let tempEquipments = [];
+  //   if(tempState.SE_Equipments?.length>0){
+  //     tempEquipments = tempState.SE_Equipments
+  //   }else{
+  //     tempEquipments = [{id:'', size:'', qty:'', dg:tempState.dg=="Mix"?"DG":tempState.dg, gross:'', teu:''}]
+  //   }
+  //   dispatch({type:"set",payload:{
+  //     exRate:tempState.exRate,
+  //     equipments:tempEquipments,
+  //     voyageList:tempVoyageList,
+  //   }});
+  //   getInvoices(tempState.id, dispatch);
+  //   reset({...tempState});
+  //   if(allValues.approved!=1 && checkEmployeeAccess()){
+  //     setDeleteAccess(true)
+  //   }else{
+  //     // console.log("Not Approved")
+  //     // console.log(deleteAccess)
+  //   }
 
-  }, [state.selectedRecord]);
+  // }, [state.selectedRecord]);
+
+  useEffect(() => {
+  if (!state.selectedRecord) return; // ✅ don't run unnecessarily
+
+  console.log("This is running");
+
+  // Build base tempState
+  let tempState = { ...baseValues, ...jobData };
+
+  // ✅ Voyage List — only update when it's actually empty and Voyage exists
+  if (state.voyageList.length === 0 && tempState.Voyage) {
+    dispatch({
+      type: "set",
+      payload: {
+        voyageList: [tempState.Voyage],
+      },
+    });
+  }
+
+  // ✅ Helper function to convert to moment or empty string
+  const toMoment = (value) => (value === "" ? "" : moment(value));
+
+  tempState = {
+    ...tempState,
+    eta: toMoment(tempState.eta),
+    etd: toMoment(tempState.etd),
+    approved:
+      tempState.approved === "true" || tempState.approved?.[0] === "1"
+        ? ["1"]
+        : [],
+    arrivalDate: toMoment(tempState.arrivalDate),
+    arrivalTime: toMoment(tempState.arrivalTime),
+    departureDate: toMoment(tempState.departureDate),
+    departureTime: toMoment(tempState.departureTime),
+    polDate: toMoment(tempState.polDate),
+    podDate: toMoment(tempState.podDate),
+    aesDate: toMoment(tempState.aesDate),
+    aesTime: toMoment(tempState.aesTime),
+    eRcDate: toMoment(tempState.eRcDate),
+    eRcTime: toMoment(tempState.eRcTime),
+    eRlDate: toMoment(tempState.eRlDate),
+    eRlTime: toMoment(tempState.eRlTime),
+    jobDate: toMoment(tempState.jobDate),
+    shipDate: toMoment(tempState.shipDate),
+    doorMove: toMoment(tempState.doorMove),
+    cutOffDate: toMoment(tempState.cutOffDate),
+    cutOffTime: toMoment(tempState.cutOffTime),
+    siCutOffDate: toMoment(tempState.siCutOffDate),
+    siCutOffTime: toMoment(tempState.siCutOffTime),
+    vgmCutOffDate: toMoment(tempState.vgmCutOffDate),
+    vgmCutOffTime: toMoment(tempState.vgmCutOffTime),
+  };
+
+  // ✅ Equipments handling
+  const tempEquipments =
+    tempState.SE_Equipments?.length > 0
+      ? tempState.SE_Equipments
+      : [
+          {
+            id: "",
+            size: "",
+            qty: "",
+            dg: tempState.dg === "Mix" ? "DG" : tempState.dg,
+            gross: "",
+            teu: "",
+          },
+        ];
+
+  // ✅ Only dispatch if something actually changed
+  dispatch((prev) => {
+    const shouldUpdate =
+      prev.exRate !== tempState.exRate ||
+      JSON.stringify(prev.equipments) !== JSON.stringify(tempEquipments);
+
+    if (!shouldUpdate) return prev;
+
+    return {
+      ...prev,
+      exRate: tempState.exRate,
+      equipments: tempEquipments,
+    };
+  });
+
+  // ✅ Only reset form if values are different
+  const currentFormValues = getValues(); // from react-hook-form
+  if (JSON.stringify(currentFormValues) !== JSON.stringify(tempState)) {
+    reset({ ...tempState });
+  }
+
+  getInvoices(tempState.id, dispatch);
+
+  if (allValues.approved != 1 && checkEmployeeAccess()) {
+    setDeleteAccess(true);
+  }
+}, []);
+
 
   const onSubmit = async(data) => {
     data.equipments = state.equipments

@@ -26,7 +26,7 @@ import { Tabs } from 'antd';
 
   useEffect(() => {
     getChargeHeads({id:state.selectedRecord.id})
-  }, [])
+  }, [state.selectedRecord])
 
   useEffect(()=>{
     allValues.charges = chargeList

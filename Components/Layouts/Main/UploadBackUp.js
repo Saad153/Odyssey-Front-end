@@ -251,19 +251,7 @@ const importParties = async () => {
         console.error(err)
     }
 }
-let usedInvoices = [];
-let usedIdSet = new Set();
 
-const filterData = (map, filter) => {
-  const temp = map.get(filter);
-
-  if (temp && !usedIdSet.has(temp.Id)) {
-    usedIdSet.add(temp.Id);
-    usedInvoices.push(temp);
-  }
-
-  return temp;
-};
 let usedVouchers = [];
 let usedVIdSet = new Set();
 
@@ -391,18 +379,10 @@ const importVouchers = async () => {
                 lookupMaps.GL_InvAdjustments.get(vh.Id) || []
             )
         }));
-
-        const usedIds = new Set(usedInvoices.map(u => u.Id));
-
-        const unusedInvoices = Invoices.filter(i => !usedIds.has(i.Id));
-
-        console.log("Invoices 1:", Invoices)
-        console.log("usedInvoices 2:", usedInvoices)
-        console.log("unusedInvoices 3:", unusedInvoices)
         
         let linkedVouchers = Vouchers.filter(v => v.GL_InvAdjustments.length > 0);
         let tempVouchers = Vouchers.filter(v => usedVIdSet.has(v.Id));
-        let unlinkedVouchers = tempVouchers.filter(v => v.GL_InvAdjustments.length == 0);
+        let unlinkedVouchers = Vouchers.filter(v => v.GL_InvAdjustments.length == 0);
         
         console.log("Vouchers 4:", Vouchers)
         console.log("Used Vouchers 4:", usedVouchers)
@@ -443,7 +423,7 @@ const importVouchers = async () => {
         };
 
         await sendBatches(linkedVouchers, "http://localhost:8082/voucher/importVouchers", 100);
-        // await sendBatches(unlinkedVouchers, "http://localhost:8082/voucher/importV", 100);
+        await sendBatches(unlinkedVouchers, "http://localhost:8082/voucher/importV", 100);
         
 
     }catch(e){
@@ -575,6 +555,19 @@ const importAECharges = async () => {
     }
 }
 
+let usedInvoices = [];
+let usedIdSet = new Set();
+
+const filterData = (map, filter) => {
+  const temp = map.get(filter);
+
+  if (temp && !usedIdSet.has(temp.Id)) {
+    usedIdSet.add(temp.Id);
+    usedInvoices.push(temp);
+  }
+
+  return temp;
+};
 
 const importJobs = async () => {
     try{
@@ -668,7 +661,7 @@ const importJobs = async () => {
 
         const tempJobBill = data.JobBill.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_JobBill = createMap(tempJobBill, "Id");
@@ -683,7 +676,7 @@ const importJobs = async () => {
 
         const tempJobInvoice = data.JobInvoice.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_JobInvoice = createMap(tempJobInvoice, "Id");
@@ -698,7 +691,7 @@ const importJobs = async () => {
 
         const tempAgentInvoice = data.Agent_Invoice.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_Agent_Invoice = createMap(tempAgentInvoice, "Id");
@@ -889,7 +882,7 @@ const importJobs = async () => {
 
         console.log("Connected AE Jobs", SEJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,SEJobs.slice(1000, 1010));
+        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,SEJobs.slice(1000, 1050));
 
         for (let i = 0; i < SEJobs.length; i += 10) {
             const chunk = SEJobs.slice(i, i + 10);
@@ -909,7 +902,7 @@ const importJobs = async () => {
         
         console.log("Connected AI Jobs", SIJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,SIJobs.slice(100, 110));
+        // const result1 = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,SIJobs.slice(100, 150));
         
         for (let i = 0; i < SIJobs.length; i += 10) {
             const chunk = SIJobs.slice(i, i + 10);
@@ -988,7 +981,7 @@ const importJobs = async () => {
             Gen_EquipmentSizeType: lookupMaps.Gen_EquipmentSizeType.get(x.EquipCode)
         }))
 
-        lookupMaps.SExp_SeaExportJob_Equipment = createGroupedMap(tempEquip, "SIJobId");
+        lookupMaps.SExp_SeaExportJob_Equipment = createGroupedMap(tempEquip, "SEJobId");
 
         
         const tempCOA = data.COA.map(x => ({
@@ -1041,7 +1034,7 @@ const importJobs = async () => {
 
         const tempJobBill = data.JobBill.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_JobBill = createMap(tempJobBill, "Id");
@@ -1055,7 +1048,7 @@ const importJobs = async () => {
 
         const tempJobInvoice = data.JobInvoice.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_JobInvoice = createMap(tempJobInvoice, "Id");
@@ -1069,7 +1062,7 @@ const importJobs = async () => {
 
         const tempAgentInvoice = data.Agent_Invoice.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_Agent_Invoice = createMap(tempAgentInvoice, "Id");
@@ -1282,7 +1275,7 @@ const importJobs = async () => {
 
         const tempJobBill = data.JobBill.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_JobBill = createMap(tempJobBill, "Id");
@@ -1296,7 +1289,7 @@ const importJobs = async () => {
 
         const tempJobInvoice = data.JobInvoice.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_JobInvoice = createMap(tempJobInvoice, "Id");
@@ -1310,7 +1303,7 @@ const importJobs = async () => {
 
         const tempAgentInvoice = data.Agent_Invoice.map(x => ({
             ...x,
-            Invoice: lookupMaps.GL_Invoices.get(x.GLInvoiceId),
+            Invoice: filterData(lookupMaps.GL_Invoices, x.GLInvoiceId),
         }))
 
         lookupMaps.GL_Agent_Invoice = createMap(tempAgentInvoice, "Id");
@@ -1407,6 +1400,14 @@ const importJobs = async () => {
         //         console.error("Batch error:", err.message);
         //     }
         // }
+
+    }catch(e){
+        console.error(e)
+    }
+
+    try{
+        
+
 
     }catch(e){
         console.error(e)

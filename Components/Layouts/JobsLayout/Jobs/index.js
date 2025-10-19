@@ -17,14 +17,12 @@ const SeJob = ({id, type}) => {
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
   useEffect(() => {
     getData();
-
-
   }, [dataSuccess, isSuccess])
   
   const getData = async() => {
     if(dataSuccess && newdata) {
-      console.log("index: ",data.result)
-      console.log("index: ",newdata)
+      // console.log("index: ",data.result)
+      // console.log("index: ",newdata)
       // data?.result?.res?.forEach((x)=>{
       //   data.result.vendor.sLine.push(x)
       // })

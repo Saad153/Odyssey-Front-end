@@ -274,7 +274,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
       <th>Qty/Wt</th>
       {(operationType=="AI"||operationType=="AE")&&<th>Rate</th>}
       <th>Currency</th>
-      <th>Amount</th>
+      {(operationType == "SE" || operationType == "SI") && <th>Amount</th>}
       <th>Discount</th>
       <th style={{minWidth:60}}>Tax</th>
       <th style={{minWidth:100}}>Tax Amount</th>
@@ -640,7 +640,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
           }
           {chargeList[index]?.currency=="PKR" && <InputNumber value={1.00} />}
           </td>
-          <td>{commas(x.local_amount.toFixed(2))}</td>
+          <td>{commas(parseFloat(x.local_amount).toFixed(2))}</td>
           <td>{x.status === '1' ? 'Approved' : 'Unapproved'}</td>
           <td></td>
           <td></td>

@@ -237,6 +237,7 @@ const getVendors = memoize(async(id) => {
 })
 
 const getHeadsNew = async(id, dispatch, reset) => {
+  console.log("getHeadsNew from states is running<<<")
   dispatch({type:'toggle', fieldName:'chargeLoad', payload:true})
   let paybleCharges = [];
   let reciveableCharges = [];

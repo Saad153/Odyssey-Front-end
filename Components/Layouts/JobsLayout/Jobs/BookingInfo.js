@@ -63,7 +63,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
     };
   
     fetchChargeHeads();
-  });
+  }, [state.selectedRecord]);
 
   useEffect(() => {
     if (allValues.freightType == "Prepaid") {
@@ -72,6 +72,10 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
       reset({ ...allValues, freightPaybleAt: 'Destination' });
     }
   }, [allValues.freightType])
+
+  useEffect(() => {
+    console.log("Type:", type)
+  }, [type])
 
   const handleOk = () => {
     allValues.approved = approved
@@ -160,25 +164,26 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
 
 
   const ShipperComp = () => {
-
     return (
       <>
         <div className='custom-link mt-2' onClick={() => pageLinking("client", shipperId)}>
           Shipper *
         </div>
-        <SelectSearchComp register={register}
+        {/* <SelectSearchComp register={register}
           name='shipperId'
-
           control={control}
           clear={true}
           label=''
           disabled={getStatus(approved)} width={"100%"}
           options={state.fields.party.shipper}
         />
+        <Space /> */}
+        <SelectSearchComp register={register} clear={true} name='shipperId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.shipper} />
         <Space />
       </>
     )
   }
+
   return (
     <>
       <Row style={{ fontSize: 12 }}>
@@ -303,14 +308,14 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
             clear={true}
             name='ClientId' control={control} label='' disabled={getStatus(approved)} width={"100%"}
             options={state.fields.party.client} />
-          {(type == "SE" || type == "AE") && <ShipperComp />}
+            {(type == "SE" || type == "AE") && <div className='custom-link mt-2' onClick={() => pageLinking("client", shipperId)}>Shipper *</div>}
+          {(type == "SE" || type == "AE") && <SelectSearchComp register={register} clear={true} name='shipperId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.shipper} />}
           <div className='custom-link mt-2'
             onClick={() => pageLinking("client", consigneeId)} >Consignee *</div>
-          <SelectSearchComp register={register} clear={true}
-
-            name='consigneeId' control={control} label='' disabled={getStatus(approved)} width={"100%"}
-            options={state.fields.party.consignee} /><Space />
-          {(type == "SI" || type == "AI") && <ShipperComp />}
+          <SelectSearchComp register={register} clear={true} name='consigneeId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.consignee} />
+          <Space />
+          {(type == "SI" || type == "AI") && <div className='custom-link mt-2' onClick={() => pageLinking("client", shipperId)}>Shipper *</div>}
+          {(type == "SI" || type == "AI") && <SelectSearchComp register={register} clear={true} name='shipperId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.shipper} />}
           {(type == "SE" || type == "SI") && <>
             <SelectSearchComp register={register}
               name='pol'
@@ -409,8 +414,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
           <div className='mt-2' />
           <Row>
             <Col md={1}>
-              <CheckGroupComp register={register} name='transportCheck' control={control} label='' disabled={getStatus(approved)}
-                options={[{ label: "", value: "Transport" }]} />
+              <CheckGroupComp register={register} name='transportCheck' control={control} label='' disabled={getStatus(approved)} options={[{ label: "", value: "Transport" }]} />
             </Col>
             <Col md={3}>
               <div className='custom-link' onClick={() => pageLinking("vendor", transporterId)} >Transport</div>
@@ -425,8 +429,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
           <div className='mt-2'></div>
           <Row>
             <Col md={1}>
-              <CheckGroupComp register={register} name='customCheck' control={control} label='' disabled={getStatus(approved)}
-                options={[{ label: "", value: "Custom Clearance" }]} />
+              <CheckGroupComp register={register} name='customCheck' control={control} label='' disabled={getStatus(approved)} options={[{ label: "", value: "Custom Clearance" }]} />
             </Col>
             <Col md={6}>
               <div className='custom-link' onClick={() => pageLinking("vendor", customAgentId)} >Custom Clearance</div>

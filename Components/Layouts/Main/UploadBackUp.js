@@ -1406,8 +1406,120 @@ const importJobs = async () => {
     }
 
     try{
-        
+        console.log("Starting Invoices Data Fetch...")
 
+        //Fetch data from Climax DB API
+        const { data } = await axios.post("http://localhost:8081/voucher/getAll");
+        console.log("Data Fetched Successfully", data)
+
+        let lookupMaps = {
+            GL_COA: createMap(data.COA, "Id"),
+            GL_COASubCategory: createMap(data.COASubCategory, "Id"),
+            Gen_BankSubType: createMap(data.BankSubType, "Id"),
+            Gen_SubCompanies: createMap(data.SubCompanies, "Id"),
+            GL_InvTaxType: createMap(data.InvTaxType, "Id"),
+            GL_PropertiesLOV: createMap(data.PropertiesLOV, "Id"),
+            GL_Currencies: createMap(data.Currencies, "Id"),
+            Gen_TaxInvNature: createMap(data.TaxInvNature, "Id"),
+            GL_Requisition: createMap(data.Requisition, "Id"),
+            GL_ChequeType: createMap(data.ChequeType, "Id"),
+            Gen_TaxFilerStatus: createMap(data.TaxFilerStatus, "Id"),
+            GL_VoucherType: createMap(data.VoucherType, "Id"),
+            GL_VoucherFormType: createMap(data.VoucherFormType, "Id"),
+            GL_InvMode: createMap(data.InvMode, "Id"),
+            GL_JobInvoice: createMap(data.JobInvoice, "GLInvoiceId"),
+            GL_JobBill: createMap(data.JobBill, "GLInvoiceId"),
+        }
+
+        const COA = data.COA.map((a) => ({
+            ...a,
+            GL_COA: lookupMaps.GL_COA.get(a.ParentAccountId),
+            GL_COASubCategory: lookupMaps.GL_COASubCategory.get(a.SubCategoryId)
+        }))
+
+        lookupMaps.GL_COA = createMap(COA, "Id")
+
+        const Parties = data.Parties.map((p) => ({
+            ...p,
+            GL_COA: lookupMaps.GL_COA.get(p.AccountId),
+        }))
+
+        lookupMaps.Gen_Parties = createMap(Parties, "Id")
+
+        const Voucher_Heads = data.Voucher_Detail.map((vh) => ({
+            ...vh,
+            GL_COA: lookupMaps.GL_COA.get(vh.COAAccountId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(vh.CurrencyIdVD),
+            GL_PropertiesLOV: lookupMaps.GL_PropertiesLOV.get(vh.CostCenterId),
+            Gen_BankSubType: lookupMaps.Gen_BankSubType.get(vh.BankSubTypeId),
+            Gen_SubCompanies: lookupMaps.Gen_SubCompanies.get(vh.SubCompanyId),
+            GL_InvTaxType: lookupMaps.GL_InvTaxType.get(vh.TaxTypeId),
+        }))
+
+        lookupMaps.GL_Voucher_Detail = createMap(Voucher_Heads, "Id")
+        lookupMaps.GL_Voucher_Details = createGroupedMap(Voucher_Heads, "VoucherId")
+
+        let Vouchers = data.Voucher.map((v) => ({
+            ...v,
+            Gen_TaxInvNature: lookupMaps.Gen_TaxInvNature.get(v.TaxNatureId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(v.CurrencyId),
+            GL_Requisition: lookupMaps.GL_Requisition.get(v.ReqId),
+            GL_ChequeType: lookupMaps.GL_ChequeType.get(v.ChequeTypeId),
+            Gen_TaxFilerStatus: lookupMaps.Gen_TaxFilerStatus.get(v.FilerStatusId),
+            Gen_SubCompanies: lookupMaps.Gen_SubCompanies.get(v.SubCompanyId),
+            GL_VoucherType: lookupMaps.GL_VoucherType.get(v.VoucherTypeId),
+            GL_VoucherFormType: lookupMaps.GL_VoucherFormType.get(v.VoucherFormId),
+            GL_Voucher_Detail: lookupMaps.GL_Voucher_Details.get(v.Id),
+        }))
+
+        lookupMaps.GL_Voucher = createMap(Vouchers, "Id")
+
+        const Invoices = data.Invoices.map((i) => ({
+            ...i,
+            GL_Voucher: filterVoucherData(lookupMaps.GL_Voucher, lookupMaps.GL_Voucher_Detail.get(i.GVDetailId).VoucherId),
+            GL_Currencies: lookupMaps.GL_Currencies.get(i.CurrencyId),
+            GL_InvMode: lookupMaps.GL_InvMode.get(i.InvoiceTypeId),
+            GL_JobInvoice: lookupMaps.GL_JobInvoice.get(i.Id),
+            GL_JobBill: lookupMaps.GL_JobBill.get(i.Id),
+            Gen_Parties: lookupMaps.Gen_Parties.get(i.PartyId),
+        }))
+
+        lookupMaps.GL_Invoices = createMap(Invoices, "Id")
+
+        const chunkArray = (array, chunkSize) => {
+            const chunks = [];
+            for (let i = 0; i < array.length; i += chunkSize) {
+                chunks.push(array.slice(i, i + chunkSize));
+            }
+            return chunks;
+        };
+
+        const sendBatches = async (items, url, batchSize = 100, maxRetries = 3) => {
+            const batches = chunkArray(items, batchSize);
+            for (let i = 0; i < batches.length; i++) {
+                let retries = 0, success = false;
+                while (!success && retries < maxRetries) {
+                    try {
+                        console.log(`🚀 Sending batch ${i + 1}/${batches.length} (${batches[i].length} items)`);
+                        // console.log(batches[i])
+                        const response = await axios.post(url, { records: batches[i] });
+                        // console.log(`✅ Batch ${i + 1} OK:`, response.data);
+                        success = true;
+                    } catch (error) {
+                        retries++;
+                        console.error(`❌ Batch ${i + 1} failed (${retries}/${maxRetries}): ${error.message}`);
+                        if (retries >= maxRetries) {
+                            console.error(`🚨 Skipping batch ${i + 1}`);
+                        } else {
+                            console.log(`🔄 Retrying batch ${i + 1}...`);
+                        }
+                    }
+                }
+            }
+            console.log("🎉 All batches processed for", url);
+        };
+
+        await sendBatches(Invoices, "http://localhost:8082/voucher/importI", 100);
 
     }catch(e){
         console.error(e)

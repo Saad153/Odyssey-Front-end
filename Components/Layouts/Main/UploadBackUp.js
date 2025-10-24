@@ -26,7 +26,7 @@ const Upload_CoA = () => {
         // await importCharges()
         // await importParties()
         await importJobs()
-        await importVouchers()
+        // await importVouchers()
         // await importAirPorts()
         // await importEmployees()
         // await importAECharges()
@@ -572,7 +572,7 @@ const filterData = (map, filter) => {
 const importJobs = async () => {
     try{
         console.log("Fetching Air Jobs data")
-        const { data } = await axios.get("http://localhost:8081/jobs/getAll");
+        // const { data } = await axios.get("http://localhost:8081/jobs/getAll");
         console.log("Air Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -925,7 +925,7 @@ const importJobs = async () => {
 
     try{
         console.log("Fetching SE Job data")
-        const { data } = await axios.get("http://localhost:8081/jobs/getAllSE");
+        // const { data } = await axios.get("http://localhost:8081/jobs/getAllSE");
         console.log("SE Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -1166,7 +1166,7 @@ const importJobs = async () => {
 
     try{
         console.log("Fetching SI Job data")
-        const { data } = await axios.get("http://localhost:8081/jobs/getAllSI");
+        // const { data } = await axios.get("http://localhost:8081/jobs/getAllSI");
         console.log("SI Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -1412,6 +1412,19 @@ const importJobs = async () => {
         const { data } = await axios.post("http://localhost:8081/voucher/getAll");
         console.log("Data Fetched Successfully", data)
 
+        const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
+
+        const createGroupedMap = (arr, key) => {
+            const map = new Map();
+            arr.forEach(item => {
+                if (!map.has(item[key])) {
+                map.set(item[key], []);
+                }
+                map.get(item[key]).push(item);
+            });
+            return map;
+        };
+
         let lookupMaps = {
             GL_COA: createMap(data.COA, "Id"),
             GL_COASubCategory: createMap(data.COASubCategory, "Id"),
@@ -1429,6 +1442,7 @@ const importJobs = async () => {
             GL_InvMode: createMap(data.InvMode, "Id"),
             GL_JobInvoice: createMap(data.JobInvoice, "GLInvoiceId"),
             GL_JobBill: createMap(data.JobBill, "GLInvoiceId"),
+            GL_InvAdjustments: createGroupedMap(data.InvAdjustments, "InvoiceId"),
         }
 
         const COA = data.COA.map((a) => ({
@@ -1482,6 +1496,7 @@ const importJobs = async () => {
             GL_JobInvoice: lookupMaps.GL_JobInvoice.get(i.Id),
             GL_JobBill: lookupMaps.GL_JobBill.get(i.Id),
             Gen_Parties: lookupMaps.Gen_Parties.get(i.PartyId),
+            GL_InvAdjustments: lookupMaps.GL_InvAdjustments.get(i.Id),
         }))
 
         lookupMaps.GL_Invoices = createMap(Invoices, "Id")
@@ -1519,7 +1534,7 @@ const importJobs = async () => {
             console.log("🎉 All batches processed for", url);
         };
 
-        await sendBatches(Invoices, "http://localhost:8082/voucher/importI", 100);
+        // await sendBatches(Invoices, "http://localhost:8082/voucher/importI", 100);
 
     }catch(e){
         console.error(e)

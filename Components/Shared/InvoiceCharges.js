@@ -491,7 +491,7 @@ return (
           <b style={{marginTop:1, paddingRight:2}}>Go to Payment/Receipt</b><RightOutlined style={{fontSize:14}}/>
           </div>
         </div>
-        <Row className='py-3'>
+        <Row className='pt-3'>
           <Col md={2} className="mb-3">
             <div>
               <span className='inv-label'>Invoice No#:</span>
@@ -572,7 +572,7 @@ return (
             </span>
           </Col>
         </Row>
-        <div style={{minHeight:250}}>
+        <div style={{minHeight:180}}>
           <div className='table-sm-1 mt-3' style={{maxHeight:300, overflowY:'auto', fontSize:11}}>
           <Table className='tableFixHead' bordered>
             <thead>
@@ -698,7 +698,7 @@ return (
               {invoice.currency!='PKR'?commas((parseFloat(invoice?.total)*parseFloat(invoice?.ex_rate)).toFixed(2)):commas(parseFloat(invoice?.total).toFixed(2))}
             </span>
           </Col>
-          <Col md={2}>
+          <Col md={3}>
             <span className='inv-label mx-2' style={{cursor:'pointer'}} onClick={()=>showSettlement(!show)}><u>Settlement Amount: {!show?"Hide":"Show"}</u></span>
             {invoice.payType=="Recievable" &&<span className='inv-value charges-box'> 
               {" "}

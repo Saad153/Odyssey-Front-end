@@ -131,7 +131,7 @@ const CreateOrEdit = ({appendClient, edit, setVisible, setEdit, selectedEmployee
 
     // console.log(selectedEmployee.Access_Levels)
     if(edit){
-      const accessLevels = selectedEmployee.Access_Levels[0].access_name;
+      const accessLevels = selectedEmployee.Access_Levels? selectedEmployee.Access_Levels.access_name: '';
       if (accessLevels == "admin") {
           setIsAdminSelected(true)
           setSelectedAccessLevels(['admin'])
@@ -176,6 +176,7 @@ return(
         if(edit){
           axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_EMPLOYEE,{ values:tempValues, updatedBy:Username }).then((x)=>{
             let arr  = [];
+            console.log("x.data.resultTwo",x.data.resultTwo)
             x.data.resultTwo.forEach(y => {
               arr.push({access_name:y.access_name})
             });

@@ -751,7 +751,7 @@ const InvoiceBalancingReport = ({ result, query }) => {
           {records.length > 0 &&
             <>
               <PrintTopHeader company={query.company} />
-              <hr className='mb-2' />
+              <hr className='mb-1' />
               <div className='table-sm-1' style={{ maxHeight: overflow ? 600 : "100%", overflowY: 'auto' }}>
                 <Table className='tableFixHead' bordered style={{ fontSize: 12 }} ref={inputRef}>
                   <thead>
@@ -838,7 +838,7 @@ const InvoiceBalancingReport = ({ result, query }) => {
                 </Table>
               </div>
               {overflow && 
-                <div className="d-flex justify-content-end mt-4">
+                <div className="d-flex justify-content-end mt-3">
                   <Pagination noOfPages={noOfPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
                 </div>
               }

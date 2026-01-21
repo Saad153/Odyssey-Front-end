@@ -20,13 +20,13 @@ const Upload_CoA = () => {
         {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
         {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
         {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
-        await importCommodities()
-        await importVoyages()
-        await importCOA()
-        await importCharges()
-        await importParties()
-        // await importJobs()
-        // await importVouchers()
+        // await importCommodities();
+        // await importVoyages();
+        // await importCOA();
+        // await importCharges();
+        // await importParties();
+        // await importJobs();
+        await importVouchers();
         // await checkInvoices()
         // await importAirPorts()
         // await importEmployees()

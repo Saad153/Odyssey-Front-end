@@ -50,7 +50,7 @@ const SelectSearchComp = (props) => {
   const { control, name, label, options, disabled, width, clear, ...rest } = props;
   const { field: { onChange, onBlur, value, name: fieldName, ref } } = useController({ control, name });
 
-  const handleValue = value ? value.toString() : undefined;
+  const handleValue = value ? value : undefined;
 
   const SelectSearch = () => {
     let tempVal = options.map((x) => ({

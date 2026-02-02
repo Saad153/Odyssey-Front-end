@@ -85,7 +85,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           // edit: false
         }
       }).then((x) => {
-        // console.log("Invoices", x.data.result)
+        console.log("Invoices", x.data.result)
         let temp = []
         !state.edit?temp  = x.data.result.filter(y => parseFloat(y.total)-parseFloat(y.recieved) != 0.0 && parseFloat(y.total)-parseFloat(y.paid) != 0.0):
         temp = x.data.result

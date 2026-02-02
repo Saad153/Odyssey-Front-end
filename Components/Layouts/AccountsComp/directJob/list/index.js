@@ -170,7 +170,7 @@ useEffect(() => {
                 </Col>
             </Row>
             {currentRecords.map((item, index) => (
-                <Row className="voucher-box">
+                <Row key={index} className="voucher-box">
                     <Row className="d-flex w-100" style={{ height: '40%'}}>
                         <Col md={5}>
                             <Row>

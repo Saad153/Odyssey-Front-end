@@ -20,12 +20,12 @@ const Upload_CoA = () => {
         {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
         {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
         {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
-        // await importCommodities();
-        // await importVoyages();
-        // await importCOA();
-        // await importCharges();
-        // await importParties();
-        // await importJobs();
+        await importCommodities();
+        await importVoyages();
+        await importCOA();
+        await importCharges();
+        await importParties();
+        await importJobs();
         await importVouchers();
         // await checkInvoices()
         // await importAirPorts()
@@ -43,7 +43,7 @@ const Upload_CoA = () => {
         console.log("Getting Invoices")
         const { data } = await axios.post("http://localhost:8081/voucher/getAllInvoices");
         console.log(data.Invoices)
-        const result = await axios.get("http://localhost:8082/invoice/invoiceMatching");
+        const result = await axios.get("http://localhost:8084/invoice/invoiceMatching");
         console.log(result.data.result)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -185,7 +185,7 @@ const Upload_CoA = () => {
                 tempCharges.push(temp)
             })
             console.log(tempCharges)
-            const result = await axios.post("http://localhost:8082/charges/bulkCreate", tempCharges)
+            const result = await axios.post("http://localhost:8084/charges/bulkCreate", tempCharges)
             console.log(result)
         }catch(err){
             console.error(err)
@@ -204,7 +204,7 @@ const Upload_CoA = () => {
 
             // })
             
-            const result = await axios.post("http://localhost:8082/accounts/importAccount", coa.data.temp)
+            const result = await axios.post("http://localhost:8084/accounts/importAccount", coa.data.temp)
             console.log(result.status)
         }catch(err){
             console.error(err)
@@ -214,7 +214,7 @@ const Upload_CoA = () => {
         try{
             // const coa = await axios.post("http://localhost:8081/accounts/getAll")
             // console.log(coa.data)
-            const result = await axios.get("http://localhost:8082/coa/getCOATree")
+            const result = await axios.get("http://localhost:8084/coa/getCOATree")
             console.log(result.data)
         }catch(err){
             console.error(err)
@@ -253,7 +253,7 @@ const importParties = async () => {
 
         console.log("Sorted Data", parties)
 
-        const result = await axios.post("http://localhost:8082/clientRoutes/bulkCreate", parties)
+        const result = await axios.post("http://localhost:8084/clientRoutes/bulkCreate", parties)
         console.log(result.data.status)
     }catch(err){
         console.error(err)
@@ -430,8 +430,18 @@ const importVouchers = async () => {
             console.log("🎉 All batches processed for", url);
         };
 
-        await sendBatches(linkedVouchers, "http://localhost:8082/voucher/importVouchers", 100);
-        await sendBatches(Vouchers, "http://localhost:8082/voucher/importV", 100);
+        await sendBatches(linkedVouchers, "http://localhost:8084/voucher/importVouchers", 100);
+        await sendBatches(Vouchers, "http://localhost:8084/voucher/importV", 100);
+
+        lookupMaps.Vouchers = createMap(data.Voucher, "Id");
+        const tempVoucher_Heads = Voucher_Heads.map(vh => ({
+            ...vh,
+            GL_Voucher: lookupMaps.Vouchers.get(vh.VoucherId),
+        }));
+        const res = await axios.post("http://localhost:8084/voucher/deleteVoucherHeads", {})
+        // console.log("Deleted Existing Voucher Heads:", res.data);
+        await sendBatches(tempVoucher_Heads, "http://localhost:8084/voucher/importVoucherHeads", 50);
+        // await sendBatches(data.Voucher_Detail, "http://localhost:8084/voucher/checkVoucherHeads", 1000);
         
 
     }catch(e){
@@ -906,16 +916,10 @@ const importJobs = async () => {
                 console.error("Batch error:", err.message);
             }
         }
-
-        
         console.log("Connected AI Jobs", SIJobs)
-
-        // const result1 = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,SIJobs.slice(100, 150));
-        
         for (let i = 0; i < SIJobs.length; i += 10) {
             const chunk = SIJobs.slice(i, i + 10);
             console.log(`Sending records ${i} - ${i + chunk.length}`);
-            
             try {
                 const result = await axios.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,
@@ -926,7 +930,6 @@ const importJobs = async () => {
                 console.error("Batch error:", err.message);
             }
         }
-
     }catch(e){
         console.error(e)
     }
@@ -1527,748 +1530,12 @@ const importJobs = async () => {
             console.log("🎉 All batches processed for", url);
         };
 
-        await sendBatches(Invoices, "http://localhost:8082/voucher/importI", 100);
+        await sendBatches(Invoices, "http://localhost:8084/voucher/importI", 100);
 
     }catch(e){
         console.error(e)
     }
 }
-
-
-
-    const uploadInvoices = async() => {
-        console.log(invoicesData)
-        let count = 0
-        let failed = []
-        setStatusInvoices("Uploading...")
-        for(let x of invoicesData){
-            if(x.companyId != "1" || x.companyId != "3"){
-                const result = await axios.post("http://localhost:8082/invoice/uploadbulkInvoices", x)
-                count++
-                console.log(result)
-            }
-            // break;
-        }
-        setStatusInvoices("Success, see console for more details")
-        // console.log(failed)
-        console.log(count)
-    }
-
-    const [jobs, setJobs] = useState([])
-
-    const handleJobData = async(data, fileInfo) => {
-        //console.log(data)
-        //console.log(fileInfo)
-        let jobList = []
-        let count = 0
-        const client = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CLIENTS)
-        const vendor = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_VENDORS)
-        let clients = client.data.result
-        let vendors = vendor.data.result
-        let index = 0
-        let SNS_AE = []
-        let SNS_AI = []
-        let SNS_SEJ = []
-        let SNS_SIJ = []
-        let ACS_AE = []
-        let ACS_AI = []
-        let ACS_SEJ = []
-        let ACS_SIJ = []
-        for(let x of data){
-            if(x.job__ && x.job__.includes("SNS")){
-                if(x.job__ && x.job__.includes("AE")){
-                    SNS_AE.push(x)
-                }
-                if(x.job__ && x.job__.includes("AI")){
-                    SNS_AI.push(x)
-                }
-                if(x.job__ && x.job__.includes("SEJ")){
-                    SNS_SEJ.push(x)
-                }
-                if(x.job__ && x.job__.includes("SIJ")){
-                    SNS_SIJ.push(x)
-                }
-            }
-            if(x.job__ && x.job__.includes("ACS")){
-                if(x.job__ && x.job__.includes("AE")){
-                    ACS_AE.push(x)
-                }
-                if(x.job__ && x.job__.includes("AI")){
-                    ACS_AI.push(x)
-                }
-                if(x.job__ && x.job__.includes("SEJ")){
-                    ACS_SEJ.push(x)
-                }
-                if(x.job__ && x.job__.includes("SIJ")){
-                    ACS_SIJ.push(x)
-                }
-            }
-        }
-        console.log(SNS_AE)
-        console.log(SNS_AI)
-        console.log(SNS_SEJ)
-        console.log(SNS_SIJ)
-        console.log(ACS_AE)
-        console.log(ACS_AI)
-        console.log(ACS_SEJ)
-        console.log(ACS_SIJ)
-        
-    }
-
-    const [vouchers, setVouchers] = useState([])
-
-    const [voucherData, setVoucherData] = useState([])
-
-    const handleVoucher = async(data, fileInfo) => {
-        console.log(data)
-        setVoucherData(data)
-        console.log(fileInfo)
-        setStatus("Processing...")
-        let toBeUploaded = []
-        let openingBalances = []
-        let misc = []
-        let salesInvoices = []
-        let purchaseInvoices = []
-        let bankPayVoucher = []
-        let bankRecVoucher = []
-        let cashPayVoucher = []
-        let cashRecVoucher = []
-        let transferVoucher = []
-        let journalVoucher = []
-        let settlementVoucher = []
-        let creditNote = []
-        let debitNote = []
-        let noParty = []
-        const client = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CLIENTS)
-        const vendor = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_VENDORS)
-        const accounts = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS, {
-            headers: {
-                id: Cookies.get("companyId")
-            }
-        })
-        console.log(accounts.data.result)
-        let accountsData = accounts.data.result
-        let clientData = client.data.result
-        let vendorData = vendor.data.result
-        console.log("Client Data:", clientData)
-        console.log("Vendor Data:",vendorData)
-        let partyid = ""
-        let partyname = ""
-        let accountType = ""
-        let matched = false
-        let i = 0
-        for(let x of data){
-            matched = false
-            if(x.exchangerate == 0){
-                x.exchangerate = 1
-            }
-            switch(x.currency){
-                case "PAK RUPEES":{
-                    x.currency = "PKR"
-                    break
-                }
-                case "US DOLLAR":{
-                    x.currency = "USD"
-                    break
-                }
-                case "US DOLLAR":{
-                    x.currency = "USD"
-                    break
-                }
-                case "USD":{
-                    x.currency = "USD"
-                    break
-                }
-                case "EURO":{
-                    x.currency = "EUR"
-                    break
-                }
-                case "BRITISH POUND":{
-                    x.currency = "GBP"
-                    break
-                }
-                case "CHF":{
-                    x.currency = "CHF"
-                    break
-                }
-                case null:{
-                    x.currency = "PKR"
-                    break
-                }
-                default:{
-                    console.log(x.currency)
-                    console.log(x)
-                }
-            }
-            clientData.forEach((a)=>{
-                if(x.accountname){
-                    if(x.accountname.includes(a.name.trim())){
-                        // x.partyId = a.id
-                        // x.partyName = a.name
-                        x.accountType = "client"
-                        // matched = true
-                        console.log("Found in Clients", a.name, i)
-                    }
-                }
-            })
-            if(!matched){
-                vendorData.forEach((a)=>{
-                    if(x.accountname){
-                        if(x.accountname.includes(a.name.trim())){
-                            // x.partyId = a.id
-                            // x.partyName = a.name
-                            x.accountType = "vendor"
-                            // matched = true
-                            if(a.types.includes("Agent")){
-                                x.accountType = "agent"
-                            }
-                            console.log("Found in Vendors", a.name, i)
-                        }
-                    }
-                })
-            }
-            if(!matched){
-                console.log("Checking in Accounts")
-                accountsData.forEach((y)=>{
-                    y.Parent_Accounts.forEach((z)=>{
-                        z.Child_Accounts.forEach((a)=>{
-                            if(x.accountname){
-                                if(a.title == x.accountname.trim()){
-                                    x.partyId = a.id
-                                    x.partyName = a.title
-                                    if(!x.accountType){
-                                        x.accountType = a.subCategory
-                                    }
-                                    matched = true      
-                                }
-                                if(x.accountname.trim() == "ROYAL AIR MARACO" && a.title == "ROYAL AIR MARACO"){
-                                    x.partyId = a.id
-                                    x.partyName = a.title
-                                    if(!x.accountType){
-                                        x.accountType = a.subCategory
-                                    }
-                                    matched = true
-                                }
-                            }
-                        })
-                    })
-                })
-            }
-            !matched?console.log("Unmatched>>>", x):null
-            let pushed = false
-            if(x.voucher_type){
-
-                if(x.voucher_type.includes("SALES INVOICE") && matched){
-                    x.vType = "SI"
-                    salesInvoices.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("PURCHASE INVOICE") && matched){
-                    x.vType = "PI"
-                    purchaseInvoices.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("BANK PAYMENT VOUCHER") && matched){
-                    x.vType = "BPV"
-                    bankPayVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("BANK RECEIPT VOUCHER") && matched){
-                    x.vType = "BRV"
-                    bankRecVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("CASH PAYMENT VOUCHER") && matched){
-                    x.vType = "CPV"
-                    cashPayVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("CASH RECEIPT VOUCHER") && matched){
-                    
-                    x.vType = "CRV"
-                    cashRecVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("TRANSFER VOUCHER") && matched){
-                    
-                    x.vType = "TV"
-                    transferVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("JOURNAL VOUCHER") && matched){
-                    
-                    x.vType = "JV"
-                    journalVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("SETTLEMENT VOUCHER") && matched){
-                    
-                    x.vType = "SV"
-                    settlementVoucher.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("CREDIT NOTE") && matched){
-                    
-                    x.vType = "CN"
-                    creditNote.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("DEBIT NOTE") && matched){
-                    
-                    x.vType = "DN"
-                    debitNote.push(x)
-                    pushed = true
-                }
-                if(x.voucher_type.includes("OPENING BALANCE") && matched){
-                    
-                    x.vType = "OP"
-                    openingBalances.push(x)
-                    pushed = true
-                }
-            }
-            if(!pushed){
-                misc.push(x)
-            }
-            i++
-        }
-        setStatus("Sorted, creating Vouchers...")
-
-        toBeUploaded.push(...bankRecVoucher)
-        toBeUploaded.push(...bankPayVoucher)
-        toBeUploaded.push(...salesInvoices)
-        toBeUploaded.push(...purchaseInvoices)
-        toBeUploaded.push(...cashPayVoucher)
-        toBeUploaded.push(...cashRecVoucher)
-        toBeUploaded.push(...transferVoucher)
-        toBeUploaded.push(...journalVoucher)
-        toBeUploaded.push(...settlementVoucher)
-        toBeUploaded.push(...creditNote)
-        toBeUploaded.push(...debitNote)
-        toBeUploaded.push(...openingBalances)
-
-        console.log("To be Uploaded", toBeUploaded)
-        console.log("SALES INVOICE", salesInvoices)
-        console.log("PURCHASE INVOICE", purchaseInvoices)
-        console.log("BANK PAYMENT VOUCHER", bankPayVoucher)
-        console.log("BANK RECEIPT VOUCHER", bankRecVoucher)
-        console.log("CASH PAYMENT VOUCHER", cashPayVoucher)
-        console.log("CASH RECEIPT VOUCHER", cashRecVoucher)
-        console.log("TRANSFER VOUCHER", transferVoucher)
-        console.log("JOURNAL VOUCHER", journalVoucher)
-        console.log("SETTLEMENT VOUCHER", settlementVoucher)
-        console.log("CREDIT NOTE", creditNote)
-        console.log("DEBIT NOTE", debitNote)
-        console.log("OPENING BALANCE", openingBalances)
-        console.log("Unsorted", misc)
-        let index = 0
-        let vouchers = []
-        let temp = toBeUploaded
-        let bank = 0
-        let count = 0
-        for(let x of toBeUploaded){
-            if(!x.partyName){
-                // console.log("No Party>>>>>",x)
-                noParty.push(x)
-            }
-            let Voucher_Heads = []
-            let a ={}
-            let voucher = {
-                voucher_Id: x.voucher_no,
-                CompanyId: Cookies.get("companyId"),
-                costCenter: "KHI",
-                type: x.voucher_type,
-                vType: x.vType,
-                currency: x.currency,
-                voucherNarration: x.narration,
-                exRate: x.exchangerate?x.exchangerate:null,
-                chequeNo: x.cheque_number?x.cheque_number:null,
-                payTo:"",
-                partyId: x.partyId,
-                partyName: x.partyName,
-                partyType: x.accountType,
-                createdBy: "Backup",
-                Voucher_Heads:Voucher_Heads,
-                createdAt: parseDateString2(x.voucher_date)
-              }
-            for(let y of toBeUploaded){
-                if(x.voucher_no && y.voucher_no && (x.voucher_no == y.voucher_no)){
-                    // console.log(y.voucher_no)
-                    count++
-                    a = {
-                        voucher_Id: y.voucher_no,
-                        defaultAmount: y.debit!=0?y.debit:y.credit,
-                        amount: y.currency!="PKR"?y.debit!=0?y.debit/y.exchangerate:y.credit/y.exchangerate:y.debit!=0?y.debit:y.credit,
-                        type: y.debit!=0?"debit":"credit",
-                        narration: y.narration,
-                        settlement: "",
-                        ChildAccountId: y.partyId,
-                        partyName: y.partyName,
-                        accountType: y.accountType,
-                        createdAt: parseDateString2(y.voucher_date)
-                    };
-                    // console.log(parseDateString2(y.voucher_date))
-                    Voucher_Heads.push(a)
-                }
-            }
-            voucher.Voucher_Heads = Voucher_Heads
-            vouchers.push(voucher)
-        }
-
-        console.log("No Party:",noParty)
-
-        const uniqueVouchers = vouchers.filter((voucher, index, self) =>
-            index === self.findIndex((v) => v.voucher_Id === voucher.voucher_Id)
-        );
-
-        console.log(uniqueVouchers)
-        setVouchers(uniqueVouchers)
-        console.log("Done", count)
-        setStatus("Vouchers created, waiting to upload...")
-    }
-
-    const uploadVouchers = async()=>{
-        setStatus("Uploading...")
-        let results = []
-        for(let voucher of vouchers){
-            let result = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER,voucher)
-            // let result = await axios.post("http://localhost:8082/voucher/pushVoucehrHeads", voucher)
-            results.push(result.data)
-        }
-        console.log(results)
-        setStatus("Uploaded")
-    }
-
-    const setExRateVouchers = async() => {
-        console.log("Running API")
-        const invoices = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/getExRateVouchers`)
-        // console.log(voucher_heads.data.result)
-        // console.log(voucherData)
-        // let notPresent = []
-        // voucherData.forEach((x)=>{
-        //     let present = false
-        //     voucher_heads.data.result.forEach((y)=>{
-        //         if(y.Voucher.voucher_Id == x.voucher_no){
-        //             present = true
-        //         }
-        //     })
-        //     !present?notPresent.push(x):null
-        // })
-        // console.log("Not Present in DB", notPresent)
-        // invoices.data.result.forEach((x)=>{
-
-        // })
-
-        console.log(invoices)
-
-    }
-    const verifyVouchers = async() => {
-        console.log("Running API")
-        const invoices = await axios.get("http://localhost:8082/voucher/getAllVoucehrHeads")
-        // console.log(voucher_heads.data.result)
-        // console.log(voucherData)
-        // let notPresent = []
-        // voucherData.forEach((x)=>{
-        //     let present = false
-        //     voucher_heads.data.result.forEach((y)=>{
-        //         if(y.Voucher.voucher_Id == x.voucher_no){
-        //             present = true
-        //         }
-        //     })
-        //     !present?notPresent.push(x):null
-        // })
-        // console.log("Not Present in DB", notPresent)
-        // invoices.data.result.forEach((x)=>{
-
-        // })
-
-        console.log(invoices.data.message)
-
-    }
-
-    const matchInvoices = async(data, fileInfo) => {
-        console.log("File Data", data)
-        console.log(fileInfo)
-        // return data
-        let agentInvoices  = false
-        data[0].agent_name?agentInvoices = true:agentInvoices = false
-        setStatusInvoiceMatching("File loaded, Fetching data...")
-        const invoices = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/invoiceMatching`)
-        // const invoices = await axios.get("http://localhost:8082/invoice/invoiceMatching")
-        setStatusInvoiceMatching("Data Fetched, Processing...")
-        console.log("DB Data", invoices.data.result)
-        let unmatched = []
-        let unmatched1 = []
-        let testing = true
-        console.log("Agent Invoices: ", agentInvoices)
-        if(!agentInvoices){
-            data.forEach((x)=>{
-                let invoiceNo = false
-                let party = false
-                let index = 0
-                invoices.data.result.forEach((y, i)=>{
-                    let check = false
-                    let check1 = true
-                    if(fileInfo.name.includes("PYB")){
-                        if(x.bill_no == y.invoice_No && x.vendor.includes(y.party_Name)){
-                            invoiceNo = true
-                            party = true
-                            check = true
-                            index = i
-                        }
-                    }else{
-                        if(x.invoice_no == y.invoice_No && x.client.includes(y.party_Name)){
-                            invoiceNo = true
-                            party = true
-                            check = true
-                            index = i
-                        }
-                    }
-                    if(check){
-                        if(fileInfo.name.includes("PYB")){
-                            if(x.payable.toString().includes("(")||x.payable.toString().includes("-")){
-                                let payable = parseFloat(x.payable.toString().replace("-","").replace("(","").replace(")","").replace(/,/g, ""))
-                                if(parseFloat(y.total) != payable){
-                                    check1 = false
-                                }
-                            }else{
-                                let payable = parseFloat(x.payable.toString().replace(/,/g, ""))
-                                if(parseFloat(y.total) != payable){
-                                    check1 = false
-                                }
-                            }
-                            if(x.paid.toString().includes("(")||x.paid.toString().includes("-")){
-                                let paid = parseFloat(x.paid.toString().replace("-","").replace("(","").replace(")","").replace(/,/g, ""))+parseFloat(x.adjust.toString().replace("(","").replace(")","").replace(/,/g, ""))
-                                if(parseFloat(y.recieved) != paid){
-                                    check1 = false
-                                }
-                            }else{
-                                let paid = parseFloat(x.paid.toString().replace("-","").replace("(","").replace(")","").replace(/,/g, ""))+parseFloat(x.adjust.toString().replace("(","").replace(")","").replace(/,/g, ""))
-                                if(parseFloat(y.paid) != paid){
-                                    check1 = false
-                                }
-                            }
-                        }else{
-                            if(x.receivable.toString().includes("(")||x.receivable.toString().includes("-")){
-                                let receivable = parseFloat(x.receivable.toString().replace("-","").replace("(","").replace(")","").replace(/,/g, ""))
-                                if(parseFloat(y.total) != receivable){
-                                    check1 = false
-                                }
-                            }else{
-                                let receivable = parseFloat(x.receivable.toString().replace(/,/g, ""))
-                                if(parseFloat(y.total) != receivable){
-                                    check1 = false
-                                }
-                            }
-                            if(x.received.toString().includes("(")||x.received.toString().includes("-")){
-                                let received = parseFloat(x.received.toString().replace("-","").replace("(","").replace(")","").replace(/,/g, ""))+parseFloat(x.adjust.toString().replace("(","").replace(")","").replace(/,/g, ""))
-                                if(parseFloat(y.paid) != received){
-                                    check1 = false
-                                }
-                            }else{
-                                let received = parseFloat(x.received.toString().replace(/,/g, ""))+parseFloat(x.adjust.toString().replace("(","").replace(")","").replace(/,/g, ""))
-                                if(parseFloat(y.recieved) != received){
-                                    check1 = false
-                                }
-                            }
-                        }
-                    }
-                    if(!check1){
-                        unmatched.push(x)
-                        console.log("Unmatched Values:", x, y )
-                    }
-                    // !check1?console.log("Unmatched Values:", x, y ):null
-                })
-                !invoiceNo?unmatched.push(`${x.invoice___bill_}, ${x.party}`):null
-                !party?console.log("Party Not matched",x):null
-            })
-        }else{
-            let unmatched = []
-            let unmatched1 = []
-            let amounts = []
-            data.forEach((x)=>{
-                // console.log(x)
-                let invoiceNo = false
-                let amount = false
-                invoices.data.result.forEach((y)=>{
-                    if(x.invoice_no == y.invoice_No && x.agent_name.includes(y.party_Name)){
-                        invoiceNo = true
-                        if(x.invoice_amount != parseFloat(y.total)){
-                            amount = true
-                        }else{
-                            if(x.type_dn_cn == "Credit"){
-                                if(x.rcvd_paid != parseFloat(y.paid)){
-                                    amount = true
-                                }
-                            }else{
-                                if(x.rcvd_paid != parseFloat(y.recieved)){
-                                    amount = true
-                                }
-                            }
-                        }
-                    }else{
-                        // console.log(x.invoice_no, x.agent, y.invoice_No, y.party_Name)
-                        unmatched.push(`${x.invoice_no}, ${x.agent_name}`)
-                    }
-                })
-                // invoiceNo?unmatched.push(`${x.invoice_no}, ${x.agent}`):null
-                amount?unmatched1.push(`${x.invoice_no}, ${x.agent_name}`):null
-            })
-        }
-        console.log(unmatched)
-        console.log(unmatched1)
-        setStatusInvoiceMatching("Complete, check console")
-    }
-
-
-
-    const uploadJobs = async()=>{
-        //console.log(jobs)
-        for(let x of jobs){
-            const result = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_SEAJOB, x)
-            //console.log(result)
-        }
-    }
-    
-
-    let accountsList = {
-        "Assets": [],
-        "Liability": [],
-        "Expense": [],
-        "income": [],
-        "Capital": []
-    }
-
-    let invoicewoAcc = []
-
-    const handleCharges = async (data, fileInfo) => {
-        console.log(data)
-        console.log(fileInfo)
-        let type = "Recievable"
-        const charges = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHARGES)
-        const clients = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CLIENTS)
-        const vendors = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_VENDORS)
-        const invoices = await axios.get("http://localhost:8082/invoice/invoiceMatching")
-        // console.log(invoices.data.result)
-        let chargesHead = []
-        let job = {
-            jobNo: "",
-            jobId: 0,
-            title: null,
-            shipStatus: "Booked",
-            pcs: "1000",
-            vol: "0",
-            pol: "PKKHI",
-            pod: "AEJEA",
-            fd: "AEJEA",
-            dg: "non-DG",
-            subType: "FCL",
-            shpVol: "0",
-            weight: "1000",
-            weightUnit: "KG",
-            costCenter: "KHI",
-            jobType: "Direct",
-            jobKind: "Current",
-            carrier: null,
-            freightType: "Prepaid",
-            nomination: "Free Hand",
-            jobDate: "2025-01-22T12:59:09.815Z",
-            shipDate: "2025-01-22T12:59:09.815Z",
-            freightPaybleAt: "Karachi, Pakistan",
-            companyId: "1",
-            pkgUnit: "CARTONS",
-            IncoTerms: "CFR",
-            exRate: "1",
-            approved: "false",
-            cwtClient: "0",
-            operation: "SE",
-            createdAt: moment(),
-            updatedAt: moment(),
-            ClientId: 43340,
-            VoyageId: 996354449746919425,
-            salesRepresentatorId: "0a1d9101-0deb-426d-b833-8204cab73c13",
-            overseasAgentId: null,
-            localVendorId: 9325,
-            customAgentId: null,
-            transporterId: null,
-            createdById: "4d7f7cfb-7ace-4655-b6ee-f9ed52f81799",
-            commodityId: 918252774343245825,
-            consigneeId: 41908,
-            forwarderId: null,
-            airLineId: null,
-            shipperId: 40618,
-            vesselId: 996352529733419009,
-            shippingLineId: 9325,
-
-
-        }
-        data.forEach((chargeHead)=>{
-            let partyType = "client"
-            charges.data.result.forEach((charge)=>{
-                if(chargeHead.particular == charge.name){
-                    chargeHead.chargeId = charge.id
-                }
-            })
-            clients.data.result.forEach((client)=>{
-                if(chargeHead.name == client.name){
-                    chargeHead.partyId = client.id
-                }
-            })
-            if(!chargeHead.partyId){
-                partyType="vendor"
-                vendors.data.result.forEach((vendor)=>{
-                    if(chargeHead.name == vendor.name){
-                        if(vendor.types.includes("agent")){
-                            partyType="agent"
-                        }
-                        chargeHead.partyId = vendor.id
-                    }
-                })
-            }
-            if(chargeHead.bill__invoice){
-                invoices.data.result.forEach((invoice)=>{
-                    if(invoice.invoice_No.trim().includes(chargeHead.bill__invoice.trim()))
-                        chargeHead.invoiceId = invoice.id
-                })
-            }
-            let charge = {
-                charge: chargeHead.chargeId,
-                particular: chargeHead.particular,
-                invoice_id: chargeHead.bill__invoice,
-                description: chargeHead.description,
-                name: chargeHead.name,
-                partyId: chargeHead.partyId,
-                invoiceType: chargeHead.bill__invoice?chargeHead.bill__invoice.includes("JI")?"Job Invoice":chargeHead.bill__invoice.includes("JB")?"Job Bill":chargeHead.bill__invoice.includes("AI")?"Agent Invoice":chargeHead.bill__invoice.includes("AB")?"Agent Bill":null:null,
-                type: type,
-                basis: chargeHead.basis.includes("Unit")?"Per Unit":"Per Shipment",
-                pp_cc: chargeHead.pp_cc,
-                size_type: chargeHead.sizetype,
-                dg_type: chargeHead.dg_non_dg=="Non DG"?"non-DG":"DG",
-                qty: chargeHead.qty,
-                rate_charge: chargeHead.rate,
-                currency: chargeHead.currency,
-                amount: chargeHead.amount,
-                discount: chargeHead.discount,
-                taxPerc: parseFloat(chargeHead.tax_amount)>0?(parseFloat(chargeHead.amount)/parseFloat(chargeHead.tax_amount))*100:0,
-                tax_apply: chargeHead.tax_amount!=0?true:false,
-                tax_amount: chargeHead.tax_amount,
-                net_amount: chargeHead.net_amount,
-                ex_rate: chargeHead.ex_rate,
-                local_amount: chargeHead.local_amount,
-                status: chargeHead.bill__invoice?"1":"0",
-                approved_by: chargeHead.approved_by,
-                approved_date: chargeHead.approved_date,
-                partyType: partyType,
-                InvoiceId: chargeHead.invoiceId
-            }
-            if(chargeHead.bill__invoice && chargeHead.invoiceId){
-                chargesHead.push(charge)
-            }else if(!chargeHead.bill__invoice){
-                console.log(charge, chargeHead)
-                chargesHead.push(charge)
-            }
-        })
-        console.log(chargesHead)
-    }
 
     return (
         <Row md={24}>

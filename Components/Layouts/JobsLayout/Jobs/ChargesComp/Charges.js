@@ -186,6 +186,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
     }
   };
   
+  console.log("Fields:", fields)
 
   return(
   <>

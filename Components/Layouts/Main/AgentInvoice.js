@@ -76,7 +76,7 @@ const AgentInvoice = () => {
     let index = 0
     recivableInvoices.forEach(async(x, i)=>{
         await delay(3000)
-        axios.post("http://localhost:8081/invoice/uploadbulkInvoicesTest",x)
+        axios.post("http://localhost:8082/invoice/uploadbulkInvoicesTest",x)
         .then((y)=>{
             setInvoiceIndex(i)
             if(y.data.status=="success"){
@@ -159,7 +159,7 @@ const AgentInvoice = () => {
     let index = 0;
     paybleList.forEach(async(x, i)=>{
         await delay(3000)
-        axios.post("http://localhost:8081/invoice/uploadbulkInvoicesTest",x)
+        axios.post("http://localhost:8082/invoice/uploadbulkInvoicesTest",x)
         .then((y)=>{
             setInvoiceIndexPay(i);
             if(y.data.status=="success"){

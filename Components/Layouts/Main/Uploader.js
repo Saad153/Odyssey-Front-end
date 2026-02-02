@@ -91,7 +91,7 @@ const Uploader = () => {
         Capital
     })
 
-    axios.post('http://localhost:8081/accounts/accountCreate',[
+    axios.post('http://localhost:8082/accounts/accountCreate',[
       ...Assets,
       ...Liability,
       ...Expense,
@@ -114,7 +114,7 @@ const Uploader = () => {
     let newItem = [...list];
     // Company Id Must to be set in backend API also !!!
     // PKR USD EUR GBP AED BDT OMR CHF
-    axios.post("http://localhost:8081/voucher/getChildAccountIds", {
+    axios.post("http://localhost:8082/voucher/getChildAccountIds", {
         list:newItem, company:3, currency:"EUR"
     }).then((x)=>{
         console.log(x.data.result.newList);
@@ -128,7 +128,7 @@ const Uploader = () => {
 
   const uploadVouchers = async() => {
     await vouchersList.forEach(async(x, i)=>{
-        await axios.post("http://localhost:8081/voucher/voucherCreation",x)
+        await axios.post("http://localhost:8082/voucher/voucherCreation",x)
         .then((y)=>{
             console.log(y.data)
             console.log(i)
@@ -151,7 +151,7 @@ const Uploader = () => {
         })
     })
     console.log(values)
-    axios.post("http://localhost:8081/invoice/createBulkInvoices", values)
+    axios.post("http://localhost:8082/invoice/createBulkInvoices", values)
     .then((x)=>{
         console.log(x.data)
     })

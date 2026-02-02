@@ -143,6 +143,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
           edit: true,
         }
       }).then((x) => {
+        console.log("Invoices", x.data.result)
         let temp = []
         state.edit?temp  = x.data.result.filter(y => parseFloat(y.total)-parseFloat(y.recieved) != 0.0 && parseFloat(y.total)-parseFloat(y.paid) != 0.0):
         temp = x.data.result;

@@ -56,6 +56,7 @@ function setAccesLevels(dispatch, collapsed){
       children: `Content of Tab Pane 2`,
     }),
   ])
+  
   const setup = getParentItem('Setup', '2', <SettingOutlined />,
   [
     //checks whether the given strings are part of the access level array or not, and includes the subsection into the children array of the parent section.
@@ -196,7 +197,13 @@ function setAccesLevels(dispatch, collapsed){
       label: `Income statement`,
       key: '5-11',
       children: `Content of Tab Pane 3`,
-    }):null    
+    }):null,  
+    (levels?.includes("ageingReport")||levels?.includes("admin"))?getItem('Ageing Report', '5-13',<></>, null, {
+      label: `Ageing`,
+      key: '5-13',
+      children: `Content of Tab Pane 3`,
+    }):null
+          
   ]
   )
   const tasks = getParentItem('Tasks', '6', <UnorderedListOutlined  />,
@@ -251,6 +258,19 @@ function setAccesLevels(dispatch, collapsed){
       }):null,
     ]
   )
+  const testReport = getParentItem('Test Report', '8', <HomeOutlined />,[
+
+    // getItem('Test Reports', '8-1',<></>, null, {
+    //   label: `Home`,
+    //   key: '8-1',
+    //   children: `Content of Tab Pane 2`,
+    // }),
+    // getItem('Requests', '8-2',<></>, null, {
+    //   label: `Requests`,
+    //   key: '8-2',
+    //   children: `Content of Tab Pane 2`,
+    // }),
+  ])
 
   //functions to generate objects from the parent and children data and rearranging the data within the object.
   function getParentItem(label, key, icon, children) {

@@ -108,8 +108,17 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/reports/incomeStatement"){
       setToggleState('5-11');
     }
+    if(newRouter.pathname==="/reports/ageingReport"){
+      setToggleState('5-13');
+    }
     if(newRouter.pathname==="/reports/incomeStatement/report"){
       setToggleState('5-12');
+    }
+    if(newRouter.pathname==="/reports/ageingReport/report"){
+      setToggleState('5-14');
+    }
+    if(newRouter.pathname==="/reports/ageingReport/summary"){
+      setToggleState('5-15');
     }
     if(newRouter.pathname==="/reports/invoice/[id]"){
       setToggleState('2-11');
@@ -126,7 +135,7 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/airJobs/import/bl/[id]"){
       setToggleState('7-6');
     }
-    if(newRouter.pathname==="/airJobs/aiJobList"){
+    if(newRouter.pathname==="/airJobs/aiJobList"){s
       setToggleState('7-4');
     }
     if(newRouter.pathname==="/airJobs/import/[id]"){
@@ -257,7 +266,9 @@ const MainLayout = ({children}) => {
 
     incomeStatement:false,
     incomeStatementReport:false,
-
+    ageingReport:false,
+    ageingReportReport:false,
+    ageingReportSummary:false,
     nonGlParties:false,
     aeJobList:false,
     aeJob:false,
@@ -327,7 +338,10 @@ const MainLayout = ({children}) => {
         else if(tabs.key=='5-9'){ tempTabActive.trialBalance=true }
         else if(tabs.key=='5-10'){ tempTabActive.trialBalanceReport=true }
         else if(tabs.key=='5-11'){ tempTabActive.incomeStatement=true }
+        else if(tabs.key=='5-13'){ tempTabActive.ageingReport=true }
         else if(tabs.key=='5-12'){ tempTabActive.incomeStatementReport=true }
+        else if(tabs.key=='5-14'){ tempTabActive.ageingReportReport=true }
+        else if(tabs.key=='5-15'){ tempTabActive.ageingReportSummary=true }
         else if(tabs.key=='6-1'){ tempTabActive.riders=true }
         else if(tabs.key=='6-1'){ tempTabActive.riderAssign=true }
         else if(tabs.key=='7-1'){ tempTabActive.aeJobList=true }
@@ -439,6 +453,9 @@ const MainLayout = ({children}) => {
     else if(x.key=='5-10'){ Router.push(`/reports/trialBalance/report/${setKey(x)}`) }
     else if(x.key=='5-11'){ Router.push(`/reports/incomeStatement`) }
     else if(x.key=='5-12'){ Router.push(`/reports/incomeStatement/report/${setKey(x)}`) }
+    else if(x.key=='5-13'){ Router.push(`/reports/ageingReport`) }
+    else if(x.key=='5-14'){ Router.push(`/reports/ageingReport/report/${setKey(x)}`) }
+    else if(x.key=='5-15'){ Router.push(`/reports/ageingReport/summary/${setKey(x)}`) }
     else if(x.key=='2-11'){ Router.push(`/reports/invoice/${setKey(x)}`) }
     else if(x.key=='6-1'){ Router.push('/tasks/riders') }
     else if(x.key=='6-2'){ Router.push(`/tasks/riders/riderAssign/${setKey(x)}`) }

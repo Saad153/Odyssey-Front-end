@@ -141,7 +141,7 @@ const CreateOrEditComp = ({id, representativeData, clientData}) => {
         }
       })
       dispatch({type:'set', payload:{
-        parentAccount:id=="new"?tempParentAccount:clientData?.Client_Associations[0]?.Parent_Account?.id,
+        // parentAccount:id=="new"?tempParentAccount:clientData?.Client_Associations[0]?.id,
         accountList:x.data.result,
         companyList:createCompanyList(companiesList),
         editCompanyList:createCompanyList(companiesList)

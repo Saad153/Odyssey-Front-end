@@ -8,9 +8,16 @@ import Cookies from "js-cookie";
 
 const Report = ({ query, result }) => {
   
-
+console.log("Ageing Result", result)
 const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
 
+useEffect(() => {
+  const temp = []
+  console.log("Ageing Result:", result)
+
+  
+  console.log("Temp:", temp)
+}, [result])
 
   // main render
   return (
@@ -19,23 +26,23 @@ const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(
       
       <div className="report-header" style={{ marginTop: '20px', marginBottom: '20px', position: 'relative' }}>
          <div style={{ position: 'relative', marginBottom: '25px' }}>
-  <div style={{
-    borderTop: '3px solid #000'
-  }} />
+      <div style={{
+        borderTop: '3px solid #000'
+      }} />
 
-  <span style={{
-    position: 'absolute',
-    top: '-12px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    background: '#fff',
-    padding: '0 14px',
-    fontWeight: 'bold',
-    fontSize: '14px'
-  }}>
-    Ageing Detail Report
-  </span>
-</div>
+      <span style={{
+        position: 'absolute',
+        top: '-12px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: '#fff',
+        padding: '0 14px',
+        fontWeight: 'bold',
+        fontSize: '14px'
+      }}>
+        Ageing Detail Report
+      </span>
+    </div>
 
         
         
@@ -62,14 +69,14 @@ const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(
         </div>
 
       <div className="report-table" style={{ marginTop: '30px' }}>
-        <Table bordered
-    pagination={false}
-    style={{
-      width: '100%',
-      fontSize: '12px',
-      fontWeight: 'bold',
-      border: '2px solid #000'
-    }}>
+            <Table bordered
+        pagination={false}
+        style={{
+          width: '100%',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          border: '2px solid #000'
+        }}>
           <thead>
             <tr style={{ backgroundColor: '#9a9a9a', borderBottom: '2px solid #000' }}>
               <th style={{ textAlign: 'center', padding: '8px' }}>Date</th>

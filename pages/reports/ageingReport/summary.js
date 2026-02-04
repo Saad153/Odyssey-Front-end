@@ -5,7 +5,7 @@ import axios from 'axios';
 const summary = ({query, result}) => {
   return (
     <div className='base-page-layout'>
-      <AgeingSummary query={query} result={result} />
+      {/* <AgeingSummary query={query} result={result} /> */}
     </div>
   )
 }

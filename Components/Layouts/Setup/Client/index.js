@@ -112,7 +112,7 @@ const Client = ({sessionData, clientData}) => {
   return (
   <div className='base-page-layout'>
     <Row>
-    <Col md={3}><h5>Clients</h5></Col>
+    <Col md={3}><h5>Parties</h5></Col>
     <Col md={7} style={{display:"inline-block"}}><span>Search By :</span>
       <Select placeholder="Search" onChange={(e) => setSearchBy(e)} style={{width:"150px", marginLeft:"5px",borderRadius:"8px"}}
         options={
@@ -160,27 +160,27 @@ const Client = ({sessionData, clientData}) => {
           return (
           <tr key={index} className='f row-hov'>
             <td onClick={()=>{
-              dispatchNew(incrementTab({"label":"Client","key":"2-7","id":x.id}));
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}><span className=''>{x.code}</span></td>
             <td onClick={()=>{
-              dispatchNew(incrementTab({"label":"Client","key":"2-7","id":x.id}));
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}><span className='blue-txt fw-7'>{x.name}</span></td>
             <td onClick={()=>{
-              dispatchNew(incrementTab({"label":"Client","key":"2-7","id":x.id}));
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}>{x.person1} {x.mobile1}<br/> {x.person2} {x.mobile2}<br/> </td>
             <td onClick={()=>{
-              dispatchNew(incrementTab({"label":"Client","key":"2-7","id":x.id}));
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}>{x.telephone1}<br/>{x.telephone2}</td>
             <td onClick={()=>{
-              dispatchNew(incrementTab({"label":"Client","key":"2-7","id":x.id}));
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}>{x.address1?.slice(0,30)}<br/> {x.address2?.slice(0,30)}<br/></td>
             <td  style={{ textAlign: 'center', verticalAlign: 'middle', height: '40px', borderRight: '1px solid lightgrey' }} onClick={()=>{
-              dispatchNew(incrementTab({"label":"Client","key":"2-7","id":x.id}));
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}>{x.active?<b className='green-txt'>Active</b>:<b className='red-txt'>Disabled</b>}</td>
             <td style={{ textAlign: 'center', verticalAlign: 'middle', height: '40px' }}

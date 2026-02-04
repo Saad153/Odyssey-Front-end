@@ -69,21 +69,21 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
     if(id!="new") {
       let tempState = {...clientData};
       let tempCompanyList = [...state.editCompanyList];
-      tempState.operations = tempState.operations.split(', ');
-      tempState.types = tempState.types.split(', ');
+      tempState.operations = tempState.operations?.split(', ');
+      tempState.types = tempState.types?.split(', ');
       tempState.registerDate = tempState.registerDate ? moment(tempState.registerDate) : "";
       tempState.bankAuthorizeDate = moment(tempState.bankAuthorizeDate);
       tempState.companies = [];
-      clientData.Client_Associations.forEach((x)=>{ tempState.companies.push(x.CompanyId) })
+      clientData.Client_Associations?.forEach((x)=>{ tempState.companies.push(x.CompanyId) })
       tempCompanyList.forEach((x, i)=>{
-        for(let j=0; j<tempState.Client_Associations.length; j++){
-          if(tempState.Client_Associations[j].CompanyId==x.value){
-            tempCompanyList[i].disabled=true;
-            break;
-          } else {
-            tempCompanyList[i].disabled=false;
-          }
-        }
+        // for(let j=0; j<tempState.Client_Associations?.length; j++){
+        //   if(tempState.Client_Associations[j].CompanyId==x.value){
+        //     tempCompanyList[i].disabled=true;
+        //     break;
+        //   } else {
+        //     tempCompanyList[i].disabled=false;
+        //   }
+        // }
       })
       dispatch({type:'toggle', fieldName:'editCompanyList', payload:tempCompanyList});
       dispatch({type:'toggle', fieldName:'oldRecord', payload:tempState});

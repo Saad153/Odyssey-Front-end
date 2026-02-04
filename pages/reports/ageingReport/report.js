@@ -1,11 +1,24 @@
 import React from 'react';
 import AgeingDetail from '/Components/Layouts/Reports/AgeingReport/AgeingDetail';
+import Summary from '/Components/Layouts/Reports/AgeingReport/AgeingSummary';
+import Weekly from '/Components/Layouts/Reports/AgeingReport/AgeingWeekly';
 import axios from 'axios';
 
 const report = ({query, result}) => {
   return (
     <div className='base-page-layout'>
-      <AgeingDetail query={query} result={result} />
+      {query.ageing_reportType === "Ageing Detail" ? 
+        <AgeingDetail query={query} result={result}/>
+        :null
+      }
+      {query.ageing_reportType === "Ageing Summary" ? 
+        <Summary query={query} result={result}/>
+        :null
+      }
+       {query.ageing_reportType === "Ageing Weekly" ? 
+        <Weekly query={query}/>
+        :null
+      }
     </div>
   )
 }
@@ -14,18 +27,17 @@ export default report
 
 export async function getServerSideProps(context) {
   const { query } = context;
-  const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_INCOME_STATEMENT,{
-    headers:{
-      "company":query.company,
-      "from":query.from,
-      "to":query.to,
-      "currency":query.currency
-  }}).then((x)=>x.data);
+  console.log("Summary Query:", query)
+  let result = []
+  if(query.ageing_reportType === "Ageing Summary"){
+    result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingSummary`,{headers:{...query}}).then((x)=>x.data);
+  }
+  // result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingReport`,{headers:{...query}}).then((x)=>x.data);
 
   return{ 
     props: {
-      result,
-      query
+      query,
+      result
     }
   }
 }

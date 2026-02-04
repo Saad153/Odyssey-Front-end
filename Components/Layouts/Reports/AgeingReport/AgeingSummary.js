@@ -82,6 +82,7 @@ useEffect(() => {
           // invoices: [],
         });
       }
+      
 
       const grp = map.get(key);
       const bal = signedBalance(inv);
@@ -156,7 +157,7 @@ useEffect(() => {
                   <Col md={4}>
                     <div style={{ display: 'flex', justifyContent: 'space-evenly  ' }}>
                       <span style={{ fontWeight: 'bold' }}>As On :</span>
-                      <span style={{ borderBottom: '1px solid #3f0202', minWidth: '120px', marginLeft: '10px' }}></span>
+                      <span style={{ borderBottom: '1px solid #3f0202', minWidth: '120px', marginLeft: '10px' }}>{query.from}</span>
                     </div>
                   </Col>
                 </Row>

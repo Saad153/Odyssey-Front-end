@@ -58,14 +58,14 @@ const AgeingReport = () => {
                 <Row className='mb-3'>
                     <Col md={2} className="mt-3">
                       <div>From</div>
-                      <DatePicker style={{width:"100%"}} size="sm" 
+                      <DatePicker style={{width:"100%"}} allowClear={false} size="sm" 
                       value={moment(state.ageing_sdate)} 
                       onChange={(e)=>{dispatch(setAgeingField({field:"ageing_sdate",value:e  }))}}    />
                       {/* <Form.Control type={"date"} size="sm"  /> */}
                     </Col>
                     <Col md={2} className="mt-3">
                       <div>To</div>
-                        <DatePicker style={{width:"100%"}}   size="sm" 
+                        <DatePicker style={{width:"100%"}} allowClear={false} size="sm" 
                         value={moment(state.ageing_edate)} 
                         onChange={(e)=>{dispatch(setAgeingField({field:"ageing_edate",value:e}))}}  />
                       {/* <Form.Control type={"date"} size="sm" /> */}

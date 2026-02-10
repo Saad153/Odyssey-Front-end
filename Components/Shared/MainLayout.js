@@ -19,6 +19,7 @@ import { ledgerReset } from '../../redux/ledger/ledgerSlice';
 import { resetOpeningInvoice } from '../../redux/openingInvoices/openingInvoicesSlice';
 import { resetVouchers } from '../../redux/vouchers/voucherSlice';
 import { resetDirectJob } from '../../redux/directJob/directJobSlice';
+import { ageingResetState } from '../../redux/ageing/ageingSlice';
 
 const { Header, Content, Sider } = Layout;
 
@@ -108,9 +109,18 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/reports/incomeStatement"){
       setToggleState('5-11');
     }
+    if(newRouter.pathname==="/reports/ageingReport"){
+      setToggleState('5-13');
+    }
     if(newRouter.pathname==="/reports/incomeStatement/report"){
       setToggleState('5-12');
     }
+    if(newRouter.pathname==="/reports/ageingReport/report"){
+      setToggleState('5-14');
+    }
+    // if(newRouter.pathname==="/reports/ageingReport/summary"){
+    //   setToggleState('5-15');
+    // }
     if(newRouter.pathname==="/reports/invoice/[id]"){
       setToggleState('2-11');
     }
@@ -257,7 +267,10 @@ const MainLayout = ({children}) => {
 
     incomeStatement:false,
     incomeStatementReport:false,
-
+    ageingReport:false,
+    ageingReportReport:false,
+    ageingReportSummary:false,
+    ageingReportWeekly:false,
     nonGlParties:false,
     aeJobList:false,
     aeJob:false,
@@ -327,7 +340,10 @@ const MainLayout = ({children}) => {
         else if(tabs.key=='5-9'){ tempTabActive.trialBalance=true }
         else if(tabs.key=='5-10'){ tempTabActive.trialBalanceReport=true }
         else if(tabs.key=='5-11'){ tempTabActive.incomeStatement=true }
+        else if(tabs.key=='5-13'){ tempTabActive.ageingReport=true }
         else if(tabs.key=='5-12'){ tempTabActive.incomeStatementReport=true }
+        else if(tabs.key=='5-14'){ tempTabActive.ageingReportReport=true }
+        // else if(tabs.key=='5-15'){ tempTabActive.ageingReportSummary=true }
         else if(tabs.key=='6-1'){ tempTabActive.riders=true }
         else if(tabs.key=='6-1'){ tempTabActive.riderAssign=true }
         else if(tabs.key=='7-1'){ tempTabActive.aeJobList=true }
@@ -439,6 +455,9 @@ const MainLayout = ({children}) => {
     else if(x.key=='5-10'){ Router.push(`/reports/trialBalance/report/${setKey(x)}`) }
     else if(x.key=='5-11'){ Router.push(`/reports/incomeStatement`) }
     else if(x.key=='5-12'){ Router.push(`/reports/incomeStatement/report/${setKey(x)}`) }
+    else if(x.key=='5-13'){ Router.push(`/reports/ageingReport`) }
+    else if(x.key=='5-14'){ Router.push(`/reports/ageingReport/report/${setKey(x)}`) }
+    // else if(x.key=='5-15'){ Router.push(`/reports/ageingReport/summary`) }
     else if(x.key=='2-11'){ Router.push(`/reports/invoice/${setKey(x)}`) }
     else if(x.key=='6-1'){ Router.push('/tasks/riders') }
     else if(x.key=='6-2'){ Router.push(`/tasks/riders/riderAssign/${setKey(x)}`) }
@@ -454,46 +473,13 @@ const MainLayout = ({children}) => {
     else if(x.key=='7-8'){ Router.push(`/airJobs/manifest/${setKey(x)}`) } //these routes are also settled in 2nd useEffect
   };
 
-  // const removeTab = (index) => {
-  //   console.log("Remove Tab>>", index)
-  //   if(index == '3-4'){
-  //     dispatch(resetState())
-  //   }
-  //   if(index == '5-5'){
-  //     dispatch(ledgerReset())
-  //   }
-  //   if(index == '3-12'){
-  //     dispatch(resetOpeningInvoice())
-  //   }
-  //   if(index == '3-5'){
-  //     dispatch(resetVouchers())
-  //   }
-  //   if(index == '3-15'){
-  //     dispatch(resetDirectJob())
-  //   }
-  //   let tempTabs = [...tabItems];
-  //   tempTabs = tempTabs.filter((x)=>{
-  //     return x.key!=index
-  //   })
-  //   console.log("MainLayout>>",tempTabs)
-  //   dispatch(setTab(tempTabs))
-  //   if(toggleState==index){
-  //     setToggleState(0)
-  //   }
-  //   if(tempTabs.length==0){
-  //     Router.push('/') 
-  //   }else{
-  //     // console.log(tempTabs[tempTabs.length-1].key)
-  //     toggleTab(tempTabs[tempTabs.length-1])
-  //   }
-  // };
-
   const removeTab = (key) => {
   if (key === '3-4') dispatch(resetState())
   if (key === '5-5') dispatch(ledgerReset())
   if (key === '3-12') dispatch(resetOpeningInvoice())
   if (key === '3-5') dispatch(resetVouchers())
   if (key === '3-15') dispatch(resetDirectJob())
+  if (key === '5-14') dispatch(ageingResetState())
 
   const currentIndex = tabItems.findIndex(tab => tab.key === key)
   const newTabs = tabItems.filter(tab => tab.key !== key)

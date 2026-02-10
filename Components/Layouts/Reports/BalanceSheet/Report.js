@@ -184,7 +184,8 @@ const BalanceSheet = ({ accounts }) => {
       </button>
     </Row>
     <hr/>
-    <BalanceSheet accounts={accounts.slice(0, 3)} />    
+    <BalanceSheet accounts={accounts.slice(0, 3)} />
+    {load && <div style={{textAlign:"center", paddingTop:'30%'}}><Spinner /></div>}
   </div>
   )
 }

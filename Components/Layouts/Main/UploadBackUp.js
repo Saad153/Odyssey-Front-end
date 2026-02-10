@@ -9,6 +9,17 @@ import { loopHooks } from "react-table";
 const Upload_CoA = () => {
 
     const backup = async () => {
+        {/* <button onClick={()=>{importCOA()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>1. Import COA from Climax DB</button> */}
+        {/* <button onClick={()=>{getCOATree()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>2. Console COA from Odyssey DB</button> */}
+        {/* <button onClick={()=>{importCharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>3. Import Charges from Climax DB</button> */}
+        {/* <button onClick={()=>{importVouchers()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>4. Import Vouchers from Climax DB</button> */}
+        {/* <button onClick={()=>{importParties()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>5. Import Parties from Climax DB</button> */}
+        {/* <button onClick={()=>{importJobs()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>6. Import Jobs from Climax DB</button> */}
+        {/* <button onClick={()=>{importAirPorts()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>7. Import Airports from Climax DB</button> */}
+        {/* <button onClick={()=>{importEmployees()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>8. Import Employees from Climax DB</button> */}
+        {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
+        {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
+        {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
         await importCommodities();
         await importVoyages();
         await importCOA();
@@ -16,6 +27,10 @@ const Upload_CoA = () => {
         await importParties();
         await importJobs();
         await importVouchers();
+        // await checkInvoices()
+        // await importAirPorts()
+        // await importEmployees()
+        // await importAECharges()
     }
 
     const [invoicesData, setInvoices] = useState([]);
@@ -426,8 +441,8 @@ const importVouchers = async () => {
         const res = await axios.post("http://localhost:8084/voucher/deleteVoucherHeads", {})
         // console.log("Deleted Existing Voucher Heads:", res.data);
         await sendBatches(tempVoucher_Heads, "http://localhost:8084/voucher/importVoucherHeads", 50);
-        await axios.post("http://localhost:8084/seaJob/linkCharges", {})
         // await sendBatches(data.Voucher_Detail, "http://localhost:8084/voucher/checkVoucherHeads", 1000);
+        
 
     }catch(e){
         console.error(e)

@@ -11,16 +11,26 @@ import Router from 'next/router';
 import Cookies from "js-cookie";
 import { FileExcelOutlined } from '@ant-design/icons';
 import { setAgeingField } from '../../../../redux/ageing/ageingSlice';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import ExcelJS from "exceljs";
+
 
 const AgeingReport = () => {
+  const [exporting, setExporting] = useState(false);
+  const state = useSelector((state) => state.ageing);
+  const dispatch = useDispatch();
 
+  const ExportExcel = async () => {
+    setExporting(true);
+    try {
+      const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingSummary`,{headers:{ ageing_reportType: state.ageing_reportType, ageing_company: state.ageing_company, from: state.ageing_sdate, to: state.ageing_edate, ageing_RP: state.ageing_RP, ageing_account: state.ageing_account, ageing_partyType: state.ageing_partyType }}).then((x)=>x.data);
+      console.log("Export to Excel Result:", result)
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+    }
+  };
 
-
-    const state = useSelector((state) => state.ageing);
-    const dispatch = useDispatch()
-    
-    
-    // const [ ageing_reportType, setageing_reportType ] = useState('Ageing Detail');
     useEffect(()=>{
         if(state.ageing_accounts.length == 0){
             getAccounts();
@@ -29,6 +39,21 @@ const AgeingReport = () => {
             dispatch(setAgeingField({field:"ageing_company",value:parseInt(Cookies.get('companyId'))}));
         }
     },[])
+
+    
+    useEffect(() => {
+    if (Array.isArray(state?.data) && state.data.length > 0) {
+        dispatch(setAgeingField({ field: "ageing_reportData", value: state.data }));
+    }
+    }, [state?.data, dispatch]);
+
+    
+    useEffect(() => {
+        if (state?.data) {
+        dispatch(setAgeingField({ field: "ageing_reportData", value: state.data }));
+        }
+    }, [state?.data, dispatch]);
+
     const getAccounts = async () => {
    
         try{  
@@ -49,6 +74,7 @@ const AgeingReport = () => {
     console.log("AgeingState: ",state)
     return (
         <div className='base-page-layout'>
+          
             <Row>
                 <Row className='mt-2' style={{borderBottom: "1px solid #ccc", paddingBottom: "10px"}}>
                     <Col md={12}>
@@ -121,26 +147,6 @@ const AgeingReport = () => {
                       </Checkbox.Group>
                     </Col>
                 </Row>
-                
-                {/* <Row>
-                    <Col md={9} className="mb-3">
-                      <b>Currency</b><br />
-                      <Radio.Group className="mt-1" 
-                      value={state.ageing_currency} 
-                      disabled={state.ageing_partyType == "Local"}
-                      onChange={e => dispatch(setAgeingField({field:"ageing_currency",value:e.target.value})
-                      )}>
-                        <Radio value={"PKR"}>PKR</Radio>
-                        <Radio value={"USD"}>USD</Radio>
-                        <Radio value={"GBP"}>GBP</Radio>
-                        <Radio value={"CHF"}>CHF</Radio>
-                        <Radio value={"EUR"}>EUR</Radio>
-                        <Radio value={"AED"}>AED</Radio>
-                        <Radio value={"OMR"}>OMR</Radio>
-                        <Radio value={"BDT"}>BDT</Radio>
-                      </Radio.Group>
-                    </Col>
-                </Row> */}
                 <Row>
                 <Col md={4} className="mt-0">
                     <div>Party type:</div>
@@ -195,11 +201,42 @@ const AgeingReport = () => {
                             Go
                         </button>
                     </Col>
-                    <Col md={2} className=''>
-                        <button className='btn-custom-excel mt-3 px-3'>
-                            <FileExcelOutlined />Export to Excel
-                        </button>
-                    </Col>
+                    <Col md={2}>
+                      <button
+                        className="btn-custom-excel mt-3 px-3"
+                        onClick={() => {
+                          // ExportExcel();
+                          setExporting(true);
+                          const iframe = document.createElement('iframe');
+                              iframe.style.display = 'none'; 
+                              iframe.src =
+                                `/reports/ageingReport/report` +
+                                `?ageing_reportType=${state.ageing_reportType}` +
+                                `&ageing_company=${state.ageing_company}` +
+                                `&from=${state.ageing_sdate}` +
+                                `&to=${state.ageing_edate}` +
+                                `&ageing_RP=${state.ageing_RP}` +
+                                `&ageing_account=${state.ageing_account}` +
+                                `&ageing_partyType=${state.ageing_partyType}` +
+                                `&autoExport=true`;
+                        document.body.appendChild(iframe);
+                        setTimeout(() => {
+                        setExporting(false);
+                            }, 1500);
+                          }}
+                        >
+                      {exporting ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" />
+                          Exporting...
+                        </>
+                          ) : (
+                        <>
+                          <FileExcelOutlined /> Export to Excel
+                        </>
+                          )}
+                    </button>
+                </Col>
                 </Row>      
                   </Row>
         </div>

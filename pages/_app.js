@@ -11,6 +11,8 @@ import Router, { useRouter  } from 'next/router';
 import { store } from '/redux/store';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '../styles/globals.css';
+import '../styles/ageingReport.css';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { 

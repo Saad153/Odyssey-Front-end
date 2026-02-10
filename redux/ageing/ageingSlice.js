@@ -11,7 +11,10 @@ const initialState = {
 //   ageing_currency: "PKR",
   ageing_RP: ["Recievable", "Payble"],
   ageing_partyType: "Local",
+  ageing_reportData: [],
 };
+
+
 
 export const ageingSlice = createSlice({
   name: 'records',
@@ -31,6 +34,8 @@ export const ageingSlice = createSlice({
       // state = initialState
     },
   },
+  
+  
 });
 
 

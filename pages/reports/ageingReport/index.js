@@ -1,16 +1,18 @@
 import React from 'react';
 import AgeingReport from '../../../Components/Layouts/Reports/AgeingReport';
-// import AgeingSummary from '../../../Components/Layouts/Reports/AgeingReport/AgeingSummary';
-// import AgeingWeekly from '../../../Components/Layouts/Reports/AgeingReport/AgeingWeekly';
+import Summary from '/Components/Layouts/Reports/AgeingReport/AgeingSummary';
+import Weekly from '/Components/Layouts/Reports/AgeingReport/AgeingWeekly'
+import axios from 'axios';
+import moment from "moment";
 
-const ageingReport = () => {
+const ageingReport = ({query, result}) => {
+  console.log("result", result)
   return (
     <>
-      <AgeingReport/>
-      {/* <AgeingSummary/> */}
-      {/* <AgeingWeekly/> */}
+      <AgeingReport query={query} result={result}/>
     </>
   )
 }
+
 
 export default ageingReport

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback, useState } from "react";
+import React, { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import moment from "moment";
 import PrintTopHeader from "/Components/Shared/PrintTopHeader";
 import { Table, Row, Col } from "react-bootstrap";
@@ -6,11 +6,178 @@ import Pagination from "/Components/Shared/Pagination";
 import ExcelJS from "exceljs";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { FileExcelOutlined } from '@ant-design/icons';
+import { setAgeingField } from '../../../../redux/ageing/ageingSlice';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 const Summary = ({ query, result }) => {
-
+  const router = useRouter();
+  const hasExported = useRef(false);
   const [ records, setRecords ] = useState([]);
 
+
+  useEffect(() => {
+    if (
+      router.isReady &&
+      router.query.autoExport === "true" &&
+      records.length > 0 &&
+      !hasExported.current
+    ) {
+      hasExported.current = true;
+      exportToExcel();
+    }
+  }, [router.isReady, router.query, records]);
+
+  const ImageToBlob = (imageUrl) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // Enable CORS if required
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(resolve);
+      };
+      img.onerror = reject;
+      img.src = imageUrl;
+    });
+  };
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Invoice Report');
+  
+    worksheet.columns = [
+      { header: 'A/C Code', key: 'AccountCode', width: 15 },
+      { header: 'A/C Title', key: 'AccountTitle', width: 30  },
+      { header: 'Curr', key: 'Currency', width: 10  },
+      { header: 'Settlement', key: 0, width: 20  },
+      { header: 'Current Invoice', key: 'Current', width: 20 },
+      { header: '1 - 30 Days', key: 'oneThirty', width: 20  },
+      { header: '31 - 60 Days', key: 'tOneSixty', width: 20 },
+      { header: '61 - 90 Days', key: 'sOneNinety', width: 20  },
+      { header: '91 - 120 Days', key: 'nOneTwenty', width: 20  },
+      { header: 'Above 120 Days', key: 'overTwenty', width: 20  },
+      { header: 'Total', key: 'total', width: 20 },
+    ];
+
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'D3D3D3' } 
+      };
+      cell.border = {
+        right: { style: 'thin', color: { argb: '000000' } },
+        left: { style: 'thin', color: { argb: '000000' } },
+        top: { style: 'thin', color: { argb: '000000' } },
+        bottom: { style: 'thin', color: { argb: '000000' } },
+      }
+      cell.font = {
+        size: 14,
+        bold: true,
+      };
+    
+      cell.alignment = {
+        horizontal: 'center',
+        vertical: 'middle'
+      };
+    });
+    // console.log(records)
+    const data = records.map((x, i) => ({
+      
+      AccountCode: x.AccountCode,
+      AccountTitle: x.AccountTitle,
+      Currency: x.currency,
+      Settlement: 0,           
+      oneThirty: x.oneThirty,
+      CurrentInvoice: x.Current,
+      tOneSixty: x.tOneSixty,
+      sOneNinety: x.sOneNinety,
+      nOneTwenty: x.nOneTwenty,
+      overTwenty: x.overTwenty,
+      total: x.total,
+    }));
+    
+
+  
+      worksheet.addRows(data);
+
+      records.forEach((x, i) => {
+        if (x.type === "parent") {
+          const row = worksheet.getRow(i + 2); // Account for header row (index starts from 1)
+          row.eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'd7d7d7' } 
+            }; // Set font to bold
+          });
+        }
+      });
+
+      worksheet.insertRow(1, ['', '', '', '', '', '', '', '']);
+      worksheet.insertRow(1, ['']);
+      worksheet.insertRow(1, ['', '', '', 'Date: From: ' + query.from + ' To: ' + query.to,]);
+      worksheet.insertRow(1, ['', '', '', 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi']);
+      query.company=='1' && worksheet.insertRow(1, ['', '', '', 'Seanet Shipping & Logistics']);
+      query.company=='2' && worksheet.insertRow(1, ['', '', '', 'Air Cargo Services']);
+      query.company!='1' && query.company!='2' && worksheet.insertRow(1, ['', '', '', 'Seanet Shipping & Logistics & Air Cargo Services']);
+      worksheet.insertRow(1, ['']);
+      worksheet.insertRow(1, ['']);
+
+    worksheet.getCell('D3').font = {
+      size: 16,  
+      bold: true  
+    };
+    worksheet.getCell('D4').font = {
+      size: 16,  // Increase font size
+      bold: true  // Make the text bold
+    };
+    worksheet.getCell('D5').font = {
+      size: 14,  // Increase font size
+      bold: true  // Make the text bold
+    };
+
+    
+    const imageUrl = query.company=='1' ? '/seanet-colored.png' : query.company=='2' ? '/acs-colored.png' : '/sns-acs.png';
+
+    // const imageUrl = '/public/seanet-logo-complete.png'
+    const imageBlob = await ImageToBlob(imageUrl);
+
+    const imageId = workbook.addImage({
+      buffer: await imageBlob.arrayBuffer(), // Convert Blob to ArrayBuffer
+      extension: 'png', // Image extension
+    });
+
+    worksheet.addImage(imageId, {
+      tl: { col: 1, row: 1 }, // Top-left position (column, row)
+      ext: { width: 150, height: 100 }, // Image width and height
+    });
+
+    try{
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'AgeingReport.xlsx';
+      link.click();
+      window.URL.revokeObjectURL(url);
+    }catch(e){
+      // console.log(e)
+      console.error(e)
+    }
+  };
+      
   const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
   console.log("summary query:", query)
   console.log("summary result:", result)
@@ -126,16 +293,25 @@ useEffect(() => {
 
   setRecords(temp);
 }, [result]);
+const groupedRecords = records.reduce((acc, item) => {
+  const group = item.groupName || "OTHERS";
+
+  if (!acc[group]) acc[group] = [];
+  acc[group].push(item);
+
+  return acc;
+}, {});
+
   
   return (                          
-    <>
-          <PrintTopHeader company={query.company} query={query} from={query.from} to={query.to} /> 
+    <>  
+    <PrintTopHeader company={query.company} query={query} from={query.from} to={query.to} /> 
         
-          <div className="report-header" style={{ marginTop: '20px', marginBottom: '20px', position: 'relative' }}>
-             <div style={{ position: 'relative', marginBottom: '25px' }}>
-      <div style={{
+    <div className="report-header" style={{ marginTop: '20px', marginBottom: '20px', position: 'relative' }}>
+      <div style={{ position: 'relative', marginBottom: '25px' }}>
+    <div style={{
         borderTop: '3px solid #000'
-      }} />
+    }} />
     
       <span style={{
         position: 'absolute',
@@ -160,86 +336,64 @@ useEffect(() => {
                       <span style={{ borderBottom: '1px solid #3f0202', minWidth: '120px', marginLeft: '10px' }}>{query.from}</span>
                     </div>
                   </Col>
-                </Row>
+                </Row> 
+      <div className="table-box">
+          <div className="table-scroll">
+            <table className="summary">
+              <thead className="sticky-header">
+                <tr>
+                  <th rowSpan={2}>A/C Code</th>
+                  <th rowSpan={2} style={{ textAlign: "left" }}>A/C Title</th>
+                  <th rowSpan={2}>Curr</th>
+                  <th colSpan={7} style={{ textAlign: "center" }}>Ageing</th>
+                  <th rowSpan={2}>Total</th>
+                </tr>
 
-     
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: "12px",
-        }}
-      >
-        <thead>
-          <tr>
-            <th
-              style={{
-                border: "1px solid #000",
-                padding: "6px",
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
-            >
-              {"Receivable"}
-            </th>
-          </tr>
-          <tr>
-            {[
-              "A/C Code",
-              "A/C Title",
-              "Curr",
-              "Settlement",
-              "Current Invoice",
-              "1-30 Days",
-              "31-60 Days",
-              "61-90 Days",
-              "91-120 Days",
-              "Over 120 Days",
-              "Total",
-            ].map((head) => (
-              <th
-                key={head}
-                style={{
-                  border: "1px solid #000",
-                  padding: "6px",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                {head}
-              </th>
-            ))}
-          </tr>
-        </thead>
+                <tr>
+                  <th>Settlement</th>
+                  <th>Current Inv</th>
+                  <th>1-30 Days</th>
+                  <th>31-60 Days</th>
+                  <th>61-90 Days</th>
+                  <th>91-120 Days</th>
+                  <th>Above 120</th>
+                </tr>
+              </thead>
 
-        <tbody  style={{
-                border: "1px solid #000",
-                padding: "6px",
-                textAlign: "center",
-                fontWeight: "bold",
-              }}>
-          {/* Sample Row */}
-          {records.map((record) => (
-            <tr key={record.AccountCode}>
-              <td>{record.AccountCode}</td>
-              <td>{record.AccountTitle}</td>
-              <td>{record.Currency}</td>
-              <td>{record.AccountTitle}</td>
-              <td>{record.Current}</td>
-              <td>{record.oneThirty}</td>
-              <td>{record.tOneSixty}</td>
-              <td>{record.sOneNinety}</td>
-              <td>{record.nOneTwenty}</td>
-              <td>{record.overTwenty}</td>
-              <td>{record.total}</td>
-            </tr>
-          ))}
-
-      
-        </tbody>
+            <tbody>
+              {Object.entries(groupedRecords).map(([groupName, groupRows]) => (
+                <React.Fragment key={groupName}>
+                  
+                  {/* GROUP HEADER ROW */}
+                  <tr className="group-row">
+                    <td colSpan={15} className="group-title">
+                      
+                    </td>
+                  </tr>
+                  {groupRows.map((r) => (
+                    <tr key={`${r.AccountCode}-${r.Currency}`}>
+                      <td className="cell-code">{r.AccountCode}</td>
+                      <td className="cell-title indent">
+                        {r.AccountTitle}
+                      </td>
+                      <td className="cell-center">{r.Currency}</td>
+                      <td className="cell-num">{0.0}</td>
+                      <td className="cell-num">{commas(r.Current)}</td>
+                      <td className="cell-num">{commas(r.oneThirty)}</td>
+                      <td className="cell-num">{commas(r.tOneSixty)}</td>
+                      <td className="cell-num">{commas(r.sOneNinety)}</td>
+                      <td className="cell-num">{commas(r.nOneTwenty)}</td>
+                      <td className="cell-num">{commas(r.overTwenty)}</td>
+                      <td className="cell-num cell-total">{commas(r.total)}</td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              ))}
+            </tbody>
       </table>
-
-    
+      </div>
+           
+      </div>
    </>
      );
    };

@@ -1,0 +1,167 @@
+:root {
+          --border: #c9c9c9;
+          --border-mid: #bdbdbd;
+          --header-bg: #f2f2f2; /* light grey like your screenshot */
+          --row-odd: #fafafa;
+          --row-hover: #f6fbff;
+          --text: #111;
+        }
+        .weekly-wrap {
+          font-family: "Segoe UI", Roboto, Arial, sans-serif;
+          color: var(--text);
+          background: #fff;
+        }
+        .strapline {
+          position: relative;
+          margin: 20px 0 20px 0;
+        }
+        .strapline .rule {
+          border-top: 3px solid #000;
+        }
+        .strapline .label {
+          position: absolute;
+          top: -12px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #fff;
+          padding: 0 14px;
+          font-weight: 700;
+          font-size: 14px;
+          white-space: nowrap;
+        }
+        .topbar {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          align-items: center;
+          padding: 6px 8px;
+          border: 1px solid var(--border);
+          border-radius: 4px;
+          background: #fff;
+          margin-top: 8px;
+          margin-bottom: 8px;
+          font-size: 12px;
+          font-weight: 600;
+        }
+        .as-on label {
+          font-weight: 700;
+          margin-right: 8px;
+        }
+        .as-on span {
+          display: inline-block;
+          min-width: 120px;
+          border-bottom: 1px solid #000;
+        }
+
+        .table-box {
+          margin-top: 16px;
+          border: 1px solid var(--border);
+          border-radius: 4px;
+          overflow: hidden;
+          background: #fff;
+        }
+        .table-scroll {
+          width: 100%;
+          overflow: auto;
+          max-height: calc(100vh - 240px); /* keep room for header/footers */
+        }
+        table.weekly {
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 0;
+          font-size: 12px;
+        }
+        table.summary {
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 0;
+          font-size: 12px;
+        }
+        thead.sticky thead,
+        .sticky-header {
+          position: sticky;
+          top: 0;
+          z-index: 2;
+          font-weight: bold;
+        }
+        .weekly {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.weekly th,
+.weekly td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+}
+
+.weekly thead th {
+  background: #f5f5f5;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+}
+.summary {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.summary th,
+.summary td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+}
+
+.summary thead th {
+  background: #f5f5f5;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.cell-title {
+  text-align: left;
+}
+
+.cell-center {
+  text-align: center;
+}
+
+.cell-num {
+  text-align: right;
+}
+
+.cell-total {
+  font-weight: bold;
+}
+.group-row td {
+  font-weight: bold;
+  background: #ffffff;
+  /* border-top: 2px solid #000; */
+  border-bottom: 1px solid #ccc;
+  padding: 6px 8px;
+}
+
+.group-title {
+  text-align: left;
+  font-size: 13px;
+}
+
+.indent {
+  padding-left: 25px;
+  color: #0d6efd; /* link-style blue like screenshot */
+}
+
+
+
+        @media print {
+          @page { size: A4 landscape; margin: 10mm; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .no-print { display: none !important; }
+          .table-scroll { max-height: none; overflow: visible; }
+          thead { display: table-header-group; }
+          tfoot { display: table-row-group; }
+          tr, img { page-break-inside: avoid; }
+        }

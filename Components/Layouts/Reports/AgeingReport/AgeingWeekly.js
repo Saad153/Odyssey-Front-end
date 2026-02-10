@@ -1,15 +1,180 @@
-import React, { useEffect, useMemo, useCallback, useState } from "react";
+import React, { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import moment from "moment";
 import PrintTopHeader from "/Components/Shared/PrintTopHeader";
 import { Table, Row, Col } from "react-bootstrap";
-import Pagination from "/Components/Shared/Pagination";
+import { useRouter } from "next/router";
 import ExcelJS from "exceljs";
-import Cookies from "js-cookie";
+
 
 const Weekly = ({ query, result }) => {
 
-
+  const router = useRouter();
+  const hasExported = useRef(false);
   const [ records, setRecords ] = useState([]);
+
+          useEffect(() => {
+                      if (
+              router.isReady &&
+              router.query.autoExport === "true" &&
+              records.length > 0 &&
+              !hasExported.current
+            ) {
+              hasExported.current = true;
+              exportToExcel();
+            }
+          }, [router.isReady, router.query, records]);
+        
+            const ImageToBlob = (imageUrl) => {
+              return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous'; // Enable CORS if required
+                img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0);
+                  canvas.toBlob(resolve);
+                };
+                img.onerror = reject;
+                img.src = imageUrl;
+              });
+            };
+          
+            const exportToExcel = async () => {
+              const workbook = new ExcelJS.Workbook();
+              const worksheet = workbook.addWorksheet('Invoice Report');
+            
+              worksheet.columns = [
+                { header: 'A/C Code', key: 'AccountCode', width: 15 },
+                { header: 'A/C Title', key: 'AccountTitle', width: 30  },
+                { header: 'Curr', key: 'Currency', width: 10  },
+                { header: 'Settlement', key: 0, width: 20  },
+                { header: 'Current Invoice', key: 'Current', width: 20 },
+                { header: '1 - 7 Days', key: 'oneSeven', width: 20  },
+                { header: '8 - 14 Days', key: 'eightForteen', width: 20 },
+                { header: '15 - 21 Days', key: 'fTwentyOne', width: 20  },
+                { header: '22 - 28 Days', key: 'tTwentyEight', width: 20  },
+                { header: '29 - 35 Days', key: 'tThirtyFive', width: 20  },
+                { header: 'Above 35 Days', key: 'aThirtyFive', width: 20  },
+                { header: 'Total', key: 'total', width: 20 },
+              ];
+          
+              const headerRow = worksheet.getRow(1);
+              headerRow.eachCell((cell) => {
+                cell.fill = {
+                  type: 'pattern',
+                  pattern: 'solid',
+                  fgColor: { argb: 'D3D3D3' } 
+                };
+                cell.border = {
+                  right: { style: 'thin', color: { argb: '000000' } },
+                  left: { style: 'thin', color: { argb: '000000' } },
+                  top: { style: 'thin', color: { argb: '000000' } },
+                  bottom: { style: 'thin', color: { argb: '000000' } },
+                }
+                cell.font = {
+                  size: 14,
+                  bold: true,
+                };
+              
+                cell.alignment = {
+                  horizontal: 'center',
+                  vertical: 'middle'
+                };
+              });
+              // console.log(records)
+              const data = records.map((x, i) => ({
+                
+                AccountCode: x.AccountCode,
+                AccountTitle: x.AccountTitle,
+                Currency: x.Currency,
+                Settlement: 0,           
+                oneSeven: x.oneSeven,
+                CurrentInvoice: x.Current,
+                eightForteen: x.eightForteen,
+                fTwentyOne: x.fTwentyOne,
+                tTwentyEight: x.tTwentyEight,
+                tThirtyFive: x.tThirtyFive,
+                aThirtyFive: x.aThirtyFive,
+                total: x.total,
+              }));
+              
+          
+            
+                worksheet.addRows(data);
+        
+                records.forEach((x, i) => {
+                  if (x.type === "parent") {
+                    const row = worksheet.getRow(i + 2); // Account for header row (index starts from 1)
+                    row.eachCell((cell) => {
+                      cell.font = { bold: true };
+                      cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'd7d7d7' } 
+                      }; // Set font to bold
+                    });
+                  }
+                });
+        
+                worksheet.insertRow(1, ['', '', '', '', '', '', '', '']);
+                worksheet.insertRow(1, ['']);
+                worksheet.insertRow(1, ['', '', '', 'Date: From: ' + query.from + ' To: ' + query.to,]);
+                worksheet.insertRow(1, ['', '', '', 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi']);
+                query.company=='1' && worksheet.insertRow(1, ['', '', '', 'Seanet Shipping & Logistics']);
+                query.company=='2' && worksheet.insertRow(1, ['', '', '', 'Air Cargo Services']);
+                query.company!='1' && query.company!='2' && worksheet.insertRow(1, ['', '', '', 'Seanet Shipping & Logistics & Air Cargo Services']);
+                worksheet.insertRow(1, ['']);
+                worksheet.insertRow(1, ['']);
+          
+              worksheet.getCell('D3').font = {
+                size: 16,  
+                bold: true  
+              };
+              worksheet.getCell('D4').font = {
+                size: 16,  // Increase font size
+                bold: true  // Make the text bold
+              };
+              worksheet.getCell('D5').font = {
+                size: 14,  // Increase font size
+                bold: true  // Make the text bold
+              };
+    
+              
+              const imageUrl = query.ageing_company=='1' ? '/seanet-colored.png' : query.ageing_company=='2' ? '/acs-colored.png' : '/sns-acs.png';
+          
+              // const imageUrl = '/public/seanet-logo-complete.png'
+              const imageBlob = await ImageToBlob(imageUrl);
+          
+              const imageId = workbook.addImage({
+                buffer: await imageBlob.arrayBuffer(), // Convert Blob to ArrayBuffer
+                extension: 'png', // Image extension
+              });
+          
+              worksheet.addImage(imageId, {
+                tl: { col: 1, row: 1 }, // Top-left position (column, row)
+                ext: { width: 150, height: 100 }, // Image width and height
+              });
+          
+              try{
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], {
+                  type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'AgeingReport.xlsx';
+                link.click();
+                window.URL.revokeObjectURL(url);
+              }catch(e){
+                // console.log(e)
+                console.error(e)
+              }
+            
+              
+            };
   
     const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
     console.log("weekly query:", query)
@@ -69,12 +234,12 @@ const Weekly = ({ query, result }) => {
             AccountTitle: accountTitle,
             Currency: currency,
             Current: 0,
-            oneSeven: 0,   // 1–30
-            eightForteen: 0,   // 31–60
-            fTwentyOne: 0,  // 61–90
-            tTwentyEight: 0,  // 91–120
-            tThirtyFive: 0,
-            aThirtyFive:0,  // 121+
+            oneSeven: 0,   // 1–7
+            eightForteen: 0,   // 8–14
+            fTwentyOne: 0,  // 15–21
+            tTwentyEight: 0,  // 22–28
+            tThirtyFive: 0,  // 29–35
+            aThirtyFive:0,  // 35+
             // Optionally keep a raw list of invoices in this group
             // invoices: [],
           });
@@ -160,90 +325,57 @@ const Weekly = ({ query, result }) => {
                                   </Col>
                                 </Row>
                             
-    <div style={{ marginTop: "20px" }}>
-      
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: "12px",
-        }}
-      >
-        <thead>
-          <tr>
-            {[
-              "A/C Code",
-              "A/C Title",
-              "Curr",
-              "Settlement",
-              "Current Inv",
-              "1-7 Days",
-              "8-14 Days",
-              "15-21 Days",
-              "22-28 Days",
-              "29-35 Days",
-              "Above Thirtyfive",
-              "Total",
-            ].map((h) => (
-              <th
-                key={h}
-                style={{
-                  border: "1px solid #000",
-                  padding: "6px",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  background: "#d9d9d9",
-                }}
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
+    <div className="table-box">
+          <div className="table-scroll">
+            <table className="weekly">
+              <thead className="sticky-header">
+                <tr>
+                  <th rowSpan={2}>A/C Code</th>
+                  <th rowSpan={2} style={{ textAlign: "left" }}>A/C Title</th>
+                  <th rowSpan={2}>Curr</th>
+                  <th colSpan={8} style={{ textAlign: "center" }}>Ageing</th>
+                  <th rowSpan={2}>Total</th>
+                </tr>
 
-        <tbody>
-          
-          {records.map((record) => (
-            <tr key={record.AccountCode}>
-              <td>{record.AccountCode}</td>
-              <td>{record.AccountTitle}</td>
-              <td>{record.Currency}</td>
-              <td>{record.AccountTitle}</td>
-              <td>{record.Current}</td>
-              <td>{record.oneSeven}</td>
-              <td>{record.eightForteen}</td>
-              <td>{record.fTwentyOne}</td>
-              <td>{record.tTwentyEight}</td>
-              <td>{record.tThirtyFive}</td>
-              <td>{record.aThirtyFive}</td>
-              <td>{record.total}</td>
-            </tr>
-          ))}
+                <tr>
+                  <th>Settlement</th>
+                  <th>Current Inv</th>
+                  <th>1-7 Days</th>
+                  <th>8-14 Days</th>
+                  <th>15-21 Days</th>
+                  <th>22-28 Days</th>
+                  <th>29-35 Days</th>
+                  <th>Above 35</th>
+                </tr>
+              </thead>
 
-          {/* <tr>
-            <td>P1005</td>
-            <td >QUICE FOOD INDUSTRIES LIMITED</td>
-            <td >PKR</td>
-            <td>0.00</td>
-            <td>0.00</td>
-            <td>0.00</td>
-            <td>0.00</td>
-            <td>0.00</td>
-            <td>0.00</td>
-            <td>0.00</td>
-            <td>1,681,478.00</td>
-            <td>1,681,478.00</td>
-          </tr> */}
+              <tbody>
+                    {records.map((r) => (
+                      <tr key={`${r.AccountCode}-${r.Currency}`}>
+                        <td className="cell-code">{r.AccountCode}</td>
+                        <td className="cell-title">{r.AccountTitle}</td>
+                        <td className="cell-center">{r.Currency}</td>
 
-         
-        </tbody>
+                        <td className="cell-num">{0.0}</td>
+                        <td className="cell-num">{commas(r.Current)}</td>
+                        <td className="cell-num">{commas(r.oneSeven)}</td>
+                        <td className="cell-num">{commas(r.eightForteen)}</td>
+                        <td className="cell-num">{commas(r.fTwentyOne)}</td>
+                        <td className="cell-num">{commas(r.tTwentyEight)}</td>
+                        <td className="cell-num">{commas(r.tThirtyFive)}</td>
+                        <td className="cell-num">{commas(r.aThirtyFive)}</td>
+
+                        <td className="cell-num cell-total">{commas(r.total)}</td>
+                      </tr>
+                    ))}
+            </tbody>
       </table>
-    </div>
-
-
-            </>
-        );
     
-       };
-       
-       export default React.memo(Weekly);
+      </div>
+      </div>
+        
+    </>
+  );
+};
+
+export default React.memo(Weekly);

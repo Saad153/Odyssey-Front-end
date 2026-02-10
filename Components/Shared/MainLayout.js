@@ -136,7 +136,7 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/airJobs/import/bl/[id]"){
       setToggleState('7-6');
     }
-    if(newRouter.pathname==="/airJobs/aiJobList"){s
+    if(newRouter.pathname==="/airJobs/aiJobList"){
       setToggleState('7-4');
     }
     if(newRouter.pathname==="/airJobs/import/[id]"){

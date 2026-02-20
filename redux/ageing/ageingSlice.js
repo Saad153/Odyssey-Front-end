@@ -3,8 +3,8 @@ import moment from 'moment';
 
 const initialState = {
   ageing_reportType: 'Ageing Summary',
-  ageing_sdate: moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).format("DD-MM-YYYY"): moment().set({ month: 6, date: 1 }).format("DD-MM-YYYY"),
-  ageing_edate: moment().format("DD-MM-YYYY"),
+  ageing_sdate: moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString(),
+  ageing_edate: moment().toISOString(),
   ageing_accounts: [],
   ageing_account: undefined,
   ageing_company: [1, 3],

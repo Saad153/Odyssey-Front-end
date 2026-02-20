@@ -80,32 +80,74 @@ const Ledger = () => {
   };
 
   return (
-  <div className='base-page-layout'>
-    <Row>
-      <Col md={12}><h4 className="fw-7">Ledger</h4></Col>
-      <Col md={12}><hr /></Col>
+  <div className="base-page-layout">
+      <div className="page-header">
+          <h4 className='fw-7 m-0'>Ledger</h4>
+          <button className='btn-custom my-1 px-4' onClick={() => {
+          if (account != "" && account != null) {
+            Router.push({ pathname: `/reports/ledgerReport/${account}/`, query: { from: moment(from).format("DD-MM-YYYY").toString(), to: moment(to).format("DD-MM-YYYY").toString(), name: name, company: company, currency: currency } });
+            dispatch(incrementTab({
+              "label": "Ledger Report",
+              "key": "5-7",
+              "id": `${account}?from=${from}&to=${to}&name=${name}&company=${company}&currency=${currency}`
+            }))
+          }
+        }
+        }> Go </button>
+      </div>
+        <div className="form-card">
+      <Col gutter={1} className=" mt-3">
+      <div className="card-section">
+      <Row gutter={16} className='form-row'>
       <Col md={3} className="mt-3">
-        <b>From</b>
-        {/* <Form.Control type={"date"} size="sm" value={from} onChange={(e) => dispatch(setFrom(e.target.value))} /> */}
-          <DatePicker allowClear={false} format="DD-MM-YYYY" value={moment(from)} onChange={(e)=>{dispatch(setFrom(e))}}/>
+          <label>From</label>
+          <DatePicker 
+          allowClear={false} 
+          format="DD-MM-YYYY" 
+          style={{ width: "100%", borderRadius:"6px" }} 
+          value={moment(from)} 
+          onChange={(e)=>{dispatch(setFrom(moment(e).toString()))}}/>
       </Col>
       <Col md={3} className="mt-3">
-        <b>To</b>
-        {/* <Form.Control type={"date"} size="sm" value={to} onChange={(e) => dispatch(setTo(e.target.value))} /> */}
-        <DatePicker allowClear={false} format="DD-MM-YYYY" value={moment(to)} onChange={(e)=>{dispatch(setTo(e))}}/>
+        <label>To</label>
+        <DatePicker 
+        allowClear={false} 
+        format="DD-MM-YYYY" 
+        style={{ width: "100%", borderRadius:"6px" }} 
+        value={moment(to)} 
+        onChange={(e)=>{dispatch(setTo(moment(e).toString()))}}/>
       </Col>
-      <Col md={6}></Col>
-      <Col md={3} className="my-3">
+      <Col md={6} className="mt-3">
+        <label>Accounts</label>
+        <Select showSearch 
+        allowClear
+        style={{ width: "100%" }} 
+        placeholder="Select Account" 
+        className='select-modern'
+        value={account}
+        onChange={handleAccountChange} 
+        options={records}
+          filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+          filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+        />
+      </Col>
+      </Row>
+      <Col md={8} className="my-3">
         <b>Company</b>
         <Radio.Group className="mt-1" 
         value={company} 
+        style={{width: '100%'}}
         onChange={(e) => dispatch(setCompany(e.target.value))}>
           <Radio value={1}>SEA NET SHIPPING & LOGISTICS</Radio>
           <Radio value={2}>CARGO LINKERS</Radio>
           <Radio value={3}>AIR CARGO SERVICES</Radio>
         </Radio.Group>
       </Col>
-      <Col md={7}></Col>
+      </div></Col>
+    
+      <Col gutter={2} className=" mt-3">
+      <div className="card-section">
+
       <Col md={9} className="my-3">
         <b>Currency</b><br />
         <Radio.Group className="mt-1" 
@@ -120,34 +162,12 @@ const Ledger = () => {
             <Radio value={"BDT"}>BDT</Radio>
         </Radio.Group>
       </Col>
-      <Col md={6}>
-        <b>Accounts</b>
-        <Select showSearch 
-        allowClear
-        style={{ width: "100%" }} 
-        placeholder="Select Account" 
-        value={account}
-        onChange={handleAccountChange} 
-        options={records}
-          filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
-          filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-        />
+      
+      
+      </div>
       </Col>
-      <Col md={12}>
-        <button className='btn-custom mt-3' onClick={() => {
-          // dispatch(setFilterValues({ pageName: "ledgerReport", values: stateValues }));
-          if (account != "" && account != null) {
-            Router.push({ pathname: `/reports/ledgerReport/${account}/`, query: { from: moment(from).format("DD-MM-YYYY"), to: moment(to).format("DD-MM-YYYY"), name: name, company: company, currency: currency } });
-            dispatch(incrementTab({
-              "label": "Ledger Report",
-              "key": "5-7",
-              "id": `${account}?from=${from}&to=${to}&name=${name}&company=${company}&currency=${currency}`
-            }))
-          }
-        }
-        }> Go </button>
-      </Col>
-    </Row>
+     
+    </div>
   </div>
   )
 }

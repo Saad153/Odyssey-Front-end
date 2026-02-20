@@ -40,7 +40,7 @@ const InvoiceEditor = ({data, reload}) => {
     if(!load){
       setLoad(true)
       axios.post(process.env.NEXT_PUBLIC_CLIMAX_SAVE_SE_HEADS_NEW, {
-        charges:charges
+        charges:charges, employeeId: Cookies.get("loginId")
       }).then(async() => {
         await delay(2000)
         setLoad(false)

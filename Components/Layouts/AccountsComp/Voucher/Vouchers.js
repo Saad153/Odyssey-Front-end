@@ -24,6 +24,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { FaPrint } from "react-icons/fa6";
 import { FaHistory } from "react-icons/fa";
 import { CiBoxList } from "react-icons/ci";
+import Cookies from "js-cookie";
 
 const Vouchers = ({ register, control, errors, CompanyId, child, settlement, reset, voucherData, setSettlement, setChild, id, setValue, defaultValues }) => {
   let inputRef = useRef(null);
@@ -185,7 +186,7 @@ useEffect(() => {
     PopConfirm("Confirmation", "Are You Sure To Remove This Charge?",
       () => {
         axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
-          id
+          id, employeeId: Cookies.get("loginId")
         }).then((x) => {
           Router.push("/accounts/voucherList")
         })

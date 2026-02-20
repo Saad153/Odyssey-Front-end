@@ -103,7 +103,15 @@ const JobBalancing = () => {
   }
 
   return(
-  <div className='base-page-layout fs-12'>
+  // <div className='base-page-layout fs-12'>
+    <div className="base-page-layout">
+        <div className="page-header">
+            <h4 className='fw-7 m-0'>Job Balancing</h4>
+            <button className='btn-custom my-1 px-4' onClick={handleSearch}>
+              Go
+            </button>
+        </div>
+        <div className="form-card">
     {(status=="success" && Object.keys(values).length>0) &&
     <Row>
       <Col md={7} style={{border:'1px solid silver'}} className='mx-3 py-2'>
@@ -249,7 +257,7 @@ const JobBalancing = () => {
             </Radio.Group>
           </Col>
           <Col md={1}></Col>
-          <Col md={1}><button className='btn-custom px-3' onClick={()=>handleSearch()}>Go</button></Col>
+          {/* <Col md={1}><button className='btn-custom px-3' onClick={()=>handleSearch()}>Go</button></Col> */}
         </Row>
       </Col>
       <Col style={{border:'1px solid silver'}} className='py-2' md={3}>
@@ -260,6 +268,7 @@ const JobBalancing = () => {
       </Col>
     </Row>
     }
+  </div>
   </div>
   );
 }

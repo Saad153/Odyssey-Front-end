@@ -32,6 +32,9 @@ const initialState = {
   jobType:'Sea Export',
   salesrepresentative:'',
   csvData:[],
+  clients:[],
+  salesRepresentative:[],
+  overseas:[],
 
   totalRevenue:0.00,
   totalCost:0.00,

@@ -33,7 +33,9 @@ const MyField = () => {
   useEffect(() => { getManagers() 
   },[])
   const getManagers = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_MANAGERS).then((x)=>{
+    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_MANAGERS, {
+      // employeeId: Cookies.get("loginId") 
+    }).then((x)=>{
       if(x.data.status=='success'){ setManagers(x.data.result) }
     })
   }
@@ -174,7 +176,7 @@ return(
         tempValues.represent = tempValues.represent.toString();
         let Username = Cookies.get('username')
         if(edit){
-          axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_EMPLOYEE,{ values:tempValues, updatedBy:Username }).then((x)=>{
+          axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_EMPLOYEE,{ values:tempValues, updatedBy:Username, employeeId: Cookies.get("loginId") }).then((x)=>{
             let arr  = [];
             console.log("x.data.resultTwo",x.data.resultTwo)
             x.data.resultTwo.forEach(y => {
@@ -210,7 +212,7 @@ return(
           })
         } else {
           axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_EMPLOYEE,{
-            values:values, createdBy:Username
+            values:values, createdBy:Username, employeeId: Cookies.get("loginId")
           }).then((x)=>{
             if(x.data.status=='exists'){
               alert("User Code or Username Already Exists!");

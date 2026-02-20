@@ -202,6 +202,16 @@ function setAccesLevels(dispatch, collapsed){
       label: `Ageing`,
       key: '5-13',
       children: `Content of Tab Pane 3`,
+    }):null,
+    (levels?.includes("auditLog")||levels?.includes("admin"))?getItem('Audit Log', '5-15',<></>, null, {
+      label: `Audit Log`,
+      key: '5-15',
+      children: `Content of Tab Pane 3`,
+    }):null,
+    (levels?.includes("lgVat")||levels?.includes("admin"))?getItem('LG VAT', '5-17',<></>, null, {
+      label: `LG VAT`,
+      key: '5-17',
+      children: `Content of Tab Pane 3`,
     }):null
           
   ]
@@ -382,6 +392,8 @@ function setAccesLevels(dispatch, collapsed){
         case "AgentInvBalance":
         case "TrialBalance":
         case "IncomeStatement":
+        case "AgeingReport":
+        case "AuditLog":
           items.indexOf(reports) === -1 ? items.push(reports) : null;
           break;
         case "admin":

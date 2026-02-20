@@ -442,15 +442,15 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
                 }
                 // let partyData = e == "PP" ? await getClients(searchPartyId) : await getVendors(searchPartyId);
                 let partyData
-                if(e == 'PP'){
-                  if(type == 'Recievable'){
+                // if(e == 'PP'){
+                  // if(type == 'Recievable'){
                     partyData = await getClients(searchPartyId)
-                  }else{
-                    partyData = await getVendors(searchPartyId)
-                  }
-                }else{
-                  partyData = await getVendors(searchPartyId)
-                }
+                  // }else{
+                    // partyData = await getVendors(searchPartyId)
+                  // }
+                // }else{
+                  // partyData = await getVendors(searchPartyId)
+                // }
                 if (state.chargesTab == '1') {
                   tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Bill" : "Job Invoice";
                 } else {

@@ -102,7 +102,7 @@ const DirectJob = ({ id }) => {
                 await axios.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/deleteDirectJob`,
                 {}, // body
-                { headers: { id: parseInt(id) } } // send the id in headers
+                { headers: { id: parseInt(id), employeeId: Cookies.get("loginId") } } // send the id in headers
                 );
 
                 // Run after deletion
@@ -264,7 +264,7 @@ const DirectJob = ({ id }) => {
 
     const result = await axios.post(
       `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/saveDirectJob`,
-      { direct_Job, direct_Job_Association }
+      { direct_Job, direct_Job_Association, employeeId: Cookies.get("loginId")}
     );
 
     openNotification('Success', state.directJob_Id ? 'Direct Job Updated' : 'Direct Job Created', 'green');

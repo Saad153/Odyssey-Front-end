@@ -102,12 +102,12 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         state.accountList.forEach((x)=>{
             if(x.id==data.parentAccount){
-                pAccountName =x.title
+                pAccountName =x.id
             }
         });
         setTimeout(async() => {
             await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_CLIENT,{
-                ...data, pAccountName
+                ...data, pAccountName, employeeId: Cookies.get('loginId')
             }).then((x)=>{
                 if(x.data.status=='success'){
                     openNotification('Success', `Client ${x.data.result.name} Created!`, 'green');
@@ -135,12 +135,12 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         state.accountList.forEach((x)=>{
             if(x.id==data.parentAccount){
-                pAccountName =x.title
+                pAccountName =x.id
             }
         });
         setTimeout(async() => {
             await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_CLIENT,{
-                data, history, EmployeeId, updateDate, pAccountName
+                data, history, updateDate, pAccountName, employeeId: Cookies.get('loginId')
             }).then((x)=>{
                 if(x.data.status=='success'){
                     openNotification('Success', `Client ${data.name} Updated!`, 'green');

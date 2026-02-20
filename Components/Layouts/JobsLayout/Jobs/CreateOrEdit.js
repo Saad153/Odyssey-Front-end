@@ -212,7 +212,8 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
     dispatch({type:'toggle', fieldName:'load', payload:true});
     setTimeout(async() => {
       await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_SEAJOB,{
-        data
+        data,
+        employeeId: Cookies.get("loginId")
       }).then((x)=>{
         if(x.data.status=='success'){
             refetch()
@@ -279,7 +280,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
     //   "bigPictureURL": "Big picture URL as a string"
     // })
     setTimeout(async() => {
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_SEAJOB,{data}).then((x)=>{
+      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_SEAJOB,{data, employeeId: Cookies.get("loginId"),}).then((x)=>{
         if(x.data.status=='success'){
           openNotification('Success', `Job Updated!`, 'green')
           createNotification(notification)
@@ -366,7 +367,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
             PopConfirm("Confirmation", "Are You Sure You Want To Cancel This Job?",
               () => {
                 axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_JOBS,{
-                  id:allValues.id
+                  id:allValues.id, employeeId: Cookies.get("loginId")
                 }).then(async(x)=>{
                   let oldTabs = await type=="SE"?tabs.filter((x)=> {return x.key!="4-3" }):
                   // console.log(oldTabs)

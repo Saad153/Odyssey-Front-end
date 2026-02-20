@@ -83,6 +83,7 @@
           top: 0;
           z-index: 2;
           font-weight: bold;
+          
         }
         .weekly {
   width: 100%;
@@ -115,6 +116,12 @@
 }
 
 .summary thead th {
+  background: #f5f5f5;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+}
+.lg-thead th {
   background: #f5f5f5;
   font-weight: bold;
   text-align: center;
@@ -153,6 +160,173 @@
   padding-left: 25px;
   color: #0d6efd; /* link-style blue like screenshot */
 }
+.audit-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+}
+
+.audit-table th,
+.audit-table td {
+  border: 1px solid #000;
+  padding: 6px 8px;
+  vertical-align: middle;
+}
+
+.audit-table thead th {
+  background-color: #cfcfcf;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Column Widths */
+.col-sno { width: 50px; text-align: center; }
+.col-datetime { width: 160px; }
+.col-user { width: 260px; }
+.col-instance { width: 150px; }
+.col-form { width: 120px; text-align: center; }
+.col-action { width: 120px; text-align: center; }
+.col-doc { width: 120px; text-align: center; }
+.col-remarks { width: 150px; }
+
+/* Alignments */
+.audit-table td:nth-child(1),
+.audit-table td:nth-child(5),
+.audit-table td:nth-child(6),
+.audit-table td:nth-child(7) {
+  text-align: center;
+}
+
+/* LG VAT INDEX PAGE CSS */
+
+.lg-vat-page {
+  padding: 20px;
+  background: #f7f9fc;
+}
+
+.page-header {
+  margin-bottom: 20px;
+  border-bottom: 2px solid #aaa6a6;
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-header{
+  display: flex;
+  float: left;
+  
+}
+.form-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.form-row label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  color: #222;
+}
+
+.card-section {
+  padding: 15px;
+  /* border: 1px solid #e6e6e6; */
+  border-radius: 8px;
+  background:#e0dede;
+  
+}
+.card-section2 {
+  padding-top: 10px;
+  /* border: 1px solid #e6e6e6; */
+  border-radius: 8px;
+  background:#e0dede;
+  
+}
+.card-section2 label {
+  font-weight: 600;
+
+  color: #222;
+}
+.card-section h5 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.card-section h6 {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  color: #222;
+}
+
+.btn-go {
+  width: 100%;
+  background-color: #1890ff;
+  color: #fff;
+  border: none;
+}
+
+.form-section {
+  background: #fafafa;
+  border: 1px solid #e6e6e6;
+  padding: 15px 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: #4d4949;
+ 
+}
+.form-section1 {
+  background:#e0dede;
+  /* border: 1px solid #e6e6e6; */
+  padding: 15px 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.checkbox-group {
+  display: flex;
+  gap: 20px; /* space between checkboxes */
+}
+
+.select-modern .ant-select-selector {
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  height: 35px !important;
+  /* padding-bottom: 20px; */
+}
+
+.select-modern .ant-select-selection-placeholder {
+  color: #999 !important;
+}
+.datePicker-modern .ant-picker {
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  height: 35px !important;
+}
+
+.datePicker-modern .ant-picker-input > input {
+  border-radius: 6px !important;
+  height: 25px;
+}
+
 
 
 

@@ -180,7 +180,7 @@ const Summary = ({ query, result }) => {
       
   const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
   console.log("summary query:", query)
-  // console.log("summary result:", result)
+// console.log("summary result:", result)
 
 useEffect(() => {
   if (!result || !Array.isArray(result.temp)) {

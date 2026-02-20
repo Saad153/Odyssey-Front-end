@@ -15,6 +15,8 @@ import voucherSlice from './vouchers/voucherSlice';
 import directJobReducer from './directJob/directJobSlice';
 import directJobSlice from './directJob/directJobSlice';
 import ageingSlice from './ageing/ageingSlice';
+import auditSlice from './audit/auditSlice';
+import lgSlice from './lgVat/lgSlice';
 
 export const store = configureStore({
   reducer: {
@@ -33,6 +35,8 @@ export const store = configureStore({
     vouchers:voucherSlice,
     directJob: directJobSlice,
     ageing: ageingSlice,
+    audit: auditSlice,
+    lgVat: lgSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(seJobValues.middleware),

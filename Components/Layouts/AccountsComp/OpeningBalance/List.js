@@ -33,7 +33,8 @@ const OpeningBalance = ({sessionData, openingBalancesList}) => {
     async () => {
       console.log(id)
       const result = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
-        id: id
+        id: id,
+        employeeId: Cookies.get("loginId")
       })
       console.log(result)
       getData();

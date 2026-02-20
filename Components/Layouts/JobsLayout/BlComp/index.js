@@ -19,6 +19,7 @@ import ItemDetail from "./ItemDetail";
 import ChargesDetail from "./ChargesDetail";
 import { getJobValues, getJobById } from '/apis/jobs';
 import { useQuery } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 
 const BlComp = ({id, blData, partiesData, type}) => {
 
@@ -91,9 +92,10 @@ const BlComp = ({id, blData, partiesData, type}) => {
       deletingContinersList: state.deletingContinersList,
       Item_Details:state.Item_Details,
       Dimensions:state.Dimensions,
-      applyToCWT:data.applyToCWT[0]==1?'1':'0'
+      applyToCWT:data.applyToCWT[0]==1?'1':'0',
     };
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_BL, tempData).then(async(x) => {
+    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_BL, {...tempData, employeeId: Cookies.get("loginId")}).then(async(x) => {
+      
       if (x.data.status == "success") {
         openNotification("Success", "BL Created Successfully", "green");
         dispatchNew(
@@ -157,14 +159,14 @@ const BlComp = ({id, blData, partiesData, type}) => {
       wtUnit: values.wtUnit,
       pkgs: values.pkgs,
       unit: values.unit,
-      cbm: values.cbm
+      cbm: values.cbm,
     };
     let emp = stamps?.find(
       (x) => x.code == undefined && x.stamp_group == undefined
     );
     console.log("TEMP DATA:", tempData)
     emp?openNotification("Error", "Fields Can't Be Empty", "red")
-      :await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_BL, tempData)
+      :await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_BL, {...tempData, employeeId: Cookies.get("loginId")})
       .then(async(x) => {
         if (x.data.status == "error") {
           openNotification("Error", "Something went wrong", "red");

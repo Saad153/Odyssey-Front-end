@@ -7,6 +7,7 @@ import { delay } from '../../../../functions/delay';
 import { getNetInvoicesAmount } from '../../../../functions/amountCalculations';
 import openNotification from '../../../Shared/Notification';
 import { getInvoices, getTotal } from './states';
+import Cookies from 'js-cookie';
 
 const Gl = ({state, dispatch, companyId}) => {
 
@@ -134,7 +135,7 @@ const Gl = ({state, dispatch, companyId}) => {
          voucher
        ).then(async(x)=>{
         let newInvoices = state.invoiceLosses.map((y)=>{
-          return {...y, VoucherId:state.edit?state.id:x.data.result.id}
+          return {...y, VoucherId:state.edit?state.id:x.data.result.id, employeeId: Cookies.get('employeeId')}
         })
         await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_TRANSACTION,{
           invoices:tempInvoices,

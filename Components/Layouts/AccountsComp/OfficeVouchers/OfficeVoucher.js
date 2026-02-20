@@ -10,6 +10,7 @@ import openNotification from '/Components/Shared/Notification';
 import PrintVoucher from './PrintVoucher';
 import FullScreenLoader from '/Components/Shared/FullScreenLoader';
 import { delay } from "/functions/delay"
+import Cookies from 'js-cookie';
 
 function recordsReducer(state, action){
     switch (action.type) {
@@ -69,7 +70,7 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
     }
     await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_UPSERT_OFFICE_VOUCHER, {
       ...tempData,
-      EmployeeId:tempData.EmployeeId, amount:state.descriptive?calculateTotal():tempData.amount, preparedBy:preparedBy, CompanyId:companyId
+      EmployeeId:tempData.EmployeeId, amount:state.descriptive?calculateTotal():tempData.amount, preparedBy:preparedBy, CompanyId:companyId, employeeId:Cookies.get("loginId")
     }).then((x)=>{
       if(x.data.status=="success"){
         openNotification("Success", `Voucher ${id=="new"?"Created":"Updated"} Successfully!`, "green")
@@ -138,11 +139,11 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
             }
           ]
         }
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER,voucher)
+        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, {...voucher, employeeId:Cookies.get("loginId")})
         .then(async(x)=>{
           if(x.data.status=="success"){
             let obj = {approved:state.approved==false?true:false, id:state.id, VoucherId:x.data.result.id};
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,obj)
+            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,{...obj, employeeId: Cookies.get("loginId")})
             .then((y)=>{
               if(y.data.status=="success"){
                 openNotification("Success", `Voucher ${id=="new"?"Approved":"Updated"} Successfully!`, "green")
@@ -219,7 +220,7 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
 
           delete tempVoucher.Voucher_Heads[0].id
           delete tempVoucher.Voucher_Heads[1].id
-          await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER,tempVoucher)
+          await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, {...tempVoucher, employeeId:Cookies.get("loginId")})
           .then((z)=>{
             // console.log(z.data)
             if(z.data.status=="success"){
@@ -258,11 +259,11 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
           onClick={async()=>{
             set({load:true})
             await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_VOUCHER,{
-              id:state.VoucherId, type:"VoucherId Exists"
+              id:state.VoucherId, type:"VoucherId Exists", employeeId:Cookies.get("loginId")
             }).then(async(x)=>{
               if(x.data.status=="success"){
                 let obj = {approved:state.approved==false?true:false, id:state.id};
-                await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,obj)
+                await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,{...obj, employeeId: Cookies.get("loginId")})
                 .then((y)=>{
                   if(y.data.status=="success"){
                     openNotification("Success", `Voucher Status changed Successfully!`, "green")

@@ -323,13 +323,18 @@ const ChartOFAccount = ({ accountsData }) => {
 
         <div className='child title'>{(node.code ? node.code + ' ' : '') + node.title}</div>
 
-        {node.editable == 1 && (
+        {node.editable == '0' && (
           <div
             className='child edit-icon'
             onClick={() => {
+              console.log("Selected Record for Edit:", node);
               // isParent: top-level or parent-level (no ChildAccountId means parent/group)
               const isParentFlag = !node.ChildAccountId; // if node has no ChildAccountId it's a parent/group
               dispatch({ type: 'toggle', fieldName: 'selectedRecord', payload: node });
+              dispatch({ type: 'toggle', fieldName: 'selectedRecordId', payload: node.id });
+              dispatch({ type: 'toggle', fieldName: 'selectedParentId', payload: node.ChildAccountId.toString() || '' });
+              dispatch({ type: 'toggle', fieldName: 'subCategory', payload: node.subCategory || 'General' });
+              dispatch({ type: 'toggle', fieldName: 'editable', payload: node.editable || false });
               dispatch({ type: 'toggle', fieldName: 'isParent', payload: isParentFlag });
               dispatch({ type: 'edit' });
             }}

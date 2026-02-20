@@ -105,7 +105,14 @@ const InvoiceBalaincing = () => {
   };
 
   return (
-    <div className='base-page-layout fs-12'>
+    <div className="base-page-layout">
+        <div className="page-header">
+            <h4 className='fw-7 m-0'>Invoice Balancing</h4>
+            <button className='btn-custom my-1 px-4' onClick={handleSearch}>
+              Go
+            </button>
+        </div>
+        <div className="form-card">
     {status == "success" &&
       <Row>
         <Col md={7} style={{ border: '1px solid silver' }} className='mx-3 py-2'>
@@ -244,7 +251,7 @@ const InvoiceBalaincing = () => {
               </Radio.Group>
             </Col>
             <Col md={3}></Col>
-            <Col md={1}><button className='btn-custom' onClick={() => handleSearch()}>Go</button></Col>
+            {/* <Col md={1}><button className='btn-custom' onClick={() => handleSearch()}>Go</button></Col> */}
           </Row>
         </Col>
         <Col style={{ border: '1px solid silver' }} className='py-2' md={3}>
@@ -255,6 +262,7 @@ const InvoiceBalaincing = () => {
         </Col>
       </Row>
     }
+    </div>
     </div>
   );
 }

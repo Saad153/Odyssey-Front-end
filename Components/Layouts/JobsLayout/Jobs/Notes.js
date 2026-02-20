@@ -16,7 +16,7 @@ const Notes = ({state, dispatch}) => {
       setTimeout(async() => {
         await axios.post(process.env.NEXT_PUBLIC_CLIMAX_ADD_SEAJOB_NOTE,{
             title:state.title, note:state.note, recordId:state.selectedRecord.id, opened: "0", 
-            recordId: state.selectedRecord.id,
+            recordId: state.selectedRecord.id, employeeId: Cookies.get("loginId"),
             type: params.pathname.includes("airJobs/export") ? "AE" : params.pathname.includes("airJobs/import") ? "AI" :
             params.pathname.includes("seaJobs/import") ? "SI" : "SE",
             createdBy:Cookies.get('username')
@@ -39,7 +39,7 @@ const Notes = ({state, dispatch}) => {
     dispatch({type:'toggle', fieldName:'load', payload:true});
     setTimeout(async() => {
       await axios.post(process.env.NEXT_PUBLIC_CLIMAX_GET_SEAJOB_NOTES,{
-        id: state.selectedRecord.id, type :state.selectedRecord.operation
+        id: state.selectedRecord.id, type :state.selectedRecord.operation, employeeId: Cookies.get("loginId"),
       }).then((x)=>{
         if(x.data.status=='success'){
           const data = {opened : "1", recordId : x.data.result[0]?.recordId};
@@ -52,7 +52,7 @@ const Notes = ({state, dispatch}) => {
   }
 
   const updateNote = async(data) => {
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_SEAJOB_NOTES, {data})
+    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_SEAJOB_NOTES, {data, employeeId: Cookies.get("loginId"),})
   }
 
   return (

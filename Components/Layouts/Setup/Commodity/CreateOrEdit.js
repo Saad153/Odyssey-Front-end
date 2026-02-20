@@ -10,6 +10,7 @@ import * as yup from "yup";
 import axios from 'axios';
 import { getJobValues } from '/apis/jobs';
 import { useQuery } from '@tanstack/react-query';
+import Cookies from "js-cookie";
 
 const CreateOrEdit = ({state, dispatch, baseValues}) => {
 
@@ -44,7 +45,8 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {             
             await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_COMMODITY,{
-                data
+                data,
+                employeeId: Cookies.get("loginId")
             }).then(async(x)=>{
                 if(x.data.status!='success'){
                     openNotification('Error', `Error Occured Try Again!`, 'red')
@@ -64,7 +66,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     const onEdit = async(data) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {             
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_COMMODITY,{data})
+            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_COMMODITY,{data, employeeId: Cookies.get("loginId")})
             .then(async(x)=>{
                 if(x.data.status=='exists'){
                     openNotification('Error', `Same Code Already Exists!`, 'red')

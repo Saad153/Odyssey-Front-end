@@ -63,7 +63,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {
             await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_NON_PARTIES,{
-                ...data
+                ...data, employeeId: Cookies.get("loginId")
             }).then((x)=>{
                 if(x.data.status=='success'){
                     openNotification('Success', `Non Gl ${x.data.result.name} Created!`, 'green');
@@ -83,7 +83,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {
             await axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_NON_PARTIES,{
-                ...data,  EmployeeId, updateDate
+                ...data,  EmployeeId, updateDate, employeeId: Cookies.get("loginId")
             }).then((x)=>{
                 if(x.data.status=='success'){
                     openNotification('Success', `Non Gl ${data.name} Updated!`, 'green')

@@ -11,6 +11,7 @@ import axios from 'axios';
 import openNotification from '/Components/Shared/Notification';
 import { getJobValues } from '/apis/jobs';
 import { useQuery } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 
 const SignupSchema = yup.object().shape({
     // code: yup.string().required('Required'),
@@ -48,7 +49,8 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     setTimeout(async() => {
         // console.log(data)
         await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_CHARGE,{
-            data
+            data,
+            employeeId: Cookies.get("loginId")
         }).then((x)=>{
             // console.log(x)
             if(x.data.status=='success'){
@@ -74,7 +76,8 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     // console.log(data)
     setTimeout(async() => {
         await axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_CHARGE,{
-            data
+            data,
+            employeeId: Cookies.get("loginId")
         }).then((x)=>{
             if(x.data.status=='success'){
                 let tempRecords = [...state.records];

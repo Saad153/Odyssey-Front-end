@@ -1,6 +1,6 @@
 import axios from 'axios';
 import moment from "moment";
-import { Select, Radio } from 'antd';
+import { Select, Radio, DatePicker, Checkbox } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Form } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
@@ -14,8 +14,8 @@ const TrialBalance = () => {
   const [records, setRecords] = useState([]);
   const [debitAccount, setDebitAccount] = useState(null);
   const [company, setCompany] = useState(1);
-  const [from, setFrom] = useState(moment("2023-07-01").format("YYYY-MM-DD"));
-  const [to, setTo] = useState(moment().format("YYYY-MM-DD"));
+  const [from, setFrom] = useState(moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString());
+  const [to, setTo] = useState(moment().toISOString());
   const [currency, setCurrency] = useState("PKR");
   const [reportType, setReportType] = useState("6- Columns Simplified View");
   const [options, setOptions ] = useState("showall");
@@ -39,8 +39,8 @@ const TrialBalance = () => {
   useEffect(() => { getAccounts(); }, [company]);
   useEffect(() => {
     if (filters) {
-      setFrom(values.from);
-      setTo(values.to);
+      // setFrom(values.from);
+      // setTo(values.to);
       setCompany(values.company);
       setCurrency(values.currency);
       setDebitAccount(values.debitAccount);
@@ -93,34 +93,59 @@ const TrialBalance = () => {
 };
 
   return (
-  <div className='base-page-layout'>
-    <Row>
-      <Col md={12} xs={12}>
-        <h4 className='fw-7'>Trial Balance</h4>
+  <div className="base-page-layout">
+        <div className="page-header">
+            <h4 className='fw-7 m-0'>Trial Balance</h4>
+            <button className='btn-custom my-1 px-4' onClick={handleSubmit}>
+              Go
+            </button>
+        </div>
+        <div className="form-card">
+      <Col gutter={1} className=" mt-3">
+        <div className="card-section">
+        <Row gutter={16} className='form-row'>
+        <Col md={3}>
+            <label>From</label>
+        <DatePicker 
+        allowClear={false} 
+        style={{width:"100%",  borderRadius:"6px"}}
+        className='datePicker-modern' 
+        format="DD-MM-YYYY" 
+        value={moment(from)} 
+        onChange={(e)=>{setFrom(moment(e).toISOString())}}/>
       </Col>
-      <Col md={12}><hr /></Col>
-      <Col md={3} className="mt-3">
-        <div>From</div>
-        <Form.Control type={"date"} size="sm" value={from} onChange={(e) => setFrom(e.target.value)} />
+      <Col md={3}>
+            <label>To</label>
+        <DatePicker 
+        allowClear={false} 
+        style={{width:"100%", borderRadius:"6px"}}
+        className='datePicker-modern' 
+        format="DD-MM-YYYY" 
+        value={moment(to)} 
+        onChange={(e)=>{setTo(moment(e).toISOString())}}/>
       </Col>
-      <Col md={3} className="mt-3">
-        <div>To</div>
-        <Form.Control type={"date"} size="sm" value={to} onChange={(e) => setTo(e.target.value)} />
+      <Col md={6}>
+        <label>Account</label>
+        <Select
+          showSearch
+          allowClear
+          style={{ width: '100%' }}
+          className='select-modern'
+          placeholder="Debit Account"
+          onChange={(e) => setDebitAccount(e)}
+          options={records}
+          value={debitAccount}
+          filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+          filterSort={(a, b) => (a?.label ?? '').toLowerCase().localeCompare((b?.label ?? '').toLowerCase())}
+        />
       </Col>
-      <Col md={6} className="py-5"></Col>
-      <Col md={4} className="mb-3">
-        <div>Company</div>
-        <Radio.Group className='mt-1'
-          value={company}
-          onChange={(e)=>{setCompany(e.target.value)}}
-        >
-          <Radio value={1}>SEA NET SHIPPING & LOGISTICS</Radio>
-          <Radio value={3}>AIR CARGO SERVICES</Radio>
-        </Radio.Group>
-      </Col>
-      <Col md={9} className="mb-3">
+      </Row>
+
+      <Row gutter={16} >
+        <Col md={8}>
+        <div className="card-section">
         <b>Currency</b><br />
-        <Radio.Group className="mt-1"
+        <Radio.Group className="mt-2"
          value={currency}
          onChange={handleCurrencyChange}>
         <Radio value={"PKR"}>PKR</Radio>
@@ -132,28 +157,16 @@ const TrialBalance = () => {
           <Radio value={"OMR"}>OMR</Radio>
           <Radio value={"BDT"}>BDT</Radio>
         </Radio.Group>
-      </Col>
-      <Col md={12}></Col>
-      <Col md={4}>
-        <div>Account</div>
-        <Select
-          showSearch
-          allowClear
-          style={{ width: '100%' }}
-          placeholder="Debit Account"
-          onChange={(e) => setDebitAccount(e)}
-          options={records}
-          value={debitAccount}
-          filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-          filterSort={(a, b) => (a?.label ?? '').toLowerCase().localeCompare((b?.label ?? '').toLowerCase())}
-        />
+        </div>
       </Col>
       <Col md={4}>
-      <div>Report</div>
+      <div className="card-section">
+      <b><label>Report</label></b>
       <Select
           showSearch
           style={{ width: '100%' }}
           placeholder="Report"
+          className='select-modern'
           onChange={(e) => setReportType(e)}
           options={[
             { value:'6- Columns Simplified View', label:'6- Columns Simplified View' },
@@ -167,30 +180,40 @@ const TrialBalance = () => {
           filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
           filterSort={(a, b) => (a?.label ?? '').toLowerCase().localeCompare((b?.label ?? '').toLowerCase())}
         />
+        </div>
       </Col>
-
-     
-    </Row>
-    <hr/>
-    <Row>
-    <Col md={4} style={{border:'1px solid silver', marginLeft:12}} className='py-1'>
-            Options
-            <br/>            <br/>
-
-            <Radio.Group onChange={(e)=>setOptions(e.target.value)} value={options}>
+      </Row>
+      </div></Col>
+      <Row gutter={16} className=" mt-3">
+        <Col md={8}>
+        <div className="card-section">
+        <h5>Company</h5>
+        <Radio.Group className='mt-1'
+          value={company}
+          onChange={(e)=>{setCompany(e.target.value)}}
+        >
+          <Radio value={1}>SEA NET SHIPPING & LOGISTICS</Radio>
+          <Radio value={3}>AIR CARGO SERVICES</Radio>
+        </Radio.Group>
+        </div>
+      </Col>
+      <Col md={4} >
+      <div className="card-section">
+            <h5>Options</h5>
+            <Radio.Group className='mt-1' onChange={(e)=>setOptions(e.target.value)} value={options}>
                 {/* <Radio value={"exclude"}>Exclude 0 </Radio> */}
                 <Radio value={"excludeOpening"}>Exclude Opening</Radio>
                 <Radio default value={"showall"}>Show All</Radio>
             </Radio.Group>
+            </div>
           </Col>
-          </Row>
+      </Row>
     <div className='d-flex'>
 
-    <button className='btn-custom mt-3 px-3' onClick={handleSubmit}>
-      Go
-    </button>
+    
     </div>
-  </div>
+    </div>
+    </div>  
   )
 }
 

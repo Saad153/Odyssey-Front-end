@@ -391,7 +391,7 @@ const Report = ({query, result}) => {
               Export to Excel
             </button>
         </div>
-        <PrintTopHeader company={query.company} from={query.from} to={query.to} />
+        <PrintTopHeader company={query.company} from={moment(query.from).format('DD-MM-YYYY')} to={moment(query.to).format('DD-MM-YYYY')} />
         {/* <hr className="" /> */}
         <div className="printDiv mt-2" style={{ maxHeight: overFlow ? "60vh" : "100%", overflowY: "auto", overflowX: "hidden" , height:"auto" }}>
           <div className="table-sm-1 mt-2">

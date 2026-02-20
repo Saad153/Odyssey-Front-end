@@ -26,7 +26,8 @@ const ListData = ({ voucherData }) => {
     PopConfirm("Confirmation", "Are You Sure To Remove This Charge?",
     () => {
       axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
-        id: id
+        id: id,
+        employeeID: Cookies.get("loginId")
       }).then((x) => {
         Router.push("/accounts/voucherList")
       })

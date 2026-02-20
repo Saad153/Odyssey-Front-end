@@ -13,6 +13,7 @@ import axios from 'axios';
 import Gl from './Gl';
 import moment from 'moment';
 import { setField } from '/redux/paymentReciept/paymentRecieptSlice';
+import Cookies from 'js-cookie';
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
@@ -240,7 +241,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           edit: state.edit,
           advance: state.advance,
           voucherId: state.voucherId,
-          narration: state.voucherNarration
+          narration: state.voucherNarration,
+          employeeId: Cookies.get("loginId")
         }).then((x) => {
           x.data.status=="success"?back():null
           x.data.status=="success"?openNotification('Success', `Transaction Saved`, 'green'):openNotification('Error', `Error saving transaction`, 'red')

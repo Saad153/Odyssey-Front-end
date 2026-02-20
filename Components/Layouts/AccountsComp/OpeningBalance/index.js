@@ -102,7 +102,8 @@ const OpeningBalance = ({id, voucherData}) => {
       axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_VOUCEHR, {        
         id:voucherData,id, exRate, currency,
         companyId, vType:"OP", costCenter:"KHI", 
-        type:"Opening Balance", Voucher_Heads:voucherAccounts
+        type:"Opening Balance", Voucher_Heads:voucherAccounts,
+        employeeId: Cookies.get("loginId")
       }).then((x)=>{
         if(x.data.status=="success"){
           openNotification("Success", `Opening Balance Updated Successfully!`, "green")

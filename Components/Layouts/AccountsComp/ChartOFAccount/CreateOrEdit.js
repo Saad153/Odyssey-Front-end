@@ -4,6 +4,7 @@ import { Form, Input, Switch, Select, notification } from 'antd';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import Cookies from 'js-cookie';
 
 const { Option } = Select;
 
@@ -61,6 +62,7 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
         id: state.selectedRecord.id,
         title: state.selectedRecord.title,
         CompanyId: companyId,
+        employeeId: Cookies.get("loginId"),
       };
 
       if (!state.isParent) {
@@ -92,7 +94,9 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
         ...(x.children ? renderAccountOptions(x.children, level + 1) : []),
         ];
     });
-    };
+  };
+
+  console.log("Current State in CreateOrEdit:", state);
 
   return (
     <div className="employee-styles">
@@ -107,6 +111,7 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
                 showSearch
                 placeholder="Select Parent Account"
                 allowClear
+                value={state.selectedParentId}
                 style={{ width: "100%" }}
                 optionFilterProp="children"
                 onChange={(e)=>{

@@ -180,7 +180,8 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
 
   const deleteVoucher = () => {
     axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_PAY_REC,{
-      id: state.voucherId
+      id: state.voucherId,
+      employeeId: Cookies.get("loginId")
     }).then((x) => {
       // console.log(x.data.status)
       if(x.data.status=="success"){

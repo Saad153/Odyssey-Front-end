@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import moment from 'moment';
 
   const initialState = {
-    from: "2023-07-01",
+    from: moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString(),
     to: moment().format("YYYY-MM-DD"),
     company: 4,
     jobType: ['SE','SI','AE','AI'],

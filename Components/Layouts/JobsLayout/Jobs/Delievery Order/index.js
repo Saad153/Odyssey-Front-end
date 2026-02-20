@@ -38,6 +38,7 @@ const DeliveryOrder = ({ state, jobData, clearingAgents, companyId }) => {
     await axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPSERT_DELIVER_ORDER, {
       ...data,
       SEJobId,
+      employeeId: Cookies.get("loginId"),
     }).then((x) => {
       if (x.data.status == "success") {
         if (!data.id) {
@@ -59,7 +60,7 @@ const DeliveryOrder = ({ state, jobData, clearingAgents, companyId }) => {
 
   async function getValues() {
     await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_DELIVER_ORDER, {
-      headers: { id: jobData.id },
+      headers: { id: jobData.id, employeeId: Cookies.get("loginId") },
     }).then((res) => {
       if (res.data.result !== null) {
         let deliveryOrder = res.data.result;

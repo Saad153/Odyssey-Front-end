@@ -29,7 +29,7 @@ const Employees = () => {
   }, [])
 
   const getEmployees = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES).then((x)=>{
+    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES, { headers: { employeeId: Cookies.get("loginId") } }).then((x)=>{
       if(x.data.status=='success'){
         setEmployeeList(x.data.result);
         setOriginalEmployeeList(x.data.result)

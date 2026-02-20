@@ -22,7 +22,7 @@ const LoadingProgram = ({ state, jobData }) => {
     // console.log(data)
     await axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPSERT_LOADING_PROGRAM, {
         ...data,
-        SEJobId,
+        SEJobId, employeeId: Cookies.get("loginId"),
     }).then((x) => {
       if(x.data.status=="success"){
         if(!data.id){
@@ -42,7 +42,7 @@ const LoadingProgram = ({ state, jobData }) => {
 
   const getValues = async() => {
     await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_LOADING_PROGRAM, {
-      headers: { id: jobData.id },
+      headers: { id: jobData.id, employeeId: Cookies.get("loginId"), }, 
     })  .then((res) => {
       if (res.data.result !== null) {
         let loadingProgram = res.data.result;

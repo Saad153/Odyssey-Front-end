@@ -180,7 +180,7 @@ const Summary = ({ query, result }) => {
       
   const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
   console.log("summary query:", query)
-  console.log("summary result:", result)
+  // console.log("summary result:", result)
 
 useEffect(() => {
   if (!result || !Array.isArray(result.temp)) {
@@ -293,7 +293,14 @@ useEffect(() => {
 
   setRecords(temp);
 }, [result]);
-const groupedRecords = records.reduce((acc, item) => {
+
+  const [currentPage,setCurrentPage] = useState(1);
+  const [recordsPerPage] = useState(30);
+  const indexOfLast = currentPage * recordsPerPage ;
+  const indexOfFirst = indexOfLast - recordsPerPage;
+  const currentRecords = records ? records.slice(indexOfFirst,indexOfLast) : [];
+  const noOfPages = records ? Math.ceil(records.length / recordsPerPage) : 0 ;
+  const groupedRecords = currentRecords.reduce((acc, item) => {
   const group = item.groupName || "OTHERS";
 
   if (!acc[group]) acc[group] = [];
@@ -305,7 +312,7 @@ const groupedRecords = records.reduce((acc, item) => {
   
   return (                          
     <>  
-    <PrintTopHeader company={query.company} query={query} from={query.from} to={query.to} /> 
+    <PrintTopHeader company={query.company} query={query} from={moment(query.from).format('DD-MM-YYYY')} to={moment(query.to).format('DD-MM-YYYY')} /> 
         
     <div className="report-header" style={{ marginTop: '20px', marginBottom: '20px', position: 'relative' }}>
       <div style={{ position: 'relative', marginBottom: '25px' }}>
@@ -331,11 +338,11 @@ const groupedRecords = records.reduce((acc, item) => {
                 <Row style={{  marginTop: '15px', justifyContent: 'right' }}>
                 
                   <Col md={4}>
-                    <div style={{ display: 'flex', justifyContent: 'space-evenly  ' }}>
-                      <span style={{ fontWeight: 'bold' }}>As On :</span>
-                      <span style={{ borderBottom: '1px solid #3f0202', minWidth: '120px', marginLeft: '10px' }}>{query.from}</span>
-                    </div>
-                  </Col>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <span style={{ fontWeight: 'bold' }}>As On :</span>
+                    <span style={{ borderBottom: '1px solid #3f0202', minWidth: '150px', marginLeft: '10px', textAlign: 'center' }}>{moment(query.to).format('DD-MM-YYYY')}</span>
+                </div>
+                </Col>
                 </Row> 
       <div className="table-box">
           <div className="table-scroll">
@@ -393,6 +400,9 @@ const groupedRecords = records.reduce((acc, item) => {
       </table>
       </div>
            
+      </div>
+      <div className="d-flex justify-content-end mt-4">
+        <Pagination noOfPages={noOfPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       </div>
    </>
      );

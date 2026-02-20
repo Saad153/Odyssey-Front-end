@@ -187,7 +187,8 @@ const Voucher = ({ id }) => {
 
   const handleDelete = (id) => {
     axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
-      id: id
+      id: id,
+      employeeID: Cookies.get("loginId")
     }).then((x) => {
       Router.push("/accounts/voucherList")
     })
@@ -204,6 +205,15 @@ const Voucher = ({ id }) => {
       openNotification('Error', `Type not Selected`, 'red')
       await setVoucherBuffer(false)
       return
+    }
+    let i = 0
+    for(let x of state.Voucher_Heads){
+      i++
+      if(x.ChildAccountId==""||x.ChildAccountId==undefined){
+        openNotification('Error', `Account not Selected in Row ${i}`, 'red')
+        await setVoucherBuffer(false)
+        return
+      }
     }
     // state.vType==""||state.vType==undefined?openNotification('Error', `Type not Selected`, 'red'):null
     if(state.vType!="JV"&&state.vType!="TV"){
@@ -231,7 +241,19 @@ const Voucher = ({ id }) => {
         }
       }
     }
-    state.debitTotal==0.0||state.debitTotal==undefined?openNotification('Error', `No amount entered`, 'red'):null
+    if(state.creditTotal==0.0&&state.debitTotal==0.0){
+      openNotification('Error', `No amount entered`, 'red')
+      await setVoucherBuffer(false)
+      return
+    }
+    // state.creditTotal==0.0||state.creditTotal==undefined?{openNotification('Error', `No amount entered`, 'red')
+    //   await setVoucherBuffer(false)
+    //   return
+    // }:null
+    // state.debitTotal==0.0||state.debitTotal==undefined?{openNotification('Error', `No amount entered`, 'red')
+    //   await setVoucherBuffer(false)
+    //   return
+    // }:null
     state.Voucher_Heads.forEach((x)=>{
       x.ChildAccountId==""||x.ChildAccountId==undefined?openNotification('Error', `Account not Selected`, 'red'):null
     })
@@ -325,7 +347,7 @@ const Voucher = ({ id }) => {
         //   ...voucher
         // }
         result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/updateVoucher`, {
-          id: state.id,
+          id: state.id, employeeId: Cookies.get('loginId'),
           ...voucher
         }).then((x) => {
           openNotification('Success', `Voucher Updated Successfully`, 'green')
@@ -334,7 +356,7 @@ const Voucher = ({ id }) => {
           // Router.push(`/accounts/vouchers/${x.data.result[0].id}`);
         });
       }else{
-        result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createVoucher`, voucher).then((x) => {
+        result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createVoucher`, { ...voucher, employeeId: Cookies.get("loginId")}).then((x) => {
           openNotification('Success', `Voucher Saved Successfully`, 'green')
           dispatch(setField({ field: 'edit', value: true }))
           Router.push(`/accounts/vouchers/${x.data.result.id}`);

@@ -293,7 +293,7 @@ const Report = ({ query }) => {
         </div>
         {!state.load &&
           <>
-            <PrintTopHeader company={query.company} />
+            <PrintTopHeader company={query.company} from={moment(query.from).format("DD-MM-YYYY")} to={moment(query.to).format("DD-MM-YYYY")} />
             <hr className='mb-2' />
             <Sheet state={state} overflow={true} />
           </>

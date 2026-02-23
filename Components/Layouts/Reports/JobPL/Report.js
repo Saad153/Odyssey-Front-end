@@ -192,10 +192,10 @@ const Report = ({ query }) => {
   const [columnDefs, setColumnDefs] = useState([
     { headerName: 'Job No', field: 'jobNo', width: 120, filter: true },
     {
-      headerName: 'Date', field: 'createdAt', width: 70, filter: true,
+      headerName: 'Date', field: 'createdAt', width: 120, filter: true,
       cellRenderer: params => {
         return <>
-          {moment(params.value).format("MM/DD/YY")}
+          {moment(params.value).format("DD/MM/YY")}
         </>;
       }
     },

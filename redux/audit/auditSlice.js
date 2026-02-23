@@ -3,8 +3,8 @@ import moment from 'moment';
 
 const initialState = {
   audit_reportType: 'Audit Log',
-  audit_sdate: moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).format("MM-DD-YYYY"): moment().set({ month: 6, date: 1 }).format("MM-DD-YYYY"),
-  audit_edate: moment().format("MM-DD-YYYY"),
+  audit_sdate: moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString(),
+  audit_edate: moment().toISOString(),
   audit_form: 'All',
   audit_user: 'All',
   audit_action: 'All',

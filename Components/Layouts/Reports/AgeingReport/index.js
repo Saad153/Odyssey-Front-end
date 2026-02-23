@@ -209,10 +209,10 @@ const AgeingReport = () => {
                   </Col>
                 </Row>
                 <Row className="mt-3">  
-                  <Col md={6}>
+                  <Col md={5}>
                     <div className="card-section">
                       <h5 className='form-label'>Party Types</h5>
-                    <Radio.Group className="mt-1" 
+                    <Radio.Group className="mt-2" 
                     value={state.ageing_partyType} 
                     onChange={e => {
                       // if(e.target.value == "Local"){dispatch(setAgeingField({field:"ageing_currency",value:"PKR"}))}
@@ -221,11 +221,12 @@ const AgeingReport = () => {
                       <Radio value={"Local"}>Local Party</Radio>
                       <Radio value={"Agent"}>Agent</Radio>
                     </Radio.Group>
+                    
                     </div>
                 </Col>  
-                <Col md={6}>
+                <Col md={7}>
                     <div className="card-section">
-                    <h6 className="form-label">Type</h6>
+                    <h5 className="form-label">Type</h5>
                     <Select
                         showSearch
                         style={{ width: '100%' }}

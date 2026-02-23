@@ -126,7 +126,7 @@ const JobPL = () => {
               pathname: `/reports/jobPLReport/report`,
               query: {
                 to: moment(to).toString(),
-                from: moment(from).month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toString(): moment().set({ month: 6, date: 1 }).toISOString(),
+                from: moment(from).toString(),
                 client: client,
                 company: company,
                 subtype:subType,

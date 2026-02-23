@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Row, Col, Form } from 'react-bootstrap';
 import { Select, Radio, DatePicker, Checkbox } from 'antd';
 import { FileExcelOutlined } from '@ant-design/icons';
@@ -13,7 +13,18 @@ import AuditReport from '/Components/Layouts/Reports/AuditLog/report';
 
 const AuditLog = () => {
     const state = useSelector((state) => state.audit);
+    const [exporting, setExporting] = useState(false);
     const dispatch = useDispatch();
+
+    const ExportExcel = async () => {
+        setExporting(true);
+        try {
+          const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getHistory`,{headers:{ audit_sdate: state.audit_sdate, audit_edate: state.audit_edate, audit_form: state.audit_form, audit_user: state.audit_user, audit_action: state.audit_action }}).then((x)=>x.data);
+          console.log("Export to Excel Result:", result)
+        } catch (error) {
+          console.error("Error exporting to Excel:", error);
+        }
+      };
 
     const getFormNames = async () => {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getFormTypes`);
@@ -82,8 +93,37 @@ const AuditLog = () => {
                         Go
                     </button>
                     <button
-                    className="btn-custom-excel my-1 px-4">
-                    <FileExcelOutlined /> Export to Excel
+                    className="btn-custom-excel my-1 px-4"
+                     onClick={() => {
+                                              // ExportExcel();
+                                              setExporting(true);
+                                              const iframe = document.createElement('iframe');
+                                                  iframe.style.display = 'none'; 
+                                                  iframe.src =
+                                                    `/reports/auditLog/report` +
+                                                    `?audit_reportType=${state.audit_reportType}` +
+                                                    `&from=${state.audit_sdate}` +
+                                                    `&to=${state.audit_edate}` +
+                                                    `&form=${state.audit_form}` +
+                                                    `&user=${state.audit_user}` +
+                                                    `&action=${state.audit_action}` +       
+                                                    `&autoExport=true`;
+                                            document.body.appendChild(iframe);
+                                            setTimeout(() => {
+                                            setExporting(false);
+                                                }, 1500);
+                                              }}
+                                            >
+                                          {exporting ? (
+                                            <>
+                                              <span className="spinner-border spinner-border-sm me-2" />
+                                              Exporting...
+                                            </>
+                                              ) : (
+                                            <>
+                                              <FileExcelOutlined /> Export to Excel
+                                            </>
+                                              )}
                 </button>
                         </div>
                     </div>
@@ -97,8 +137,8 @@ const AuditLog = () => {
                         style={{ width: "100%", borderRadius:"6px" }}
                         className='datePicker-modern'
                         allowClear={false}
-                        value={moment(state.lg_sdate)}
-                        onChange={(e) => dispatch(setAuditField({ field: "audit_sdate", value: e }))}
+                        value={moment(state.audit_sdate)}
+                        onChange={(e) => dispatch(setAuditField({ field: "audit_sdate", value: moment(e).toISOString()}))}
                     />
                   </Col>
         
@@ -108,8 +148,8 @@ const AuditLog = () => {
                       style={{ width: "100%", borderRadius:"6px" }}
                       className='datePicker-modern'
                       allowClear={false}
-                      value={moment(state.lg_edate)}
-                      onChange={(e) => dispatch(setAuditField({ field: "audit_edate", value: e }))}
+                      value={moment(state.audit_edate)}
+                      onChange={(e) => dispatch(setAuditField({ field: "audit_edate", value: moment(e).toISOString()}))}
                     />
                   </Col>
 

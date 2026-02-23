@@ -281,11 +281,6 @@ const Report = ({ query }) => {
       {/* <---- Reports View only , setting overflow to true ----> */}
       {query.report == "viewer" && <>
         <ReactToPrint content={() => inputRef} trigger={() => <AiFillPrinter className="blue-txt cur fl-r" size={30} />} />
-        {/* {state.csvData.length > 0 && <div className="d-flex justify-content-end " >
-          <CSVLink data={state.csvData}  className="btn-custom mx-2 fs-11 text-center" style={{ width: "110px", float: 'left' }}>
-            Excel
-          </CSVLink>
-        </div>} */}
         <div className="d-flex justify-content-end " >
           <button className="btn-custom-green px-3 mx-2" onClick={exportToExcel}>
             Export to Excel

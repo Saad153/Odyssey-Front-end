@@ -39,60 +39,6 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
   const tabs = useSelector((state)=>state.tabs.tabs)
   const [ deleteAccess, setDeleteAccess ] = useState(false);
 
-  // useEffect(() => {
-  //   console.log("This is running")
-  //   let tempState = {...baseValues, ...jobData};
-  //   let tempVoyageList = [...state.voyageList];
-  //   tempVoyageList.length>0?null:tempVoyageList.push(tempState.Voyage);
-  //   tempState = {
-  //     ...tempState,
-  //     eta: tempState.eta==""?"":moment(tempState.eta),
-  //     etd: tempState.etd==""?"":moment(tempState.etd),
-  //     approved: tempState.approved=="true"||tempState.approved[0]=='1'?["1"]:[],
-  //     arrivalDate: tempState.arrivalDate==""?"":moment(tempState.arrivalDate),
-  //     arrivalTime: tempState.arrivalTime==""?"":moment(tempState.arrivalTime),
-  //     departureDate: tempState.departureDate==""?"":moment(tempState.departureDate),
-  //     departureTime: tempState.departureTime==""?"":moment(tempState.departureTime),
-  //     polDate: tempState.polDate==""?"":moment(tempState.polDate),
-  //     podDate: tempState.podDate==""?"":moment(tempState.podDate),
-  //     aesDate: tempState.aesDate==""?"":moment(tempState.aesDate),
-  //     aesTime: tempState.aesTime==""?"":moment(tempState.aesTime),
-  //     eRcDate: tempState.eRcDate==""?"":moment(tempState.eRcDate),
-  //     eRcTime: tempState.eRcTime==""?"":moment(tempState.eRcTime),
-  //     eRlDate: tempState.eRlDate==""?"":moment(tempState.eRlDate),
-  //     eRlTime: tempState.eRlTime==""?"":moment(tempState.eRlTime),
-  //     jobDate: tempState.jobDate==""?"":moment(tempState.jobDate),
-  //     shipDate:tempState.shipDate==""?"":moment(tempState.shipDate),
-  //     doorMove:tempState.doorMove==""?"":moment(tempState.doorMove),
-  //     cutOffDate:tempState.cutOffDate==""?"":moment(tempState.cutOffDate),
-  //     cutOffTime:tempState.cutOffTime==""?"":moment(tempState.cutOffTime),
-  //     siCutOffDate:tempState.siCutOffDate==""?"":moment(tempState.siCutOffDate),
-  //     siCutOffTime:tempState.siCutOffTime==""?"":moment(tempState.siCutOffTime),
-  //     vgmCutOffDate:tempState.vgmCutOffDate==""?"":moment(tempState.vgmCutOffDate),
-  //     vgmCutOffTime:tempState.vgmCutOffTime==""?"":moment(tempState.vgmCutOffTime)
-  //   }
-  //   let tempEquipments = [];
-  //   if(tempState.SE_Equipments?.length>0){
-  //     tempEquipments = tempState.SE_Equipments
-  //   }else{
-  //     tempEquipments = [{id:'', size:'', qty:'', dg:tempState.dg=="Mix"?"DG":tempState.dg, gross:'', teu:''}]
-  //   }
-  //   dispatch({type:"set",payload:{
-  //     exRate:tempState.exRate,
-  //     equipments:tempEquipments,
-  //     voyageList:tempVoyageList,
-  //   }});
-  //   getInvoices(tempState.id, dispatch);
-  //   reset({...tempState});
-  //   if(allValues.approved!=1 && checkEmployeeAccess()){
-  //     setDeleteAccess(true)
-  //   }else{
-  //     // console.log("Not Approved")
-  //     // console.log(deleteAccess)
-  //   }
-
-  // }, [state.selectedRecord]);
-
   useEffect(() => {
   if (!state.selectedRecord) return; // ✅ don't run unnecessarily
 
@@ -270,15 +216,6 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
       createdById: Cookies.get("loginId"),
       notification: approved[0] == '1' ?  `Job No ${data.jobNo} Approved`: `Job No ${data.jobNo} Dispproved`
     }
-    // axios.post('https://app.nativenotify.com/api/notification',{
-    //   "appId": 20066,
-    //   "appToken": "6QD0cTOyCmXeUb7Q6okftL",
-    //   "title": `${type} JOB`,
-    //   "body": approved[0] == '1' ?  `Job No ${data.jobNo} Approved`: `Job No ${data.jobNo} Dispproved`,
-    //   "dateSent": "3-8-2024 0:17AM",
-    //   "pushData": { "yourProperty": "yourPropertyValue" },
-    //   "bigPictureURL": "Big picture URL as a string"
-    // })
     setTimeout(async() => {
       await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_SEAJOB,{data, employeeId: Cookies.get("loginId"),}).then((x)=>{
         if(x.data.status=='success'){
@@ -303,18 +240,10 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
       ['jobData', {id, type}],
       (x) => x?{...x,result:obj}:x
     )
-
-    // console.log(state.values)
-    // console.log(allValues.approved)
-    // console.log(checkEmployeeAccess())
     if(allValues.approved!=1 && checkEmployeeAccess()){
-      // console.log("approved")
       setDeleteAccess(true)
-      // console.log(deleteAccess)
     }else{
       setDeleteAccess(false)
-      // console.log("Not Approved")
-      // console.log(deleteAccess)
     }
   }, [allValues, state.equipments])
   return(
@@ -370,7 +299,6 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
                   id:allValues.id, employeeId: Cookies.get("loginId")
                 }).then(async(x)=>{
                   let oldTabs = await type=="SE"?tabs.filter((x)=> {return x.key!="4-3" }):
-                  // console.log(oldTabs)
                   await type=="SI"?tabs.filter((x)=> {return x.key!="4-6" }):
                   await type=="AE"?tabs.filter((x)=> {return x.key!="7-2" }):
                   await tabs.filter((x)=> {return x.key!="7-5" })

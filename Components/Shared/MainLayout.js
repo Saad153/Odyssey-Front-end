@@ -2,7 +2,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { companySelect, addCompanies } from '/redux/company/companySlice';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Layout, Menu, Select } from 'antd';
 import Router, { useRouter } from 'next/router';
 import Cookies, { set } from 'js-cookie';
@@ -26,6 +26,9 @@ const { Header, Content, Sider } = Layout;
 
 const MainLayout = ({children}) => {
 
+  const searchSelectRef = useRef(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+
   const newRouter = useRouter();
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
@@ -37,6 +40,43 @@ const MainLayout = ({children}) => {
   const items = setAccesLevels(dispatch, collapsed);
   const tabs = useSelector((state) => state.tabs.value);
   const tabItems = useSelector((state) => state.tabs.tabs);
+
+  // Focus the Sider search Select on Alt + L
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      // Require Alt + L (case-insensitive)
+      const isAltL = e.altKey && (e.key || '').toLowerCase() === 'l';
+      if (!isAltL) return;
+
+      // Don't trigger while typing in inputs/textareas/contenteditable
+      const t = e.target;
+      const isFormField =
+        t &&
+        (t.tagName === 'INPUT' ||
+        t.tagName === 'TEXTAREA' ||
+        t.isContentEditable);
+      if (isFormField) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      // If Sider is collapsed, expand first, then focus
+      if (collapsed) {
+        setCollapsed(false);
+        // Wait for layout to expand
+        setTimeout(() => {
+          searchSelectRef.current?.focus?.();
+          setSearchOpen(true);
+        }, 0);
+      } else {
+        searchSelectRef.current?.focus?.();
+        setSearchOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [collapsed]);
 
   useEffect(() => { 
     getCompanies(); 
@@ -589,20 +629,34 @@ useEffect(() => {
           {!collapsed && <p className='wh-txt'>Dashboard</p>}
         </span>
       </div>
-      {!collapsed && <div className='px-3'>
-        <Select 
-          showSearch 
-          style={{ width: "101%" }} 
-          placeholder="Search to Select" 
-          optionFilterProp="children" 
-          onChange={searchPages}
-          filterOption={(input, option) => (option?.label.toLowerCase() ?? '').includes(input.toLowerCase())}
-          filterSort={(optionA, optionB) => (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase()) }
-          options={searchingList.map((x)=>{
-            return { value:x?.key, label:x?.label }
-          })}
-        />
-      </div>}
+        {!collapsed && <div className='px-3'>
+          <Select
+            ref={searchSelectRef}             // <-- add ref
+            showSearch
+            open={searchOpen}                 // <-- controlled open
+            onDropdownVisibleChange={setSearchOpen}
+            onFocus={() => setSearchOpen(true)} // open when focused (hotkey)
+            onBlur={() => setSearchOpen(false)}  // optional: close on blur
+            style={{ width: "101%" }}
+            placeholder="Search to Select"
+            optionFilterProp="children"
+            onChange={(value) => {            // close after choosing
+              setSearchOpen(false);
+              searchPages(value);
+            }}
+            filterOption={(input, option) =>
+              (option?.label.toLowerCase() ?? '').includes(input.toLowerCase())
+            }
+            filterSort={(optionA, optionB) =>
+              (optionA?.label ?? '').toLowerCase()
+                .localeCompare((optionB?.label ?? '').toLowerCase())
+            }
+            options={searchingList.map((x) => ({
+              value: x?.key,
+              label: x?.label
+            }))}
+          />
+        </div>}
       <Menu mode="inline" theme='dark' defaultSelectedKeys={['1']} items={!collapsed?items:[]} />
     </Sider>
     }

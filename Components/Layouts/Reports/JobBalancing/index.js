@@ -171,7 +171,7 @@ const JobBalancing = () => {
           filterOption={filterOption}
           options={values?.vendor?.overseasAgent.map((x)=>{ return { value:x.id, label:x.name }})}
         />
-        Local Vendor
+        {/* Local Vendor
         <Select defaultValue="" onChange={()=>{ }} style={{width:'100%', marginBottom:5}} size='small' disabled
           options={[
             {value:1,label:"Sea Net Shipping & Logistics"},
@@ -209,7 +209,7 @@ const JobBalancing = () => {
           showSearch
           filterOption={filterOption}
           options={values?.sr?.map((x)=>{ return { value:x.id, label:x.name }})}
-        />
+        /> */}
         <Row>
           <Col md={4}>
             Currency

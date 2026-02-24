@@ -157,7 +157,7 @@ const InvoiceBalaincing = () => {
             filterOption={filterOption}
             options={values?.vendor?.overseasAgent.map((x) => { return { value: x.id, label: x.name } })}
           />
-          Client
+          {/* Client
           <Select defaultValue="" onChange={() => { }} style={{ width: '100%', marginBottom: 5 }} size='small' disabled
             options={[
               { value: 1, label: "Sea Net Shipping & Logistics" },
@@ -196,7 +196,7 @@ const InvoiceBalaincing = () => {
               { value: 2, label: "Cargo Linkers" },
               { value: 3, label: "Air Cargo Services" },
             ]}
-          />
+          /> */}
             Sales Representor
           <Select defaultValue="" style={{ width: '100%', marginBottom: 5 }} size='small'
             showSearch

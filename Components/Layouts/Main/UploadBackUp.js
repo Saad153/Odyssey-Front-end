@@ -20,13 +20,14 @@ const Upload_CoA = () => {
         {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
         {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
         {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
-        await importCommodities();
-        await importVoyages();
-        await importCOA();
-        await importCharges();
-        await importParties();
-        await importJobs();
-        await importVouchers();
+        // await importCommodities();
+        // await importVoyages();
+        // await importCOA();
+        // await importCharges();
+        // await importParties();
+        // await importJobs();
+        // await importVouchers();
+        await FixAirJobs();
         // await checkInvoices()
         // await importAirPorts()
         // await importEmployees()
@@ -38,6 +39,17 @@ const Upload_CoA = () => {
     const [V, setVendors] = useState(false);
     const [CV, setCV] = useState(false);
     const [GL, setNonGl] = useState(false);
+
+    const FixAirJobs = async () => {
+        try{
+            console.log("Getting Air Jobs Data for Fix")
+            const result = await axios.get("http://localhost:8081/jobs/fixJobs");
+            console.log("Fix Jobs Result:", result.data.result)
+            await axios.post("http://localhost:8084/seaJob/fixAirJobs", result.data.result)
+        }catch(e){
+            console.error(e)
+        }
+    }
 
     const checkInvoices = async () => {
         console.log("Getting Invoices")

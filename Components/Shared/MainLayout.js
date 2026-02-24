@@ -526,6 +526,41 @@ const MainLayout = ({children}) => {
   // If removed tab was NOT active → do nothing
 }
 
+// Close current tab on Ctrl + Shift + E
+useEffect(() => {
+  const onKeyDown = (e) => {
+    // Require Ctrl + Shift + E
+    const isCtrlShiftE =
+      e.altKey &&
+      // e.ctrlKey &&
+      (e.key || '').toLowerCase() === 'w';
+
+    if (!isCtrlShiftE) return;
+
+    // Avoid triggering while typing in inputs, textareas, or contenteditable
+    const target = e.target;
+    const isFormField =
+      target &&
+      (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      );
+
+    if (isFormField) return;
+
+    if (toggleState) {
+      e.preventDefault();
+      e.stopPropagation();
+      removeTab(toggleState);
+    }
+  };
+
+  window.addEventListener('keydown', onKeyDown);
+  return () => window.removeEventListener('keydown', onKeyDown);
+}, [toggleState, removeTab]);
+``
+
 
   const searchPages = (e) => {
     let item;

@@ -636,7 +636,7 @@ const InvoiceBalancingReport = ({ result, query }) => {
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
-      worksheet.insertRow(1, ['', '', '', '', '','Date: From: ' + query.from + ' To: ' + query.to,]);
+      worksheet.insertRow(1, ['', '', '', '', '','Date: From: ' + moment(query.from).format('DD-MM-YYYY') + ' To: ' + moment(query.to).format('DD-MM-YYYY'),]);
       worksheet.insertRow(1, ['', '', '', '', '','House# D-213, DMCHS, Siraj Ud Daula Road, Karachi']);
       Cookies.get('companyId')=='1' && worksheet.insertRow(1, ['', '', '', '', '','Seanet Shipping & Logistics']);
       Cookies.get('companyId')=='2' && worksheet.insertRow(1, ['', '', '', '', '','Air Cargo Services']);
@@ -750,7 +750,7 @@ const InvoiceBalancingReport = ({ result, query }) => {
         <>
           {records.length > 0 &&
             <>
-              <PrintTopHeader company={query.company} />
+              <PrintTopHeader company={query.company} from={moment(query.from).format('DD-MM-YYYY')} to={moment(query.to).format('DD-MM-YYYY')} />
               <hr className='mb-1' />
               <div className='table-sm-1' style={{ maxHeight: overflow ? 600 : "100%", overflowY: 'auto' }}>
                 <Table className='tableFixHead' bordered style={{ fontSize: 12 }} ref={inputRef}>

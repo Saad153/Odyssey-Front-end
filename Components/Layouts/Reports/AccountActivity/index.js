@@ -1,6 +1,6 @@
 import axios from 'axios';
 import moment from "moment";
-import { Select, Radio, Modal } from 'antd';
+import { Select, Radio, Modal, DatePicker } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Row, Col, Table, Spinner, Form } from 'react-bootstrap';
@@ -18,8 +18,8 @@ const AccountActivity = () => {
   const [debitAccount, setDebitAccount] = useState("");
   const [creditAccount, setCreditAccount] = useState("");
   const [company, setCompany] = useState(1);
-  const [from, setFrom] = useState(moment("2023-07-01").format("YYYY-MM-DD"));
-  const [to, setTo] = useState(moment().format("YYYY-MM-DD"));
+  const [from, setFrom] = useState(moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString());
+  const [to, setTo] = useState(moment().toISOString());
   const dispatch = useDispatch()
 
   const commas = (a) => { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }
@@ -115,26 +115,27 @@ const AccountActivity = () => {
             <Col md={7}>
             <div className="card-section">
             <Row className='form-row'>
-              <Col md={6} className="mt-3">
+              <Col md={6} className="my-3">
               <label>From</label>
-              <Form.Control 
-              type={"date"}  
-              value={from}
-              size="sm" 
-              style={{width: '100%'}}
-              onChange={(e) => setFrom(e.target.value)} />
+              <DatePicker
+            // type="date" 
+            style={{ width: "100%", borderRadius:"6px" }} 
+            className='datePicker-modern'
+            value={from ? moment(from) : null} 
+            onChange={(e) => setFrom(e ? e.startOf("day").toISOString() : null)} />
             </Col>
-            <Col md={6} className="mt-3">
+            <Col md={6} className="my-3">
               <label>To</label>
-              <Form.Control 
-              type={"date"} 
-              size="sm" 
-              value={to} 
-              onChange={(e) => setTo(e.target.value)} />
+              <DatePicker 
+            // type="date" 
+            value={to ? moment(to) : null}
+            style={{ width: "100%", borderRadius:"6px" }} 
+            className='datePicker-modern'
+            onChange={(e) => setTo(e ? e.endOf("day").toISOString() : null)} />
             </Col>
             </Row>
             <Row className='card-section2'>
-              <Col md={8} className="mb-3">
+              <Col md={8} className="my-2">
                 <label className='mt-0'>Company</label>
                 <Radio.Group className='mt-1'
                   value={company}
@@ -168,6 +169,7 @@ const AccountActivity = () => {
               }
             />
           </Col>
+          <br />
             <Col md={12} className="my-3">
               <h6>Credit Account</h6>
               <Select

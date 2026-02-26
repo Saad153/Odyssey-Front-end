@@ -1,19 +1,20 @@
 import { Row, Col, Form } from "react-bootstrap";
-import { Select, Input, Checkbox, Radio } from 'antd';
+import { Select, Input, Checkbox, Radio, DatePicker } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getJobValues } from '/apis/jobs';
 import { incrementTab } from '/redux/tabs/tabSlice';
-import { useDispatch, useSelector } from 'react-redux';
 import Router from "next/router";
+import { useDispatch, useSelector } from 'react-redux';
+// import {useRouter} from "next/router";
 import moment from 'moment';
 import { setFilterValues } from "/redux/filters/filterSlice";
 
 const InvoiceBalaincing = () => {
 
   const dispatch = useDispatch();
-  const [from, setFrom] = useState(moment("2023-07-01").format("YYYY-MM-DD"));
-  const [to, setTo] = useState(moment().format("YYYY-MM-DD"));
+  const [from, setFrom] = useState(moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString());
+  const [to, setTo] = useState(moment().toISOString());
   const [company, setCompany] = useState(4);
   const [overseasAgent, setOverseasAgent] = useState(undefined);
   const [representator, setRepresentator] = useState("");
@@ -38,7 +39,7 @@ const InvoiceBalaincing = () => {
     reportType,
     balance
   };
-
+  
   const filterValues = useSelector(state => state.filterValues);
   const filters = filterValues.find(page => page.pageName === "AgentInvoiceBalancing");
   const value = filters ? filters.values : null
@@ -105,165 +106,210 @@ const InvoiceBalaincing = () => {
   };
 
   return (
-    <div className="base-page-layout">
-        <div className="page-header">
+        <div className="base-page-layout">
+            <div className="page-header d-flex justify-content-between align-items-center">
             <h4 className='fw-7 m-0'>Invoice Balancing</h4>
-            <button className='btn-custom my-1 px-4' onClick={handleSearch}>
+            <button className='btn-custom px-4' onClick={handleSearch}>
               Go
             </button>
-        </div>
+            </div>
+        {status == "success" &&
         <div className="form-card">
-    {status == "success" &&
-      <Row>
-        <Col md={7} style={{ border: '1px solid silver' }} className='mx-3 py-2'>
-          Company
-          <Select size='small' style={{ width: '100%', marginBottom: 5 }}
-            allowClear
-            value={company}
-            onChange={(e) => { setCompany(e) }}
-            options={[
-              { value: 1, label: "Sea Net Shipping & Logistics" },
-              { value: 2, label: "Cargo Linkers" },
-              { value: 3, label: "Air Cargo Services" },
-              {value:4,label:"SNS & ACS"},
-            ]}
-          />
-          <Row>
-            <Col md={3}>
-              Pay Type
-              <Select defaultValue="" style={{ width: '100%', marginBottom: 5 }} size='small'
-                onChange={(e) => { setPayType(e) }} value={payType}
-                options={[
-                  { value: "Recievable", label: "Recievable" },
-                  { value: "Payble", label: "Payble" },
-                  { value: "All", label: "All" },
-                ]}
-              />
+          
+      <div className="filter-section">
+              <Row gutter={16}>
+                <Col md={4}>
+                  <label>From</label>
+                  <DatePicker
+                  // type="date" 
+                  style={{ width: "100%", borderRadius:"6px" }} 
+                  className='datePicker-modern'
+                  value={from ? moment(from) : null} 
+                  onChange={(e) => setFrom(e ? e.startOf("day").toISOString() : null)} />
+                </Col>
+      
+                <Col md={4}>
+                  <label>To</label>
+                  <DatePicker 
+                  // type="date" 
+                  value={to ? moment(to) : null}
+                  style={{ width: "100%", borderRadius:"6px" }} 
+                  className='datePicker-modern'
+                  onChange={(e) => setTo(e ? e.endOf("day").toISOString() : null)} />
+                </Col>
+      
+                <Col md={4}>
+                  <label>Company</label>
+                  <Select
+                    
+                    style={{ width: "100%" }}
+                    className='select-modern'
+                    value={company}
+                    onChange={(e) => setCompany(e)}
+                    options={[
+                      { value: 1, label: "Sea Net Shipping & Logistics" },
+                      { value: 2, label: "Cargo Linkers" },
+                      { value: 3, label: "Air Cargo Services" },
+                      { value: 4, label: "SNS & ACS" },
+                    ]}
+                  />
+                </Col>
+      
+                <Col md={4}>
+                  <label>Pay Type</label>
+                  <Select
+                    // size="small"
+                    style={{width: '100%'}}
+                    className='select-modern'
+                    value={payType}
+                    onChange={(e) => setPayType(e)}
+                    options={[
+                      { value: "Recievable", label: "Recievable" },
+                      { value: "Payble", label: "Payble" },
+                      { value: "All", label: "All" },
+                    ]}
+                  />
+                </Col>
+      
+                {/* <Col md={4}>
+                  <label>Party Specific</label>
+                  <Select
+                    // size="small"
+                    style={{width: '100%'}}
+                    showSearch
+                    allowClear
+                    className='select-modern'
+                    filterOption={filterOption}
+                    onChange={(e) => setParty(e)}
+                    options={[
+                      ...values?.party?.client?.map((x) => ({ value: x.id, label: x.name })),
+                      ...values?.vendor?.localVendor?.map((x) => ({ value: x.id, label: x.name })),
+                      ...values?.vendor?.airLine?.map((x) => ({ value: x.id, label: x.name })),
+                      ...values?.vendor?.chaChb?.map((x) => ({ value: x.id, label: x.name })),
+                      ...values?.vendor?.forwarder?.map((x) => ({ value: x.id, label: x.name })),
+                      ...values?.vendor?.sLine?.map((x) => ({ value: x.id, label: x.name })),
+                      ...values?.vendor?.transporter?.map((x) => ({ value: x.id, label: x.name })),
+                    ]}
+                  />
+                </Col> */}
+      
+                <Col md={4}>
+                  <label>Overseas Agent</label>
+                  <Select
+                    
+                    style={{width: '100%'}}
+                    showSearch
+                    allowClear
+                    className='select-modern'
+                    filterOption={filterOption}
+                    onChange={(e) => setOverseasAgent(e)}
+                    options={values?.vendor?.overseasAgent?.map((x) => ({
+                      value: x.id,
+                      label: x.name,
+                    }))}
+                  />
+                </Col>
+              </Row>
+            </div>
+            <div className="filter-section">
+              <Row gutter={16}>
+                <Col md={4}>
+                  <label>Sales Representor</label> 
+                  <Select defaultValue="" 
+                  style={{width:'100%'}}
+                  className='select-modern' 
+                  onChange={(e)=>{setRepresentator(e) }} 
+                  showSearch filterOption={filterOption} 
+                  options={values?.sr?.map((x)=>{ return { value:x.id, label:x.name }})} />
+                </Col>
+      
+                <Col md={4}> 
+                <label>Job # </label>
+                <Input 
+                style={{width:'100%', borderRadius: '6px', height: '35px', border: '1px solid #ccc'}}
+                className='select-modern'
+                /> 
+                </Col>
+      
+                <Col md={4}>
+                  <label>File # </label>
+                  <Input 
+                  style={{width:'100%', borderRadius: '6px', height: '35px', border: '1px solid #ccc'}}
+                  className='select-modern'
+                   />
+                </Col>
+      
+                <Col md={4}>
+                    <label>Currency </label>
+                    <Select 
+                    defaultValue="" 
+                    style={{width:'100%'}}
+                    className='select-modern'
+                    onChange={(e)=>{setCurrency(e) }} 
+                    options={[ { value:"PKR", label:"PKR"}, { value:"USD", label:"USD"}, { value:"EUR", label:"EUR"}, { value:"GBP", label:"GBP"}, { value:"AED", label:"AED"}, { value:"OMR", label:"OMR"}, { value:"BDT", label:"BDT"}, { value:"CHF", label:"CHF"}, ]} 
+                    /> 
+                </Col>
+      
+                <Col md={4}>
+                <label>Flight #</label> 
+                <Input 
+                style={{width:'100%', borderRadius: '6px', height: '35px', border: '1px solid #ccc'}}
+                className='input-modern'
+                /> 
+                </Col> 
+                <Col md={4}> 
+                <label>Voyage # </label>
+                <Input 
+                style={{width:'100%', borderRadius: '6px', height: '35px', border: '1px solid #ccc'}}
+                className='input-modern'
+                /> 
+                </Col>
+              </Row>
+            </div>
+            {/* ================= REPORT + TYPE SECTION ================= */}
+            <div className='last'> <Row className="mt-3">
+              <Col md={4}>
+                <div className="filter-section">
+                  <h6 className="section-title">Report Type</h6>
+                  <Radio.Group
+                    onChange={(e) => setReportType(e.target.value)}
+                    value={reportType}
+                  >
+                    <Radio value={"viewer"}>Viewer</Radio>
+                    <Radio value={"grid"}>Grid</Radio>
+                  </Radio.Group>
+                </div>
+              </Col>
+              
+              <Col md={4}>
+              <div className="filter-section1"> 
+                <h6 className="section-title">Operation Types</h6>
+                <Checkbox.Group
+                  options={plainOptions}
+                  defaultValue={['SE', 'SI', 'AE', 'AI']}
+                  onChange={(e) => setJobTypes(e)}
+                />
+              </div>
             </Col>
             <Col md={4}>
-              Job #
-              <Input style={{ marginBottom: 10 }} size='small' />
+              <div className="filter-section">
+                <h6 className="section-title">Balance</h6>
+                <Radio.Group
+                  onChange={(e) => setBalance(e.target.value)}
+                  value={balance}
+                >
+                  <Radio value={"exclude0"}>Exclude 0</Radio>
+                  <Radio value={"showall"}>Show All</Radio>
+                </Radio.Group>
+              </div>
             </Col>
-            <Col>
-              File #
-              <Input style={{ marginBottom: 10 }} size='small' />
-            </Col>
-          </Row>
-          Overseas Agent
-          <Select defaultValue="" placeholder="Select OverSeas Agent" value={overseasAgent} style={{ width: '100%', marginBottom: 5 }} size='small'
-            onChange={(e) => setOverseasAgent(e)}
-            showSearch
-            allowClear
-            filterOption={filterOption}
-            options={values?.vendor?.overseasAgent.map((x) => { return { value: x.id, label: x.name } })}
-          />
-          {/* Client
-          <Select defaultValue="" onChange={() => { }} style={{ width: '100%', marginBottom: 5 }} size='small' disabled
-            options={[
-              { value: 1, label: "Sea Net Shipping & Logistics" },
-              { value: 2, label: "Cargo Linkers" },
-              { value: 3, label: "Air Cargo Services" },
-            ]}
-          />
-          Local Vendor
-          <Select defaultValue="" onChange={() => { }} style={{ width: '100%', marginBottom: 5 }} size='small' disabled
-            options={[
-              { value: 1, label: "Sea Net Shipping & Logistics" },
-              { value: 2, label: "Cargo Linkers" },
-              { value: 3, label: "Air Cargo Services" },
-            ]}
-          />
-          Forwarder/Coloader
-          <Select defaultValue="" onChange={() => { }} style={{ width: '100%', marginBottom: 5 }} size='small' disabled
-            options={[
-              { value: 1, label: "Sea Net Shipping & Logistics" },
-              { value: 2, label: "Cargo Linkers" },
-              { value: 3, label: "Air Cargo Services" },
-            ]}
-          />
-          Shipping Line
-          <Select defaultValue="" onChange={() => { }} style={{ width: '100%', marginBottom: 5 }} size='small' disabled
-            options={[
-              { value: 1, label: "Sea Net Shipping & Logistics" },
-              { value: 2, label: "Cargo Linkers" },
-              { value: 3, label: "Air Cargo Services" },
-            ]}
-          />
-          Air Line
-          <Select defaultValue="" onChange={() => { }} style={{ width: '100%', marginBottom: 5 }} size='small' disabled
-            options={[
-              { value: 1, label: "Sea Net Shipping & Logistics" },
-              { value: 2, label: "Cargo Linkers" },
-              { value: 3, label: "Air Cargo Services" },
-            ]}
-          /> */}
-            Sales Representor
-          <Select defaultValue="" style={{ width: '100%', marginBottom: 5 }} size='small'
-            showSearch
-            filterOption={filterOption}
-            onChange={(e) => { setRepresentator(e) }}
-            options={values?.sr?.map((x) => { return { value: x.id, label: x.name } })}
-          />
-          <Row>
-            <Col md={4}>
-              Currency
-              <Select defaultValue={currency} style={{ width: '100%', marginBottom: 5 }} size='small'
-                onChange={(e) => { console.log(e); setCurrency(e) }}
-                options={[
-                  { value:"PKR", label:"PKR"},
-                  { value:"USD", label:"USD"},
-                  { value:"EUR", label:"EUR"},
-                  { value:"GBP", label:"GBP"},
-                  { value:"AED", label:"AED"},             
-                  { value:"OMR", label:"OMR"},
-                  { value:"BDT", label:"BDT"},             
-                  { value:"CHF", label:"CHF"},
-                ]}
-              />
-            </Col>
-            <Col md={4}>
-              Flight #
-              <Input style={{ marginBottom: 10 }} size='small' />
-            </Col>
-            <Col md={4}>
-              Voyage #
-              <Input style={{ marginBottom: 10 }} size='small' />
-            </Col>
-          </Row>
-          <hr />
-          <Row>
-            <Col md={3} style={{ border: '1px solid silver', marginLeft: 12 }} className='py-1'>
-              Job Types
-              <Checkbox.Group options={plainOptions} defaultValue={['SE', 'SI', 'AE', 'AI']} onChange={(e) => setJobTypes(e)} />
-            </Col>
-            <Col md={2} style={{ border: '1px solid silver', marginLeft: 12 }} className='py-1'>
-              Report Types
-              <Radio.Group onChange={(e) => setReportType(e.target.value)} value={reportType}>
-                <Radio value={"viewer"}>Viewer</Radio>
-                <Radio value={"grid"}>Grid</Radio>
-              </Radio.Group>
-            </Col>
-            <Col md={2} style={{ border: '1px solid silver', marginLeft: 12 }} className='py-1'>
-              Balance
-              <Radio.Group onChange={(e) => setBalance(e.target.value)} value={balance}>
-                <Radio value={"exclude0"}>Exclude 0</Radio>
-                <Radio value={"all"}>Show All</Radio>
-              </Radio.Group>
-            </Col>
-            <Col md={3}></Col>
-            {/* <Col md={1}><button className='btn-custom' onClick={() => handleSearch()}>Go</button></Col> */}
-          </Row>
-        </Col>
-        <Col style={{ border: '1px solid silver' }} className='py-2' md={3}>
-          From
-          <Form.Control type="date" size='sm' value={from} onChange={(e) => setFrom(e.target.value)} className='mb-2' />
-          To
-          <Form.Control type="date" size='sm' value={to} onChange={(e) => setTo(e.target.value)} />
-        </Col>
-      </Row>
-    }
-    </div>
-    </div>
+            </Row>
+            </div>
+          </div>
+      
+     
+  };
+  </div>
   );
 }
 export default React.memo(InvoiceBalaincing);

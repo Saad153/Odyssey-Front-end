@@ -202,7 +202,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                   <Col md={2}>
                     <div className="bl-print" >{parse(cleanNullParagraphs(state.marksContent))}</div>
                     </Col>
-                  <Col md={2}>{parse(state.noOfPckgs)}</Col>
+                  <Col md={2}>{state.noOfPckgs}</Col>
                   <Col md={4}>
                       <div className="bl-print" >
                         {allValues.stamps?.length>0 && allValues.stamps.map((x)=> x?.stamp_group == "4"?stamps[Number(x.code)-1].label:"")}{parse(cleanNullParagraphs(state.descOfGoodsContent))}

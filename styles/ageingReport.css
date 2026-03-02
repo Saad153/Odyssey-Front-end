@@ -306,6 +306,49 @@
   gap: 20px; /* space between checkboxes */
 }
 
+.form-card {
+  background: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.filter-section {
+  background: #dcdcdc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.filter-section label {
+  font-weight: 600;
+  font-size: 13px;
+  /* margin-bottom: 4px; */
+  display: block;
+  /* padding: 2px; */
+}
+.filter-section1 {
+  background: #dcdcdc;
+  padding: 12px;
+  border-radius: 8px;
+}
+.filter-section1 label {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 2px;
+  /* margin-bottom: 4px; */
+ 
+}
+.section-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.input-modern .ant-input {
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  height: 35px !important;
+}
+
 .select-modern .ant-select-selector {
   border-radius: 6px !important;
   border: 1px solid #ccc !important;
@@ -326,7 +369,9 @@
   border-radius: 6px !important;
   height: 25px;
 }
-
+.last{
+  height: 30%;
+}
 
 
 

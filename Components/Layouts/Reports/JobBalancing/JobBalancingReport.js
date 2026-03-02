@@ -220,7 +220,7 @@ const JobBalancingReport = ({ result, query }) => {
         });
       });
 
-      worksheet.insertRow(1, ['', '', '', '', '','Job Balancing Report', '', '', '', '', '', '', '', '', 'Date: From: ' + query.from + ' To: ' + query.to,]);
+      worksheet.insertRow(1, ['', '', '', '', '','Job Balancing Report', '', '', '', '', '', '', '', '', 'Date: From: ' + moment(query.from).format('DD-MM-YYYY') + ' To: ' + moment(query.to).format('DD-MM-YYYY'),]);
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
@@ -324,7 +324,20 @@ const JobBalancingReport = ({ result, query }) => {
       let balance3 = 0.0;
       let balance4 = 0.0;
       let balance5 = 0.0;
-      result.result.filter((x) => (query.options === 'exclude0' ? Math.floor(x.balance.slice(1, -1)) !== 0 : x)).forEach((x)=>{
+      result.result
+        .filter((x) => {
+          if (query.options === "exclude0") {
+            const balance =
+              x.payType !== "Recievable"
+                ? parseFloat(x.total) - parseFloat(x.paid)
+                : parseFloat(x.total) - parseFloat(x.recieved);
+
+            return balance !== 0;
+          }
+          return true;
+        })
+        .forEach((x) => {
+
         //console.log("Total>>",x.total)
         //console.log("payType>>",x.payType)
         if((getAge(x.createdAt)+1)>=0 && (getAge(x.createdAt)+1) <=30){
@@ -750,7 +763,7 @@ const JobBalancingReport = ({ result, query }) => {
       <>
       {result.result?.length > 0 &&
         <>
-          <PrintTopHeader company={query.company} />
+          <PrintTopHeader company={query.company} from={moment(query.from).format("DD-MM-YYYY")} to={moment(query.to).format("DD-MM-YYYY")}/>
           <hr className='mb-2' />
           <div className='table-sm-1' style={{ maxHeight: overflow ? 530 : "50%", overflowY: 'auto' }}>
           <Table className='tableFixHead' bordered style={{ fontSize: 11 }}>

@@ -90,7 +90,8 @@ const LgVat = ({query, result}) => {
             <Row gutter={16} className='form-row'>
             <Col md={2}>
                 <label>From</label>
-                <DatePicker 
+                <DatePicker
+                style={{ width: "100%", borderRadius:"6px" }} 
                 className='datePicker-modern'
                 allowClear={false}
                 value={moment(state.lg_sdate)}
@@ -101,7 +102,7 @@ const LgVat = ({query, result}) => {
           <Col md={2}>
             <label>To</label>
             <DatePicker 
-              style={{ width: "100%" }}
+              style={{ width: "100%", borderRadius:"6px" }}
               className='datePicker-modern'
               allowClear={false}
               value={moment(state.lg_edate)}

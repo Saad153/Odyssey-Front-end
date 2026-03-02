@@ -177,11 +177,14 @@ return(
         let Username = Cookies.get('username')
         if(edit){
           axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_EMPLOYEE,{ values:tempValues, updatedBy:Username, employeeId: Cookies.get("loginId") }).then((x)=>{
-            let arr  = [];
-            console.log("x.data.resultTwo",x.data.resultTwo)
-            x.data.resultTwo.forEach(y => {
-              arr.push({access_name:y.access_name})
-            });
+            // let arr  = [];
+            // console.log("x.data.resultTwo",x.data.resultTwo)
+            // x.data.resultTwo.forEach(y => {
+            //   arr.push({access_name:y.access_name})
+            // });
+            let arr = (x.data.resultTwo || []).map(y => ({
+              access_name: y.access_name
+            }));
             let obj = {
                 id: values.id,
                 name: values.empName,

@@ -45,8 +45,9 @@ const Upload_CoA = () => {
             console.log("Getting Air Jobs Data for Fix")
             const result = await axios.get("http://localhost:8081/jobs/fixJobs");
             console.log("Fix Jobs Result:", result.data.result)
-            // await axios.post("http://localhost:8084/seaJob/fixAirJobs", result.data.result)
-            await axios.post("http://localhost:8084/seaJob/fixAEBL", result.data.result.BL)
+            const { BL, ...rest } = result.data.result
+            await axios.post("http://localhost:8084/seaJob/fixAirJobs", rest)
+            // await axios.post("http://localhost:8084/seaJob/fixAEBL", BL)
         }catch(e){
             console.error(e)
         }

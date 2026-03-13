@@ -134,6 +134,7 @@ const AuditLog = () => {
                     <Col md={3}>
                         <label>From</label>
                         <DatePicker 
+                        format={'DD-MM-YYYY'}
                         style={{ width: "100%", borderRadius:"6px" }}
                         className='datePicker-modern'
                         allowClear={false}
@@ -145,6 +146,7 @@ const AuditLog = () => {
                   <Col md={3}>
                     <label>To</label>
                     <DatePicker 
+                    format={'DD-MM-YYYY'}
                       style={{ width: "100%", borderRadius:"6px" }}
                       className='datePicker-modern'
                       allowClear={false}

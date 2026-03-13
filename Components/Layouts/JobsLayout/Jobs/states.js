@@ -227,7 +227,7 @@ const memoize = (fn) => {
 
 const getClients = memoize(async(id) => {
   const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CLIENTS_FOR_CHARGES, {
-    headers:{id:id}, employeeId: Cookies.get("loginId")
+    headers:{id:id} 
   })
   .then((x)=>x.data.result);
   return result;

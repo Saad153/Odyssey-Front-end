@@ -121,7 +121,7 @@ const JobBalancing = () => {
           <Col md={4}>
             <label>From</label>
             <DatePicker
-            // type="date" 
+            format={'DD-MM-YYYY'}
             style={{ width: "100%", borderRadius:"6px" }} 
             className='datePicker-modern'
             value={from ? moment(from) : null} 
@@ -131,7 +131,7 @@ const JobBalancing = () => {
           <Col md={4}>
             <label>To</label>
             <DatePicker 
-            // type="date" 
+            format={'DD-MM-YYYY'}
             value={to ? moment(to) : null}
             style={{ width: "100%", borderRadius:"6px" }} 
             className='datePicker-modern'

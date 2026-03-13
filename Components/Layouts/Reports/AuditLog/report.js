@@ -83,7 +83,7 @@ const AuditReport = ({ query, result }) => {
           const data = records.map((x, i) => ({
             
             id: i + 1,
-            createdAt: moment(x.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+            createdAt: moment(x.createdAt).format("YYYY-MM-DD HH:MM:SS"),
             Employee: x.Employee?.name || "",
             formName: x.formName || "",
             type: x.type || "",
@@ -189,7 +189,7 @@ const AuditReport = ({ query, result }) => {
 }, {});
     return (
         <>  
-            <PrintTopHeader company={query.company} query={query} from={moment(query.from).format('DD-MM-YYYY')} to={moment(query.to).format('DD-MM-YYYY')} /> 
+            <PrintTopHeader company={query.company} query={query} from={moment(query.from).format('DD-MM-YYYY')} to={moment(query.to).subtract(1, 'days').format('DD-MM-YYYY')} /> 
                 
             <div className="report-header" style={{ marginTop: '20px', marginBottom: '20px', position: 'relative' }}>
               <div style={{ position: 'relative', marginBottom: '25px' }}>
@@ -217,7 +217,7 @@ const AuditReport = ({ query, result }) => {
                 <Col md={4}>  
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <span style={{ fontWeight: 'bold' }}>As On :</span>
-                    <span style={{ borderBottom: '1px solid #3f0202', minWidth: '150px', marginLeft: '10px', textAlign: 'center' }}>{moment(query.to).format('DD-MM-YYYY')}</span>
+                    <span style={{ borderBottom: '1px solid #3f0202', minWidth: '150px', marginLeft: '10px', textAlign: 'center' }}>{moment(query.to).subtract(1, 'days').format('DD-MM-YYYY')}</span>
                 </div>
                 </Col>
             </Row>
@@ -257,7 +257,7 @@ const AuditReport = ({ query, result }) => {
                           <thead className="sticky-header">
                             <tr>
                               <th rowSpan={2}>S #</th>
-                              <th rowSpan={2} style={{ textAlign: "left" }}>Date Time</th>
+                              <th rowSpan={2} style={{ textAlign: "left" }}>Date | Time</th>
                               <th rowSpan={5}>User Log</th>
                               <th colSpan={6} style={{ textAlign: "center" }}>Audit</th>
                               {/* <th rowSpan={2}>Total</th> */}
@@ -284,7 +284,7 @@ const AuditReport = ({ query, result }) => {
                               {groupRows.map((r, index) => (
                                 <tr key={index}>
                                   <td>{index + 1}</td>
-                                  <td className="cell-code">{moment(r.createdAt).format('DD-MM-YYYY')}</td>
+                                  <td className="cell-code">{moment(r.createdAt).format('DD-MM-YYYY | HH:mm:ss')}</td>
                                   <td className="cell-title indent">
                                     {r.Employee?.name}
                                   </td>

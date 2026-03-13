@@ -351,6 +351,10 @@ const ChartOFAccount = ({ accountsData }) => {
     );
   };
 
+  const disableModal = () => {
+    dispatch({ type: 'modalOff' })
+  }
+
   /* -------------------- UI -------------------- */
   return (
     <div className='dashboard-styles'>
@@ -391,7 +395,7 @@ const ChartOFAccount = ({ accountsData }) => {
             footer={false}
             centered={false}
           >
-            <CreateOrEdit state={state} dispatch={dispatch} getAccounts={getAccounts} />
+            <CreateOrEdit state={state} dispatch={dispatch} getAccounts={getAccounts} disableModal={disableModal} />
           </Modal>
         </div>
       </div>

@@ -258,7 +258,7 @@ const Report = ({query, result}) => {
 
         worksheet.insertRow(1, ['', '', '', 'Opening', '',  'Transactions', '', 'Closing']);
         worksheet.insertRow(1, ['']);
-        worksheet.insertRow(1, ['', '', '', 'Date: From: ' + query.from + ' To: ' + query.to,]);
+        worksheet.insertRow(1, ['', '', '', 'Date: From: ' + moment(query.from).format('DD-MM-YYYY') + ' To: ' + moment(query.to).format('DD-MM-YYYY'),]);
         worksheet.insertRow(1, ['', '', '', 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi']);
         query.company=='1' && worksheet.insertRow(1, ['', '', '', 'Seanet Shipping & Logistics']);
         query.company=='2' && worksheet.insertRow(1, ['', '', '', 'Air Cargo Services']);

@@ -95,7 +95,7 @@ const InvoiceBalaincing = () => {
         }
     });
     dispatch(incrementTab({
-        "label": "Agt Inovice Bal Report",
+        "label": "Agt Invoice Bal Report",
         "key": "5-8",
         "id": `report?company=${company}&overseasagent=${overseasAgent}&representator=${representator}&currency=${currency}&jobtypes=${jobTypes}&to=${to}&from=${from}&paytype=${payType}&report=${reportType}&balance=${balance}`
     }))
@@ -121,7 +121,7 @@ const InvoiceBalaincing = () => {
                 <Col md={4}>
                   <label>From</label>
                   <DatePicker
-                  // type="date" 
+                  format={'DD-MM-YYYY'}
                   style={{ width: "100%", borderRadius:"6px" }} 
                   className='datePicker-modern'
                   value={from ? moment(from) : null} 
@@ -131,7 +131,7 @@ const InvoiceBalaincing = () => {
                 <Col md={4}>
                   <label>To</label>
                   <DatePicker 
-                  // type="date" 
+                  format={'DD-MM-YYYY'}
                   value={to ? moment(to) : null}
                   style={{ width: "100%", borderRadius:"6px" }} 
                   className='datePicker-modern'

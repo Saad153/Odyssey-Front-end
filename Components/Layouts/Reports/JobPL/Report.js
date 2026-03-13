@@ -12,6 +12,7 @@ import { CSVLink } from "react-csv";
 import ExcelJS from "exceljs";
 import Pagination from "/Components/Shared/Pagination";
 import { FileExcelOutlined } from '@ant-design/icons';
+import { current } from '@reduxjs/toolkit';
 
 
 const Report = ({ query }) => {
@@ -185,7 +186,7 @@ const Report = ({ query }) => {
       <>
         <PrintTopHeader company={query.company} />
         <hr className='mb-2' />
-        <Sheet state={state} overflow={overflow} fontSize={fontSize} />
+        <Sheet state={state} overflow={overflow} fontSize={fontSize}  currentPage={currentPage} noOfPages={noOfPages} />
       </>
     )
   }
@@ -301,7 +302,7 @@ const Report = ({ query }) => {
           <>
             <PrintTopHeader company={query.company} from={moment(query.from).format("DD-MM-YYYY")} to={moment(query.to).format("DD-MM-YYYY")} />
             <hr className='mb-2' />
-            <Sheet state={{...state, records: currentRecords}} overflow={true} />
+          <Sheet state={{...state, records: currentRecords}} overflow={true} currentPage={currentPage} noOfPages={noOfPages} />
           </>
         }
         {state.load && <Spinner />}

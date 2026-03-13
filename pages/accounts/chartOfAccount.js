@@ -22,10 +22,10 @@ export async function getServerSideProps({req,res}){
           "id": `${cookies.get('companyId')}`
       }
   }).then((x)=>x.data);
-  const accountsData = await accountRequest
+  // const accountsData = await accountRequest
   // console.log(accountsData.result[0].Parent_Accounts)
 
   return{
-      props: { accountsData:accountsData }
+      props: { accountsData:accountRequest }
   }
 }

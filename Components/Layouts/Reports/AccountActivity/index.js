@@ -15,8 +15,8 @@ const AccountActivity = () => {
   const [load, setLoad] = useState(false);
   const [records, setRecords] = useState([]);
   const [voucherRecords, setVoucherRecords] = useState([]);
-  const [debitAccount, setDebitAccount] = useState("");
-  const [creditAccount, setCreditAccount] = useState("");
+  const [debitAccount, setDebitAccount] = useState();
+  const [creditAccount, setCreditAccount] = useState();
   const [company, setCompany] = useState(1);
   const [from, setFrom] = useState(moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString());
   const [to, setTo] = useState(moment().toISOString());
@@ -118,7 +118,7 @@ const AccountActivity = () => {
               <Col md={6} className="my-3">
               <label>From</label>
               <DatePicker
-            // type="date" 
+            format={'DD-MM-YYYY'}
             style={{ width: "100%", borderRadius:"6px" }} 
             className='datePicker-modern'
             value={from ? moment(from) : null} 
@@ -127,7 +127,7 @@ const AccountActivity = () => {
             <Col md={6} className="my-3">
               <label>To</label>
               <DatePicker 
-            // type="date" 
+            format={'DD-MM-YYYY'} 
             value={to ? moment(to) : null}
             style={{ width: "100%", borderRadius:"6px" }} 
             className='datePicker-modern'
@@ -157,6 +157,7 @@ const AccountActivity = () => {
             <h6>Debit Account</h6>
             <Select
               showSearch
+              allowClear
               style={{ width: '100%' }}
               onChange={(e) => setDebitAccount(e)}
               options={records}
@@ -174,6 +175,7 @@ const AccountActivity = () => {
               <h6>Credit Account</h6>
               <Select
                 showSearch
+                allowClear
                 style={{ width: '100%' }}
                 placeholder="Credit Account"
                 onChange={(e) => setCreditAccount(e)}
@@ -195,7 +197,7 @@ const AccountActivity = () => {
       
       </div>
       {/* modal open  */}
-      <Modal open={visible} width={"80%"} onOk={() => setVisible(false)}
+      <Modal open={visible} width={"80%"} style={{ top: '20px' }} onOk={() => setVisible(false)}
         onCancel={() => { setVisible(false); setVoucherRecords([]); }}
         footer={false} maskClosable={false}
         title={`Account Activity`}

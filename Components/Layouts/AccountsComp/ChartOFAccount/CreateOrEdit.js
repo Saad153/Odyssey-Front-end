@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 
 const { Option } = Select;
 
-const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
+const CreateOrEdit = ({ state, dispatch, getAccounts, disableModal }) => {
   const companyId = useSelector((s) => s.company.value);
 
   const openNotification = (title, message, color) => {
@@ -40,8 +40,14 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
 
       const { data } = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_CHILD_ACCOUNT, payload);
       if (data.status === "success") {
-        getAccounts(data);
+        const accountRequest = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS,{
+            headers:{
+                "id": `${Cookies.get('companyId')}`
+            }
+        }).then((x)=>x.data);
+        getAccounts(accountRequest);
         dispatch({ type: "toggle", fieldName: "visible", payload: false });
+        disableModal();
         openNotification("Success", `Account ${state.title} Created!`, "green");
       } else {
         openNotification("Failure", `An account named "${state.title}" already exists!`, "red");
@@ -63,6 +69,7 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
         title: state.selectedRecord.title,
         CompanyId: companyId,
         employeeId: Cookies.get("loginId"),
+        parentId: parseInt(state.selectedParentId)
       };
 
       if (!state.isParent) {
@@ -72,8 +79,14 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
 
       const { data } = await axios.post(endpoint, payload);
       if (data.status === "success") {
-        getAccounts(data);
+        const accountRequest = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS,{
+            headers:{
+                "id": `${Cookies.get('companyId')}`
+            }
+        }).then((x)=>x.data);
+        getAccounts(accountRequest);
         openNotification("Success", `Account ${state.selectedRecord.title} Updated!`, "green");
+        disableModal();
       } else {
         openNotification("Failure", `A Similar Account With Name ${state.selectedRecord.title} Already Exists!`, "red");
       }
@@ -111,7 +124,7 @@ const CreateOrEdit = ({ state, dispatch, getAccounts }) => {
                 showSearch
                 placeholder="Select Parent Account"
                 allowClear
-                value={state.selectedParentId}
+                value={parseInt(state.selectedParentId)}
                 style={{ width: "100%" }}
                 optionFilterProp="children"
                 onChange={(e)=>{

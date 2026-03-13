@@ -89,7 +89,7 @@ const Ledger = () => {
             dispatch(incrementTab({
               "label": "Ledger Report",
               "key": "5-7",
-              "id": `${account}?from=${from}&to=${to}&name=${name}&company=${company}&currency=${currency}`
+              "id": `${account}?from=${moment(from).format("DD-MM-YYYY").toString()}&to=${moment(to).format("DD-MM-YYYY").toString()}&name=${name}&company=${company}&currency=${currency}`
             }))
           }
         }

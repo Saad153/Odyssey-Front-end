@@ -5,7 +5,7 @@ import { incrementTab } from '/redux/tabs/tabSlice';
 import { useRouter } from 'next/router';
 import moment from 'moment';
 
-const Sheet = ({state, overflow, fontSize}) => {
+const Sheet = ({state, overflow, fontSize, currentPage, noOfPages}) => {
 
     const router = useRouter();
     const dispatch = useDispatch();
@@ -86,27 +86,28 @@ const Sheet = ({state, overflow, fontSize}) => {
             
         </tr>
         )})}
+        {currentPage == noOfPages &&
         <tr className='f fs-11 text-center'>
             <td colSpan={6}></td>
             <td >Total: </td>
             <td style={{ minWidth:120 }}>{setCommas(state.totalRevenue)}</td>
             <td style={{ minWidth:120 }}>{setCommas(
-    Array.isArray(state.records)
-      ? state.records.reduce((x, c) => Number(c.cost) + x, 0)
-      : 0
-  )}
-</td>  
-<td>         
-{setCommas(
-    Array.isArray(state.records)
-      ? state.records.reduce((x, c) => Number(c.actual) + x, 0)
-      : 0
-  )}
-</td>   
-
+                Array.isArray(state.records)
+                ? state.records.reduce((x, c) => Number(c.cost) + x, 0)
+                : 0
+            )}
+            </td>  
+            <td>         
+            {setCommas(
+                Array.isArray(state.records)
+                ? state.records.reduce((x, c) => Number(c.actual) + x, 0)
+                : 0
+            )}
+            </td>   
             <td>{setCommas(state.totalgainLoss)}</td>
             <td>{setCommas(state.totalAfter)}</td>
         </tr>
+        }
         </tbody>
         </Table>
         </div>

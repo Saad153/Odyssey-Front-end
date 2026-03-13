@@ -10,10 +10,12 @@ import { Spinner } from "react-bootstrap";
 import { AgGridReact } from 'ag-grid-react';
 import { CSVLink } from "react-csv";
 import ExcelJS from "exceljs";
+import Pagination from "/Components/Shared/Pagination";
+import { FileExcelOutlined } from '@ant-design/icons';
 
 
 const Report = ({ query }) => {
-
+  // const [ records, setRecords ] = useState([]);
   let inputRef = useRef(null);
   const [username, setUserName] = useState("");
 
@@ -113,7 +115,7 @@ const Report = ({ query }) => {
       worksheet.addRows(data);
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
-      worksheet.insertRow(1, ['', '', '', 'Date: From: ' + query.from + ' To: ' + query.to,]);
+      worksheet.insertRow(1, ['', '', '', 'Date: From: ' + moment(query.from).format('DD-MM-YYYY') + ' To: ' + moment(query.to).format('DD-MM-YYYY'),]);
       worksheet.insertRow(1, ['', '', '', 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi']);
       query.company=='1' && worksheet.insertRow(1, ['', '', '', 'Seanet Shipping & Logistics']);
       query.company=='2' && worksheet.insertRow(1, ['', '', '', 'Air Cargo Services']);
@@ -267,30 +269,39 @@ const Report = ({ query }) => {
 
 
 
-  const defaultColDef = useMemo(() => ({
-    sortable: true,
-    resizable: true,
-  }));
+      const defaultColDef = useMemo(() => ({
+        sortable: true,
+        resizable: true,
+      }));
 
-  const getRowHeight = useCallback(() => {
-    return 38;
-  }, []);
-
+    const getRowHeight = useCallback(() => {
+      return 38;
+    }, []);
+   const [currentPage,setCurrentPage] = useState(1);
+     const [recordsPerPage] = useState(30);
+     const indexOfLast = currentPage * recordsPerPage ;
+     const indexOfFirst = indexOfLast - recordsPerPage;
+     const records = state.records || [];
+    const currentRecords = records.slice(indexOfFirst, indexOfLast);
+    const noOfPages = Math.ceil(records.length / recordsPerPage);
+     
+   
+    
   return (
-    <div className='base-page-layout'>
+    <div className='base-page-layout' >
       {/* <---- Reports View only , setting overflow to true ----> */}
       {query.report == "viewer" && <>
-        <ReactToPrint content={() => inputRef} trigger={() => <AiFillPrinter className="blue-txt cur fl-r" size={30} />} />
-        <div className="d-flex justify-content-end " >
-          <button className="btn-custom-green px-3 mx-2" onClick={exportToExcel}>
-            Export to Excel
+        <ReactToPrint content={() => inputRef} trigger={() => <AiFillPrinter className="blue-txt cur mx-2 fl-r" size={30} />} />
+        <div className="d-flex justify-content-end" >
+          <button className="btn-custom-excel px-4 " onClick={exportToExcel}>
+           <FileExcelOutlined /> Export to Excel
           </button>
         </div>
         {!state.load &&
           <>
             <PrintTopHeader company={query.company} from={moment(query.from).format("DD-MM-YYYY")} to={moment(query.to).format("DD-MM-YYYY")} />
             <hr className='mb-2' />
-            <Sheet state={state} overflow={true} />
+            <Sheet state={{...state, records: currentRecords}} overflow={true} />
           </>
         }
         {state.load && <Spinner />}
@@ -319,6 +330,9 @@ const Report = ({ query }) => {
           <div style={{ position: 'absolute', bottom: 10 }}>Printed On: {`${moment().format("YYYY-MM-DD")}`}</div>
           <div style={{ position: 'absolute', bottom: 10, right: 10 }}>Printed By: {username}</div>
         </div>
+      </div>
+      <div className="d-flex justify-content-end mt-4">
+        <Pagination noOfPages={noOfPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       </div>
     </div>
   )

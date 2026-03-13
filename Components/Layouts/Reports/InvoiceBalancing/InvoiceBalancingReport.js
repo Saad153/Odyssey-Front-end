@@ -12,6 +12,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { CSVLink } from "react-csv";
 import Pagination from "/Components/Shared/Pagination";
 import ExcelJS from "exceljs";
+import { FileExcelOutlined } from '@ant-design/icons';
 
 
 const InvoiceBalancingReport = ({ result, query }) => {
@@ -357,7 +358,7 @@ const InvoiceBalancingReport = ({ result, query }) => {
         });
       });
 
-      worksheet.insertRow(1, ['', '', '', '', '','Agent Invoice Balancing Report', '', '', '', '', '', 'Date: From: ' + query.from + ' To: ' + query.to,]);
+      worksheet.insertRow(1, ['', '', '', '', '','Agent Invoice Balancing Report', '', '', '', '', '', 'Date: From: ' + moment(query.from).format('DD-MM-YYYY') + ' To: ' + moment(query.to).format('DD-MM-YYYY'),]);
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
@@ -459,7 +460,8 @@ const InvoiceBalancingReport = ({ result, query }) => {
       let balance3 = 0.0;
       let balance4 = 0.0;
       let balance5 = 0.0;
-      records.filter((x) => (query.balance === 'exclude0' ? Math.floor(x.balance.slice(1, -1)) !== 0 : x)).forEach((x)=>{
+      records.filter((x) => (query.balance === 'exclude0' ? Math.floor(parseFloat(String(x.balance).slice(1, -1))) !== 0 : x)).forEach((x)=>{
+        const balance = parseFloat(String(x.balance).slice(1, -1));
         if(x.age>=0 && x.age <=30){
           x.payType == "Recievable"?
           balance1 += parseFloat(x.balance.slice(1, -1)):
@@ -901,14 +903,14 @@ const InvoiceBalancingReport = ({ result, query }) => {
   <div className='base-page-layout'>
     {query.report == "viewer" && (
       <>
-        <ReactToPrint content={() => inputRef} trigger={() => <AiFillPrinter className="blue-txt cur fl-r" size={30} />} />
+        <ReactToPrint content={() => inputRef} trigger={() => <AiFillPrinter className="blue-txt cur mx-2 fl-r" size={30} />} />
         {/* <---- Excel Download button ----> */}
         <div className="d-flex justify-content-end items-end" >
           {/* <CSVLink data={result.result} className="btn-custom mx-2 fs-11 text-center" style={{ width: "110px", float: 'left' }}>
             Excel
           </CSVLink> */}
-          <button className="btn-custom-green px-3 mx-2" onClick={exportToExcel}>
-            Export to Excel
+          <button className="btn-custom-excel px-4 " onClick={exportToExcel}>
+            <FileExcelOutlined /> Export to Excel
           </button>
         </div>
       </>

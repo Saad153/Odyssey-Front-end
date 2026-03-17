@@ -1,8 +1,10 @@
 import { Row, Col, Table } from 'react-bootstrap';
-import React, { useEffect, useReducer } from 'react';
-import { Modal, Input } from 'antd';
+import React, { useEffect, useReducer, useState } from 'react';
+import { Modal, Input, notification } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
-import { EditOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 function recordsReducer(state, action){
   switch (action.type) {
@@ -63,8 +65,47 @@ const initialState = {
 const Charges = ({chargeData}) => {
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
   const { records, visible, viewHistory } = state;
+  const [ search, setSearch] = useState("")
 
   useEffect(() => dispatch({type:'toggle', fieldName:'records', payload:chargeData.result}), [])
+
+  const openNotification = (title, message, color) => {
+    notification.open({
+      message: title,
+      description: message,
+      icon: <ExclamationCircleOutlined style={{ color }} />,
+    });
+  };
+
+  const deleteCharge = async (x) => {
+    try{
+      console.log("Deleting Charge with ID:", x.id);
+      const deleteResponse = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/delete`, { id: x.id, employeeId: Cookies.get("username") })
+      if(deleteResponse.data.status == 'success'){
+        openNotification("Success", `${x.name} Deleted Successfully`)
+      }else if(deleteResponse.data.status == 'exists'){
+        openNotification("Error", `${x.name} cannot be deleted as it is associated with other records`)
+      }else{
+        openNotification("Error", `Error Deleting ${x.name}`)
+      }
+    }catch(e){
+      console.log(e)
+    }
+  }
+
+  const statusChange = async (x) => {
+    try{
+      console.log("Changing Status of Charge with ID:", x.id);
+      const statusResponse = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/status`, { id: x.id, employeeId: Cookies.get("username") })
+      if(statusResponse.data.status == 'success'){
+        openNotification("Success", `${x.name} Status Changed Successfully`)
+      }else{
+        openNotification("Error", `Error Changing Status ${x.name}`)
+      }
+    }catch(e){
+      console.log(e)
+    }
+  }
 
   return (
     <div className='base-page-layout'>
@@ -74,10 +115,12 @@ const Charges = ({chargeData}) => {
         <Row>
             <Col md={4}></Col>
             <Col md={5}>
-                <Input value={state.search} placeholder="search"
+                <Input value={search} placeholder="search"
                     style={{borderRadius:"5px"}}
                     className='ant-input'
-                    onChange={(e)=>dispatch({type:'toggle', fieldName:'search', payload:e.target.value})} 
+                    onChange={(e)=>{
+                        setSearch(e.target.value)
+                    }}
                 />
                 </Col>
             <Col md={3}><button className='btn-custom right' onClick={()=>dispatch({type:'create'})}>Create</button></Col>
@@ -95,18 +138,20 @@ const Charges = ({chargeData}) => {
             <th>Calculation Type</th>
             <th>Default Payble</th>
             <th>Default Receivable</th>
+            <th>Status</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
           {/* {console.log(records)} */}
         {records?.filter((x)=>{
             if(
-              x.code==state.search.toLowerCase() ||
-              x.name?.toLowerCase()==state.search.toLowerCase() ||
-              x.short?.toLowerCase()==state.search.toLowerCase()||
-              x.currency?.toLowerCase()==state.search.toLowerCase()){
+              x.code==search.toLowerCase() ||
+              x.name?.toLowerCase().includes(search.toLowerCase()) ||
+              x.short?.toLowerCase().includes(search.toLowerCase())||
+              x.currency?.toLowerCase().includes(search.toLowerCase())){
               return x
-            } else if(state.search==""){
+            } else if(search==""){
               return x
             }
         }).map((x, index) => {
@@ -119,6 +164,26 @@ const Charges = ({chargeData}) => {
             <td>{x.calculationType}</td>
             <td>{x.defaultPaybleParty}</td>
             <td>{x.defaultRecivableParty}</td>
+            <td><button className={x.status ? 'status-btn-true' : 'status-btn-false'} onClick={(e) => {
+                e.stopPropagation()
+                console.log(x)
+                statusChange(x)
+              }}>
+              {x.status === false && (
+                <CloseCircleOutlined className="delete-icon" style={{ color: '#1f2937', fontSize: '30px' }} />
+              )}
+              {x.status === true && (
+                <CheckCircleOutlined className="delete-icon" style={{ color: '#1f2937', fontSize: '30px' }} />
+              )}
+              </button></td>
+            <td>
+              <button className='delete-btn1' onClick={(e) => {
+                e.stopPropagation()
+                deleteCharge(x)
+              }}>
+                <DeleteOutlined className="delete-icon" style={{ color: '#1f2937', fontSize: '20px' }} />
+              </button>
+            </td>
           </tr>
           )
         })}

@@ -40,7 +40,6 @@ import axios from "axios";
   const normalizeChargeProfitability = (voucherData, invoiceBillList) => {
   const grouped = {};
 
-  console.log("Voucher Data", voucherData)
 
   voucherData.forEach(item => {
     const chargeId = String(item.Charge_Name);
@@ -75,7 +74,7 @@ import axios from "axios";
     }
   });
 
-  invoiceBillList.filter(item => item.status == '1').forEach(item => {
+  invoiceBillList?.filter(item => item.status == '1').forEach(item => {
     const chargeId = String(item.charge);
 
     if (!grouped[chargeId]) {
@@ -137,7 +136,6 @@ import axios from "axios";
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Running Direct Job Fetch")
       try {
         // async logic here
         const response = await axios.get(
@@ -175,7 +173,6 @@ import axios from "axios";
       );
 
       setDataSource(tableData);
-        console.log("Direct Job Data: ", response.data.result);
         setER(response.data.result);
       } catch (error) {
         console.error(error);
@@ -259,9 +256,6 @@ import axios from "axios";
       key: 'total_net',
     }
   ]
-
-  console.log("Charge List: ", chargeList)
-  console.log("State: ", state)
 
   // useEffect(() => {
   //   let obj = { charges:chargeList, payble:state.payble, reciveable:state.reciveable };

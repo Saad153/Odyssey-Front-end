@@ -237,3 +237,55 @@ a {
   opacity: 1; /* show delete button */
 }
 
+.status-btn-true{
+  height: 35px !important;
+  width: 35px !important;
+  border-radius: 50% !important;
+  /* border: 1px solid black !important; */
+  background-color: #00A67E !important;
+  display: flex !important;            /* center icon */
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.21) !important;
+}
+
+.status-btn-true:hover{
+  background-color: #DC2626 !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.status-btn-true .delete-icon {
+  color: #fff !important;
+  transition: 0.2s !important;
+}
+
+.status-btn-true:hover .delete-icon {
+  color: white !important;
+}
+
+.status-btn-false{
+  height: 35px !important;
+  width: 35px !important;
+  border-radius: 50% !important;
+  /* border: 1px solid black !important; */
+  background-color: #DC2626 !important;
+  display: flex !important;            /* center icon */
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.21) !important;
+}
+
+.status-btn-false:hover{
+  background-color: #00A67E !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.status-btn-false .delete-icon {
+  color: #fff !important;
+  transition: 0.2s !important;
+}
+
+.status-btn-false:hover .delete-icon {
+  color: white !important;
+}
+

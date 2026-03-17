@@ -25,10 +25,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
   const [generate, setGenerate] = useState(false);
   const [InvoiceBuffer, setInvoiceBuffer] = useState(false);
 
-  useEffect(() => {
-    console.log("InvoiceBuffer Triggered", InvoiceBuffer)
-  }, [InvoiceBuffer]);
-
   const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")};
 
   useEffect(() => {
@@ -105,14 +101,11 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
   const approveCharges = async () => {
     if(!state.chargeLoad){
       let charges = []
-      console.log(chargeList)
       chargeList.forEach((x) => {
-        console.log(x.check)
         if(x.check){
           charges.push(x)
         }
       });
-      console.log(charges)
       await calculate()
       await dispatch({type:'toggle', fieldName:'chargeLoad', payload:true})
       await approveHeads(charges, state, dispatch, reset);
@@ -158,7 +151,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
 
   const generateInvoice = async () => {
     calculate()
-    console.log("Generate function called")
     if (!state.chargeLoad) {
       dispatch({ type: 'toggle', fieldName: 'chargeLoad', payload: true });
       let abc = false;
@@ -177,7 +169,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
       });
       // Check if `charges` contains items and `abc` is true
       if (charges.length > 0 && abc) {
-        console.log("Making Invoices");
         await makeInvoice(charges, companyId, reset, operationType, dispatch, state);
       } else {
         dispatch({ type: 'toggle', fieldName: 'chargeLoad', payload: false });
@@ -186,8 +177,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
     }
   };
   
-  console.log("Fields:", fields)
-
   return(
   <>
     <Row>
@@ -202,13 +191,12 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
         }
       }}>Generate Invoice No</div> */}
       <div className='div-btn-custom-green fl-right py-1 px-3 mx-1' style={{cursor: !generate? "not-allowed" : "pointer"}} onClick={async ()=>{
-        console.log("Invoice Buffer1:", InvoiceBuffer)
         if(generate && !InvoiceBuffer){
           setInvoiceBuffer(true)
           await delay(500)
-          console.log("Invoice Buffer2:", InvoiceBuffer)
           let temp = chargeList.filter((x)=>x.partyType=="client"&&x.check)
           if(temp.length==0){
+            setInvoiceBuffer(false)
             openNotification('Error', `No Client Selected!`, 'red');
           }else{
             await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer).then(()=>{
@@ -217,14 +205,12 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
         }
       }}>Auto Invoice</div>
       <div className='div-btn-custom-green fl-right py-1 px-3 mx-1' style={{cursor: !generate? "not-allowed" : "pointer"}} onClick={async ()=>{
-        console.log("Charge List:", chargeList)
-        console.log(state.chargeLoad)
         if(generate && !InvoiceBuffer){
           setInvoiceBuffer(true)
           await delay(500)
           let temp = chargeList.filter((x)=>(x.partyType=="vendor"||x.partyType=="vendors")&&x.check)
-          console.log("filtered Charges", temp)
           if(temp.length==0){
+            setInvoiceBuffer(false)
             openNotification('Error', `No Vendor Selected!`, 'red');
           }else{
             await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer);
@@ -237,6 +223,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
           await delay(500)
           let temp = chargeList.filter((x)=>x.partyType=="agent"&&x.check)
           if(temp.length==0){
+            setInvoiceBuffer(false)
             openNotification('Error', `No Agent Selected!`, 'red');
           }else{
             await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer);
@@ -306,9 +293,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
                         reset({ chargeList: tempState });
                         dispatch({ type: 'toggle', fieldName: 'deleteList', payload: tempDeleteList });
                 })}else{
-                  console.log(x.Invoice, x.Invoice.status, x.Invoice.approved)
-                  console.log("stuck in the else")
-                }
+                    openNotification('Error', `Cannot Remove Approved Charge!`, 'red');}
               }}
             />
           </td>
@@ -341,8 +326,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
                 let tempChargeList = [...chargeList];
                 let check = false
                 tempChargeList[index].charge ? check = true : check = false
-                console.log("Check:", check)
-
                 state.fields.chargeList.forEach(async (y, i) => {
                   if (y.id == e) {
                     tempChargeList[index] = {
@@ -389,7 +372,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
                     } else {
                       tempChargeList[index].invoiceType =  partyData[0].types.includes("Overseas Agent") ? "Agent Bill" : "Job Bill";
                     }
-                    console.log(tempChargeList)
                     if(!check){
                       tempChargeList[index].name = partyData[0].name;
                       tempChargeList[index].partyId = partyData[0].id;
@@ -428,7 +410,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
               disabled={permissionAssign(permissions, x)}
               onChange={async (e) => {
                 let tempChargeList = [...chargeList];
-                console.log("Charge:",tempChargeList[index])
                 tempChargeList[index].pp_cc = e
                 let searchPartyId;
                 if(e == 'PP'){

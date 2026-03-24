@@ -47,8 +47,14 @@ import { useController } from "react-hook-form";
 import React from 'react';
 
 const SelectSearchComp = (props) => {
-  const { control, name, label, options, disabled, width, clear, ...rest } = props;
-  const { field: { onChange, onBlur, value, name: fieldName, ref } } = useController({ control, name });
+  const { control, name, label, options, disabled, width, clear, required = false, ...rest } = props;
+  
+  const controllerConfig = { control, name };
+  if (required) {
+    controllerConfig.rules = { required: `${label} is required` };
+  }
+  
+  const { field: { onChange, onBlur, value, name: fieldName, ref } } = useController(controllerConfig);
 
   const handleValue = value ? value : undefined;
 
@@ -60,23 +66,6 @@ const SelectSearchComp = (props) => {
     }));
 
     return (
-      // <Select
-      //   showSearch
-      //   disabled={disabled}
-      //   style={{ minWidth: width || 200, maxWidth: width || 200, fontSize: 12 }}
-      //   name={fieldName}
-      //   onChange={onChange}
-      //   value={handleValue}
-      //   onBlur={onBlur}
-      //   optionFilterProp="children"
-      //   filterOption={(input, option) =>
-      //     ((option?.label) ?? '').toLowerCase().includes(input.toLowerCase()) ||
-      //     ((option?.code) ?? '').includes(input) // ||
-      //   }
-      //   options={tempVal}
-      //   allowClear={clear}
-      //   {...rest}
-      // />
     <Select
       showSearch
       disabled={disabled}
@@ -96,7 +85,6 @@ const SelectSearchComp = (props) => {
       allowClear={clear}
       {...rest}
     />
-
     );
   };
 

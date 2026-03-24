@@ -11,6 +11,7 @@ import Router from 'next/router';
 import { getJobValues } from '/apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from 'antd';
+import Cookies from 'js-cookie';
 
 function recordsReducer(state, action){
     switch (action.type) {
@@ -95,7 +96,7 @@ const Voyage = ({vesselsData}) => {
   const{ register, control, handleSubmit, reset, formState:{errors} } = useForm({defaultValues:state.values});
 
   const getRecords = async(id) => {
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES, {id:id})
+    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES, {id:id, employeeId: Cookies.get("loginId")})
     .then((x)=>{
       set('voyagerecords', x.data.result);
   }); 
@@ -104,7 +105,7 @@ const Voyage = ({vesselsData}) => {
   const findVoyages = async(data) => {
     set('load', true);
     set('selectedRecord', data);
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES,{id:data.id})
+    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES,{id:data.id, employeeId: Cookies.get("loginId")})
     .then((x)=>{
         set('voyagerecords', x.data.result);
     }); 

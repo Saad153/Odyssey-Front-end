@@ -26,11 +26,11 @@ const CreateOrEdit = ({state, dispatch, baseValues, register, control, useWatch}
         </Col>
         <Col md={3}>
         <SelectSearchComp register={register} name='pol' control={control} label='POL' width={'100%'}
-          options={ports.ports}/>
+          options={ports.ports} allowClear={true}/>
         </Col>
         <Col md={3}>
         <SelectSearchComp register={register} name='pod' control={control} label='POD' width={'100%'}
-          options={ports.ports}/>
+          options={ports.ports} allowClear={true}/>
         </Col>
         <Col md={12}><hr className='my-2' />
             <Row className='mt-3' >

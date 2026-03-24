@@ -12,6 +12,7 @@ import RadioComp from "/Components/Shared/Form/RadioComp";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { getJobValues } from '/apis/jobs';
 import { useQuery } from '@tanstack/react-query';
+import Cookies from "js-cookie";
 
 const CreateOrEdit = ({state, dispatch, baseValues}) => {
 

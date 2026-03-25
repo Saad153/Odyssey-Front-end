@@ -7,6 +7,8 @@ import axios from 'axios'
 import Router from 'next/router'
 import openNotification from "/Components/Shared/Notification";
 import Cookies from 'js-cookie'
+import dayjs from 'dayjs'
+import moment from 'moment'
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
 const OpeningInvoice = (id) => {
@@ -26,7 +28,7 @@ const OpeningInvoice = (id) => {
     await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
       headers: {
         type: "Adjust",
-        companyid: Cookies.get('companyId'),
+        companyid: Cookies.get('companyId'), 
       }
     }).then((x) => {
       console.log("Accounts:", x)
@@ -75,6 +77,12 @@ const OpeningInvoice = (id) => {
       dispatch(setField({ field: 'account', value: result.data.result.result.party_Id }));
       // dispatch(setField({ field: 'creditAccount', value: parseInt(result.data.result.result.party_Id) }));
       dispatch(setField({ field: 'total', value: parseInt(result.data.result.result.total) }));
+      dispatch(setField({ 
+        field: 'createdAt', 
+        value: moment(result.data.result.result.date) 
+          ? dayjs(result.data.result.result.date)
+          : null
+      }));
       
       
       
@@ -93,7 +101,13 @@ const OpeningInvoice = (id) => {
   useEffect(() => {
     fetchAccounts();
   }, [state.accountType])
+  const selectedAccount = state.accounts?.find((x) => {
+  const clientId = x?.Client_Associations?.[0]?.ChildAccountId;
+  const vendorId = x?.Vendor_Associations?.[0]?.ChildAccountId;
 
+    return clientId === state.account || vendorId === state.account;
+  });
+  const partyName = selectedAccount?.name || "N/A";
   const save = async () => {
     if(id.id.id != "new"){
       await deleteInvoice(id.id.id)
@@ -103,9 +117,9 @@ const OpeningInvoice = (id) => {
     }else{
       const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/openingInvoice`, {
         party_Id: state.account,
-        party_Name: state.accounts[0].Client_Associations?state.accounts.find((x) => x.Client_Associations[0].ChildAccountId === state.account)?.name || "N/A":state.accounts.find((x) => x.Vendor_Associations[0].ChildAccountId === state.account)?.name || "N/A",
+        party_Name: partyName,
         type: state.type,
-        date: state.createdAt,
+        date: state.createdAt ? state.createdAt.toISOString() : null,
         amount: state.total,
         currency: state.currency,
         payType: state.payType,
@@ -246,8 +260,14 @@ const OpeningInvoice = (id) => {
             <div style={{width:"20%"}}>
               Date
             </div>
-            <DatePicker style={{ width: '65%', marginLeft: '5%' }} value={state.createdAt} onChange={(e) => dispatch(setField({ field: 'createdAt', value: e }))}>
-            </DatePicker>
+            <DatePicker
+              style={{ width: '65%', marginLeft: '5%' }}
+              value={state.createdAt ? dayjs(state.createdAt) : null}
+              onChange={(date) => {
+                dispatch(setField({ field: 'createdAt', value: moment(date) }))
+              }}
+            />
+            {/* </DatePicker> */}
           </Row>
         </Col>
       </Row>
@@ -298,10 +318,15 @@ const OpeningInvoice = (id) => {
               style={{ width: '65%' }}
               placeholder="Select Account"
               value={state.account}
-              options={state.accounts.map((account) => ({
-                label: `(${account.code}) ${account.name}`,
-                value: account.Client_Associations?account.Client_Associations[0].ChildAccountId:account?.Vendor_Associations[0]?.ChildAccountId,
-              }))}
+              options={state.accounts.map((account) => {
+                const clientId = account.Client_Associations?.[0]?.ChildAccountId;
+                const vendorId = account.Vendor_Associations?.[0]?.ChildAccountId;
+
+                return {
+                  label: `(${account.code}) ${account.name}`,
+                  value: clientId || vendorId || null,
+                };
+              })}
               filterOption={(input, option) =>
                 option?.label?.toLowerCase().includes(input.toLowerCase())
               }

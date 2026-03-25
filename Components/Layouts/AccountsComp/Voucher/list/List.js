@@ -9,6 +9,8 @@ import Router from 'next/router';
 import moment from 'moment';
 import axios from 'axios';
 import { Input } from 'antd';
+import Cookies from 'js-cookie';
+import openNotification from '/Components/Shared/Notification';
 import { checkEmployeeAccess } from '../../../../../functions/checkEmployeeAccess';
 import { checkEditAccess } from '../../../../../functions/checkEditAccess';
 import { resetState } from '/redux/vouchers/voucherSlice';
@@ -22,15 +24,26 @@ const ListData = ({ voucherData }) => {
   
   const dispatch = useDispatch();
 
-  const handleDelete = (id) => {
-    PopConfirm("Confirmation", "Are You Sure To Remove This Charge?",
-    () => {
-      axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
-        id: id,
-        employeeID: Cookies.get("loginId")
-      }).then((x) => {
-        Router.push("/accounts/voucherList")
-      })
+  const handleDelete = async (id) => {
+    PopConfirm("Confirmation", "Are You Sure To Remove This Voucher?",
+    async () => {
+      try {
+        const response = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
+          id: id,
+          employeeID: Cookies.get("loginId")
+        });
+        if (response.data.status === "success") {
+          openNotification("Success", "Voucher Deleted Successfully!", "green");
+          // Update local state to remove the deleted item
+          setRowData(prev => prev.filter(item => item.id !== id));
+          setOriginalData(prev => prev.filter(item => item.id !== id));
+        } else {
+          openNotification("Error", "Failed to delete voucher", "red");
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        openNotification("Error", "An error occurred while deleting the voucher", "red");
+      }
     })
   };
 

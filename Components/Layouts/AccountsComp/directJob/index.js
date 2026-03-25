@@ -215,33 +215,40 @@ const DirectJob = ({ id }) => {
     const user = Cookies.get('username');
 
     let direct_Job = {
-        Entry_No: state.directJob_EntryNumber,
-        Entry_Date: state.directJob_EntryDate,
-        Type: state.directJob_Type,
-        Reference_No: state.directJob_Reference,
-        Operation: state.directJob_Operation,
-        Job_Type: state.directJob_JobType,
-        SubType: state.directJob_SubType,
-        Cheque_No: state.directJob_ChequeNo,
-        Cheque_Date: state.directJob_ChequeDate,
-        Currency: state.directJob_Currency,
-        Ex_Rate: state.directJob_Currency == 'PKR' ? 1 : state.directJob_JobType == 'single' ? state.directJob[0].ExRate: state.directJob_ExRate,
-        Tran_Mode: state.directJob_TransMode,
-        Drawn_At: state.directJob_DrawnAt,
-        Account_No: state.directJob_Account,
-        Paid_To: state.directJob_PaidTo,
-        Paid_Name: state.directJob_PaidTo ? state.directJob_CAccounts.find((x) => x.id == state.directJob_PaidTo).name : '',
-        Narration: state.directJob_Remarks,
-        companyId,
-        Add_By: user,
+      Entry_No: state.directJob_EntryNumber,
+      Entry_Date: state.directJob_EntryDate,
+      Type: state.directJob_Type,
+      Reference_No: state.directJob_Reference,
+      Operation: state.directJob_Operation,
+      Job_Type: state.directJob_JobType,
+      SubType: state.directJob_SubType,
+      Cheque_No: state.directJob_ChequeNo,
+      Cheque_Date: state.directJob_ChequeDate,
+      Currency: state.directJob_Currency,
+      Ex_Rate:
+        state.directJob_Currency == 'PKR'
+          ? 1
+          : state.directJob_JobType == 'single'
+          ? state.directJob[0]?.ExRate
+          : state.directJob_ExRate,
+      Tran_Mode: state.directJob_TransMode,
+      Drawn_At: state.directJob_DrawnAt,
+      Account_No: state.directJob_Account,
+      Paid_To: state.directJob_PaidTo,
+      Paid_Name: state.directJob_PaidTo
+        ? state.directJob_CAccounts.find((x) => x.id == state.directJob_PaidTo)?.name || ''
+        : '',
+      Narration: state.directJob_Remarks,
+      companyId,
+      Add_By: user,
     };
 
-    if(id && id != 'new'){
-        direct_Job.id = parseInt(state.directJob_Id)
-        direct_Job.Voucher_Id = parseInt(state.directJob_VoucherId)
+    if (id && id != 'new') {
+      direct_Job.id = parseInt(state.directJob_Id);
+      direct_Job.Voucher_Id = parseInt(state.directJob_VoucherId);
     }
 
-    const direct_Job_Association = state.directJob.map(job => ({
+    const direct_Job_Association = state.directJob.map((job) => ({
       Job_No: job.JobNumber,
       File_No: job.FileNumber,
       Charge_Name: job.Charge,
@@ -260,22 +267,46 @@ const DirectJob = ({ id }) => {
       Job_Id: job.JobId,
     }));
 
-    console.log("Direct Job to be saved", { direct_Job, direct_Job_Association })
+    console.log("API Payload", { direct_Job, direct_Job_Association });
 
     const result = await axios.post(
       `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/saveDirectJob`,
-      { direct_Job, direct_Job_Association, employeeId: Cookies.get("loginId")}
+      {
+        direct_Job,
+        direct_Job_Association,
+        employeeId: Cookies.get("loginId"),
+      }
     );
 
-    openNotification('Success', state.directJob_Id ? 'Direct Job Updated' : 'Direct Job Created', 'green');
-    Router.push(`/accounts/directJob/${result.data.result.id}`);
+    console.log("API Response", result.data);
+
+    const savedId = result?.data?.result?.id;
+
+    openNotification(
+      'Success',
+      state.directJob_Id ? 'Direct Job Updated' : 'Direct Job Created',
+      'green'
+    );
+
+    if (savedId) {
+      Router.push(`/accounts/directJob/${savedId}`);
+    } else {
+      console.warn("ID not returned from API");
+    }
+
     setLoading(false);
 
   } catch (e) {
-    console.log(e);
-    setLoading(false);
-    openNotification('Error', 'Something went wrong', 'red');
-  }
+  console.log("FULL ERROR:", e);
+  console.log("SERVER ERROR:", e?.response?.data);
+  
+  setLoading(false);
+  openNotification(
+    'Error',
+    e?.response?.data?.message || 'Something went wrong',
+    'red'
+  );
+}
 };
 
     useEffect(() => {

@@ -208,11 +208,11 @@ function setAccesLevels(dispatch, collapsed){
       key: '5-15',
       children: `Content of Tab Pane 3`,
     }):null,
-    (levels?.includes("lgVat")||levels?.includes("admin"))?getItem('LG VAT', '5-17',<></>, null, {
-      label: `LG VAT`,
-      key: '5-17',
-      children: `Content of Tab Pane 3`,
-    }):null
+    // (levels?.includes("lgVat")||levels?.includes("admin"))?getItem('LG VAT', '5-17',<></>, null, {
+    //   label: `LG VAT`,
+    //   key: '5-17',
+    //   children: `Content of Tab Pane 3`,
+    // }):null
           
   ]
   )

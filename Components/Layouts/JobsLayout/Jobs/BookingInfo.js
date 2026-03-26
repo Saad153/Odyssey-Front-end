@@ -360,7 +360,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
             />
           </>}
           <Space />
-          <div className='custom-link mt-2' onClick={() => pageLinking("vendor", forwarderId)} >Forwarder/Coloader *</div>
+          <div className='custom-link mt-2' onClick={() => pageLinking("client", forwarderId)} >Forwarder/Coloader *</div>
           <SelectSearchComp register={register}
             clear={true}
 
@@ -374,17 +374,17 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
         </Col>
         <Col md={3}><Space />
         {(type == "SE" || type == "SI") && <>
-            <div className='custom-link mt-2' onClick={() => pageLinking("vendor", shippingLineId)} >Sline/Carrier</div>
+            <div className='custom-link mt-2' onClick={() => pageLinking("client", shippingLineId)} >Sline/Carrier</div>
             <SelectSearchComp register={register}
               clear={true} name='shippingLineId' control={control} label='' disabled={getStatus(approved)} options={state.fields.vendor.sLine} width={"100%"} />
           </>}
-          <div className='custom-link mt-2' onClick={() => pageLinking("vendor", overseasAgentId)} >Overseas Agent *</div>
+          <div className='custom-link mt-2' onClick={() => pageLinking("client", overseasAgentId)} >Overseas Agent *</div>
           <SelectSearchComp register={register}
             clear={true}
 
             name='overseasAgentId' control={control} label='' disabled={getStatus(approved)} options={state.fields.vendor.overseasAgent} width={"100%"} />
 
-          <div className='custom-link mt-2' onClick={() => pageLinking("vendor", localVendorId)} >Local Vendor *</div>
+          <div className='custom-link mt-2' onClick={() => pageLinking("client", localVendorId)} >Local Vendor *</div>
           <SelectSearchComp register={register}
             clear={true}
 
@@ -392,7 +392,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
             disabled={getStatus(approved)} options={state.fields.vendor.localVendor} width={"100%"}
           />
           {(type == "AE" || type == "AI") && <>
-            <div className='custom-link mt-2' onClick={() => pageLinking("vendor", airLineId)} >Air line *</div>
+            <div className='custom-link mt-2' onClick={() => pageLinking("client", airLineId)} >Air line *</div>
             <SelectSearchComp register={register}
               clear={true}
 
@@ -415,7 +415,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
               <CheckGroupComp register={register} name='transportCheck' control={control} label='' disabled={getStatus(approved)} options={[{ label: "", value: "Transport" }]} />
             </Col>
             <Col md={3}>
-              <div className='custom-link' onClick={() => pageLinking("vendor", transporterId)} >Transport</div>
+              <div className='custom-link' onClick={() => pageLinking("client", transporterId)} >Transport</div>
             </Col>
             <Col>.</Col>
           </Row>
@@ -430,7 +430,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
               <CheckGroupComp register={register} name='customCheck' control={control} label='' disabled={getStatus(approved)} options={[{ label: "", value: "Custom Clearance" }]} />
             </Col>
             <Col md={6}>
-              <div className='custom-link' onClick={() => pageLinking("vendor", customAgentId)} >Custom Clearance</div>
+              <div className='custom-link' onClick={() => pageLinking("client", customAgentId)} >Custom Clearance</div>
             </Col>
             <Col>.</Col>
           </Row>

@@ -33,7 +33,7 @@ const SignupSchema = yup.object().shape({
     //address1: yup.string().required('Required'),
     //address2: yup.string().required('Required'),
     city: yup.string().required('Required'),
-    zip: yup.string().required('Required'),
+    // zip: yup.string().required('Required'),
     //telephone1: yup.string().required('Required'),
     //telephone2: yup.string().required('Required'),
     infoMail: yup.string().email('Must be an E-mail!'),
@@ -44,6 +44,7 @@ const SignupSchema = yup.object().shape({
 
 const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
 
+    // console.log("Client CreateOrEdit", state)
 
     const company = useSelector((state) => state.company.companies);
     const [register_date, setRegisterdate] = useState(moment().format('YYYY-MM-DD'));
@@ -74,8 +75,8 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
       tempState.registerDate = tempState.registerDate ? moment(tempState.registerDate) : "";
       tempState.bankAuthorizeDate = moment(tempState.bankAuthorizeDate);
       tempState.companies = [];
-      clientData.Client_Associations?.forEach((x)=>{ tempState.companies.push(x.CompanyId) })
-      tempCompanyList.forEach((x, i)=>{
+    //   clientData.Client_Associations?.forEach((x)=>{ tempState.companies.push(x.CompanyId) })
+    //   tempCompanyList.forEach((x, i)=>{
         // for(let j=0; j<tempState.Client_Associations?.length; j++){
         //   if(tempState.Client_Associations[j].CompanyId==x.value){
         //     tempCompanyList[i].disabled=true;
@@ -84,10 +85,14 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         //     tempCompanyList[i].disabled=false;
         //   }
         // }
-      })
+    //   })
+    tempState.Client_Associations?.forEach((x)=>{
+        // console.log("association", x.Child_Account.parent.id)
+        tempState.parentAccount = x.Child_Account.parent.id
+    })
       dispatch({type:'toggle', fieldName:'editCompanyList', payload:tempCompanyList});
       dispatch({type:'toggle', fieldName:'oldRecord', payload:tempState});
-      reset({...tempState, parentAccount:state.parentAccount});
+      reset({...tempState, parentAccount:tempState.parentAccount});
     }
     if(id=="new") { 
         reset({...baseValues, parentAccount:state.parentAccount}) 

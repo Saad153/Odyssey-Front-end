@@ -139,11 +139,11 @@ function setAccesLevels(dispatch, collapsed){
       key: '3-16',
       children: `Content of Tab Pane 2`,
     }):null,
-    (levels?.includes("OfficeVoucherList")||levels?.includes("admin"))?getItem('Office Voucher List', '3-7',<></>, null, {
-      label: `Office Voucher List`,
-      key: '3-7',
-      children: `Content of Tab Pane 3-7`,
-    }):null,
+    // (levels?.includes("OfficeVoucherList")||levels?.includes("admin"))?getItem('Office Voucher List', '3-7',<></>, null, {
+    //   label: `Office Voucher List`,
+    //   key: '3-7',
+    //   children: `Content of Tab Pane 3-7`,
+    // }):null,
     (levels?.includes("OpeningBalances")||levels?.includes("admin"))?getItem('Opening Balances', '3-9',<></>, null, {
       label: `Opening Balances`,
       key: '3-9',
@@ -365,7 +365,7 @@ function setAccesLevels(dispatch, collapsed){
         case "Payment/Reciept":
         case "Voucher":
         case "VoucherList":
-        case "OfficeVoucherList":
+        // case "OfficeVoucherList":
         case "OpeningBalances":
         case "OpeningInvoises":
           items.indexOf(accounts) === -1 ? items.push(accounts) : null;

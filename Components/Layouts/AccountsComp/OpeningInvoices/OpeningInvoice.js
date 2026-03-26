@@ -80,7 +80,7 @@ const OpeningInvoice = (id) => {
       dispatch(setField({ 
         field: 'createdAt', 
         value: moment(result.data.result.result.date) 
-          ? dayjs(result.data.result.result.date)
+          ? moment(result.data.result.result.date)
           : null
       }));
       
@@ -137,7 +137,7 @@ const OpeningInvoice = (id) => {
     }
   }
 
-  console.log(state)
+  console.log("Opening invoice:", state)
 
 
   return (
@@ -166,23 +166,23 @@ const OpeningInvoice = (id) => {
                   dispatch(setField({ field: 'account', value: undefined}));
                   dispatch(setField({ field: 'type', value: 'OI'}));
                 }
-                if(e.target.value == 'vendor'){
-                  dispatch(setField({ field: 'accountType', value: e.target.value }));
-                  dispatch(setField({ field: 'payType', value: 'Payble' }));
-                  dispatch(setField({ field: 'currency', value: 'PKR' }));
-                  dispatch(setField({ field: 'type', value: 'OB' }));
-                }
-                if(e.target.value == 'agent'){
-                  dispatch(setField({ field: 'accountType', value: e.target.value }));
-                  dispatch(setField({ field: 'payType', value: 'Payble' }));
-                  dispatch(setField({ field: 'currency', value: 'USD' }));
-                  dispatch(setField({ field: 'account', value: undefined }));
-                  dispatch(setField({ field: 'type', value: 'OB' }));
-                }
+                // if(e.target.value == 'vendor'){
+                //   dispatch(setField({ field: 'accountType', value: e.target.value }));
+                //   dispatch(setField({ field: 'payType', value: 'Payble' }));
+                //   dispatch(setField({ field: 'currency', value: 'PKR' }));
+                //   dispatch(setField({ field: 'type', value: 'OB' }));
+                // }
+                // if(e.target.value == 'agent'){
+                //   dispatch(setField({ field: 'accountType', value: e.target.value }));
+                //   dispatch(setField({ field: 'payType', value: 'Payble' }));
+                //   dispatch(setField({ field: 'currency', value: 'USD' }));
+                //   dispatch(setField({ field: 'account', value: undefined }));
+                //   dispatch(setField({ field: 'type', value: 'OB' }));
+                // }
               }}>
                 <Radio value={'client'}>Client</Radio>
-                <Radio value={'vendor'}>Vendor</Radio>
-                <Radio value={'agent'}>Agent</Radio>
+                {/* <Radio value={'vendor'}>Vendor</Radio>
+                <Radio value={'agent'}>Agent</Radio> */}
               </Radio.Group>
           </Row>
         </Col>
@@ -262,7 +262,7 @@ const OpeningInvoice = (id) => {
             </div>
             <DatePicker
               style={{ width: '65%', marginLeft: '5%' }}
-              value={state.createdAt ? dayjs(state.createdAt) : null}
+              value={state.createdAt ? moment(state.createdAt) : null}
               onChange={(date) => {
                 dispatch(setField({ field: 'createdAt', value: moment(date) }))
               }}

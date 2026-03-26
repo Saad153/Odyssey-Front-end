@@ -45,14 +45,26 @@ const IncomeStatement = () => {
     const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_PARENT_ACCOUNTS_ADVANCED, {
       headers: { companyid: company }
     }).then((x) => {
-      temprecords = x.data.result.filter((x) => {
-        if(x.AccountId == 2 || x.AccountId == 1){
-          return x
+      // temprecords = x.data.result
+      x.data.result.forEach((account) => {
+        if(account.code == '4'){
+          temprecords.push(account)
+        }
+        if(account.code == '5'){
+          temprecords.push(account)
         }
       })
+      console.log("Accounts:", temprecords)
+      // .filter((x) => {
+      //   if(x.AccountId == 2 || x.AccountId == 1){
+      //     return x
+      //   }
+      // })
     })
     setRecords(temprecords);
   }
+
+  console.log("Records: ", records)
 
   useEffect(() => { getAccounts(); }, [company]);
 
@@ -199,10 +211,10 @@ const IncomeStatement = () => {
         placeholder="Select Revenue" 
         showSearch onChange={handleRevenueChange}>
           {records.map((x, index) => {
-            if(x.AccountId == '2'){
+            if(x.code == '4'){
               // console.log(x)
               return <Select.OptGroup key={index} label={x.title}>
-                {x.Child_Accounts.map((y, index) => {
+                {x.children.map((y, index) => {
                   return <Select.Option key={index} value={y.title}>{"("+y.code+")" + ' - ' +y.title}</Select.Option>
                 })}
               </Select.OptGroup>
@@ -223,9 +235,9 @@ const IncomeStatement = () => {
         placeholder="Select Expense" 
         showSearch onChange={handleExpenseChange}>
         {records.map((x, index) => {
-            if(x.AccountId == '1'){
+            if(x.code == '5'){
               return <Select.OptGroup key={index} label={x.title}>
-                {x.Child_Accounts.map((y, index) => {
+                {x.children.map((y, index) => {
                   return <Select.Option key={index} value={y.title}>{"("+y.code+")" + ' - ' +y.title}</Select.Option>
                 })}
               </Select.OptGroup>

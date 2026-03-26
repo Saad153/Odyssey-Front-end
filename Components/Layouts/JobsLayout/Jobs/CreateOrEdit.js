@@ -129,7 +129,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
 
   getInvoices(tempState.id, dispatch);
 
-  if (allValues.approved != 1 && checkEmployeeAccess()) {
+  if (allValues.approved != 1) {
     setDeleteAccess(true);
   }
 }, []);
@@ -240,7 +240,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
       ['jobData', {id, type}],
       (x) => x?{...x,result:obj}:x
     )
-    if(allValues.approved!=1 && checkEmployeeAccess()){
+    if(allValues.approved!=1){
       setDeleteAccess(true)
     }else{
       setDeleteAccess(false)

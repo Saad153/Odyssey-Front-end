@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // <-- use this in Next.js 13+
 import VannaChat from './VannaChat';
 import UploadBackUp from './UploadBackUp';
@@ -26,13 +26,20 @@ const Main = ({ sessionData, chartData }) => {
     console.log(reply)
   } 
 
+  const [ allow, setAllow ] = React.useState(false);
+
+  useState(() => {
+    if(username == 'isaadalam'){
+      setAllow(true);
+    }
+  })
 
   return (
     <div className="base-page-layout">
       {/* {username == 'Saad' && <VannaChat /> } */}
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
-      <UploadBackUp />
+      {allow &&<UploadBackUp />}
     </div>
   );
 };

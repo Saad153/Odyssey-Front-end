@@ -1,5 +1,5 @@
 import { setAccesLevels } from '/functions/setAccesLevels';
-import { logout } from '/functions/logout';
+import logout from '/functions/logout';
 import Cookies from "js-cookie";
 import jwt_decode from 'jwt-decode';
 
@@ -11,7 +11,7 @@ function checkEmployeeAccess(){
     let tempToken = Cookies.get('token');
     if(tempToken == Cookies.get('token')){
       token = jwt_decode(Cookies.get("token"));
-      // console.log(token.access) 
+      console.log("Check Employee Access", token.access) 
     }else{
       logout();
     }
@@ -38,6 +38,8 @@ function checkEmployeeAccess(){
       // console.log("admin triggered")
       access = true;
       // console.log(access);
+    }else{
+      logout();
     }
 
    

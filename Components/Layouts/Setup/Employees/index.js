@@ -6,6 +6,8 @@ import CreateOrEdit from './CreateOrEdit';
 import { useSelector } from 'react-redux';
 import { Input } from 'antd';
 import Cookies from 'js-cookie';
+import { check } from 'prettier';
+import { checkEmployeeAccess } from '../../../../functions/checkEmployeeAccess';
 
 const Employees = () => {
 
@@ -26,6 +28,7 @@ const Employees = () => {
   }
 
   useEffect(() => {
+    checkEmployeeAccess();
     getEmployees();
   }, [])
 

@@ -4,9 +4,11 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { loopHooks } from "react-table";
-
+import { Spin } from 'antd';
 
 const Upload_CoA = () => {
+
+    const [ status, setStatus ] = useState("Idle")
 
     const backup = async () => {
         {/* <button onClick={()=>{importCOA()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>1. Import COA from Climax DB</button> */}
@@ -26,12 +28,15 @@ const Upload_CoA = () => {
         // await importCharges();
         // await importParties();
         // await importJobs();
+        // await importLGJobs();
         // await importVouchers();
-        await FixAirJobs();
+        // await FixAirJobs();
+        await FixSeaJobs();
         // await checkInvoices()
         // await importAirPorts()
         // await importEmployees()
         // await importAECharges()
+        setStatus("Success")
     }
 
     const [invoicesData, setInvoices] = useState([]);
@@ -40,6 +45,128 @@ const Upload_CoA = () => {
     const [CV, setCV] = useState(false);
     const [GL, setNonGl] = useState(false);
 
+    const importLGJobs = async () => {
+        try{
+            const c = await axios.get("http://localhost:8084/clientRoutes/getClientsForBackup");
+            console.log("Clients", c)
+            const com = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CREATE_COMMODITY);
+            console.log("Commodities", com)
+            const result = await axios.get("http://localhost:8081/jobs/getLOGJOB");
+            console.log("Log Jobs", result.data.result)
+            const Clients = c.data.result
+            const ClientsMap = new Map(
+                Clients.map(c => [c.climaxId, c.id])
+            )
+            const Commodites = com.data.result
+            const CommoditiesMap = new Map(
+                Commodites.map(c => [c.climaxId, c.id])
+            )
+            const UNLocation = result.data.result.UNLocation
+            const UNLocMap = new Map(
+                UNLocation.map(b => [b.UNLocCode, b.UNLocName])
+            )
+            const UNPacking = result.data.result.Packing
+            const PackingMap = new Map(
+                UNPacking.map(b => [b.PackCode, b.PackName])
+            )
+            const Gen_IncoTerms = result.data.result.IncoTerms
+            const IncoMap = new Map(
+                Gen_IncoTerms.map(b => [b.Id, b.IncoName])
+            )
+            const jobs = []
+            result.data.result.Job.forEach((j) => {
+                jobs.push({
+                    jobNo: j.JobNumber,
+                    jobId: j.JobNumber.split("-")[1].split("/")[0],
+                    title: null,
+                    customerRef: null,
+                    fileNo: j.CustomFileNo,
+                    shipStatus: null,
+                    teu: null,
+                    bkg: null,
+                    pcs: j.NoOfPackages,
+                    vol: j.Volume,
+                    volWeight: j.GrossWeight,
+                    pol: UNLocMap.get(j.POLCode),
+                    pod: UNLocMap.get(j.PODCode),
+                    fd: UNLocMap.get(j.POFDCode),
+                    dg: null,
+                    subType: j.ContianerTypeId == 5 ? 'FCL' : j.ContianerTypeId == 4 ? 'LCL': 'None',
+                    billVol: 0,
+                    shpVol: 0,
+                    weight: j.GrossWeight,
+                    weightUnit: null,
+                    costCenter: 'Khi',
+                    jobType: j.JobTypeId == 1 ? 'Clearing Only' : j.JobTypeId == 2 ? 'Transport' : 'Clearing + Tpt',
+                    jobKind: j.ContianerTypeId == 5 ? 'FCL' : j.ContianerTypeId == 4 ? 'LCL': 'None',
+                    container: null, 
+                    carrier: null,
+                    freightType: 'Prepaid',
+                    nomination: 'Free Hand',
+                    transportCheck: j.TransporterId? "Transport": '',
+                    customCheck: j.ShippingAgentId? 'Shipping': '',
+                    etd: null,
+                    eta: null,
+                    cbkg: null,
+                    aesDate: null,
+                    aesTime: null,
+                    eRcDate: null,
+                    eRcTime: null,
+                    eRIDate: null,
+                    eRITime: null,
+                    jobDate: j.JobDate,
+                    shipDate: null,
+                    doorMove: null,
+                    cutOffDate: null,
+                    cutOffTime: null,
+                    siCutOffDate: null,
+                    siCutOffTime: null,
+                    vgmCutOffDate: null,
+                    vgmCuttOffTime: null,
+                    freightPaybleAt: null,
+                    terminal: null,
+                    delivery: null,
+                    companyId: 2,
+                    pkgUnit: PackingMap.get(j.PackagesCode),
+                    incoTerms: IncoMap.get(j.IncoTermsId),
+                    exRate: 0,
+                    approved: j.ApprovedStatusId == 2 ? 'true' : 'false',
+                    canceled: null,
+                    climaxid: j.Id,
+                    flightNo: null,
+                    cwtLine: null,
+                    cwtClient: null,
+                    operation: j.OperationTypeId == 4 ? 'SE' : j.OperationTypeId == 2 ? 'AE' : j.OperationTypeId == 1 ? 'AI' : 'SI',
+                    arrivalDate: null,
+                    arrivalTime: null,
+                    departureDate: null,
+                    departureTime: null,
+                    ClientId: ClientsMap.get(j.CustomerId),
+                    VoyageId: null,
+                    saleRepresentatorId: "4d7f7cfb-7ace-4655-b6ee-f9ed52f81799" ,
+                    overseasAgentId: ClientsMap.get(j.OverSeasAgentId),
+                    shippingLineId: ClientsMap.get(j.ShippingLineId),
+                    LocalVendorId: ClientsMap.get(j.ShippingAgentId),
+                    customAgentId: ClientsMap.get(j.ClearingAgentId),
+                    transporterId: ClientsMap.get(j.TransporterId),
+                    createdById: "4d7f7cfb-7ace-4655-b6ee-f9ed52f81799",
+                    commodityId: CommoditiesMap.get(j.commodityId),
+                    consigneeId: ClientsMap.get(j.ConsigneeId),
+                    forwarderId: ClientsMap.get(j.ForwarderId),
+                    airLineId: ClientsMap.get(j.AirLineId),
+                    shipperId: ClientsMap.get(j.ShipperId),
+                    vesselId: null,
+                    por: null,
+
+                })
+            })
+            console.log(jobs)
+            const res = await axios.post("http://localhost:8084/seaJob/uploadLogJobs", jobs)
+        }catch(e){
+            console.error(e)
+        }
+    }
+
     const FixAirJobs = async () => {
         try{
             console.log("Getting Air Jobs Data for Fix")
@@ -47,6 +174,19 @@ const Upload_CoA = () => {
             console.log("Fix Jobs Result:", result.data.result)
             const { BL, ...rest } = result.data.result
             await axios.post("http://localhost:8084/seaJob/fixAirJobs", rest)
+            // await axios.post("http://localhost:8084/seaJob/fixAEBL", BL)
+        }catch(e){
+            console.error(e)
+        }
+    }
+
+    const FixSeaJobs = async () => {
+        try{
+            console.log("Getting Sea Jobs Data for Fix")
+            const result = await axios.get("http://localhost:8081/jobs/fixSeaJobs");
+            console.log("Fix Jobs Result:", result.data.result)
+            // const { BL, ...rest } = result.data.result
+            await axios.post("http://localhost:8084/seaJob/fixSeaJobs", result.data.result)
             // await axios.post("http://localhost:8084/seaJob/fixAEBL", BL)
         }catch(e){
             console.error(e)
@@ -178,6 +318,7 @@ const Upload_CoA = () => {
 
     const importCharges = async () => {
         try{
+            setStatus("Fetching Charges")
             const charges = await axios.post("http://localhost:8081/charges/getAll")
             console.log(charges)
             let tempCharges = []
@@ -200,6 +341,7 @@ const Upload_CoA = () => {
             })
             console.log(tempCharges)
             const result = await axios.post("http://localhost:8084/charges/bulkCreate", tempCharges)
+            setStatus("Charges Imported")
             console.log(result)
         }catch(err){
             console.error(err)
@@ -208,6 +350,7 @@ const Upload_CoA = () => {
     }
     const importCOA = async () => {
         try{
+            setStatus("Fetching COA")
             console.log("Importing Accounts")
             const companyId = Cookies.get("companyId")
             const coa = await axios.post("http://localhost:8081/accounts/getAll")
@@ -219,6 +362,7 @@ const Upload_CoA = () => {
             // })
             
             const result = await axios.post("http://localhost:8084/accounts/importAccount", coa.data.temp)
+            setStatus("COA Imported")
             console.log(result.status)
         }catch(err){
             console.error(err)
@@ -237,6 +381,7 @@ const Upload_CoA = () => {
 
 const importParties = async () => {
     try{
+        setStatus("Fetching Parties")
         console.log("Importing Parties")
         const { data } = await axios.get("http://localhost:8081/parties/get")
         console.log("Parties Data:", data)
@@ -268,6 +413,7 @@ const importParties = async () => {
         console.log("Sorted Data", parties)
 
         const result = await axios.post("http://localhost:8084/clientRoutes/bulkCreate", parties)
+        setStatus("Parties Imported")
         console.log(result.data.status)
     }catch(err){
         console.error(err)
@@ -518,11 +664,12 @@ const importEmployees = async () => {
 
 const importCommodities = async () => {
     try {
+        setStatus("Fetching Commodities")
         const { data } = await axios.get("http://localhost:8081/jobs/getCommodities");
         console.log("Commodity Data:", data);
 
         await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/commodity/uploadCommodities`, data);
-
+        setStatus("Commodities Imported")
         console.log("Comodities uploaded successfully");
     }catch(e){
         console.log(e)
@@ -531,6 +678,7 @@ const importCommodities = async () => {
 
 const importVoyages = async () => {
     try {
+        setStatus("Fetching Vessels & Voyages")
         const { data } = await axios.get("http://localhost:8081/jobs/getVoyages");
         console.log("Voyage Data:", data);
         let Vessels = []
@@ -554,7 +702,7 @@ const importVoyages = async () => {
         console.log("Updated Vessels", Vessels)
 
         const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/vessel/uploadVoyages`, Vessels);
-
+        setStatus("Vessels & Voyages Imported")
         console.log("Vessels uploaded successfully", result);
     }catch(e){
         console.log(e)
@@ -1552,111 +1700,19 @@ const importJobs = async () => {
 }
 
     return (
-        <Row md={24}>
-            {/* <Col md={12}>
-                <div style={{overflow: 'auto', height: '87.5vh'}}>
-                <span className="py-2">Chart of Accounts</span>
-                <CSVReader onFileLoaded={handleData}/>
-                <button onClick={uploadData} style={{maxWidth: 75}} className='btn-custom mt-3 px-3 mx-3'>Upload</button>
-                <span className="py-2">Parties</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{handleDataParties(data, fileInfo)}}/>
-                <button onClick={uploadDataParties}style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Upload Parties</button>
-                <button onClick={uploadDataAssociations} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Create Party Associations</button>
-                <span className="py-2">Opening Balances</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{handleOpeningBalances(data, fileInfo)}}/>
-                <span className="py-2">Invoices</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{handleInvoices(data, fileInfo)}}/>
-                <span
-                    className="py-2"
-                    style={{
-                        color: statusInvoices === "Waiting for file" ? "grey" :
-                            statusInvoices === "File loaded, Fetching data..." ? "orange" :
-                            statusInvoices === "Data Fetched, Processing..." ? "blue" :
-                            statusInvoices === "Success, see console for more details" ? "green" :
-                            statusInvoices === "Uploading..." ? "blue" :
-                            "red"
-                    }}
-                    >
-                    {statusInvoices}
-                </span>
-                <button onClick={uploadInvoices} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Upload Invoices</button>
-                <button
-                onClick={async () => {
-                    try {
-                    const response = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/updateVouchersWithInvoices`);
-                    if (response.data.status === 'success') {
-                        alert('Vouchers updated successfully!');
-                    } else {
-                        alert('Failed to update vouchers: ' + response.data.message);
-                    }
-                    } catch (error) {
-                    console.error('Error updating vouchers:', error);
-                    alert('An error occurred while updating vouchers. Please check the console for details.');
-                    }
-                }}
-                style={{ width: 'auto' }}
-                className="btn-custom mt-3 px-3 mx-3"
-                >
-                Update Invoices
-                </button>
-                <span className="py-2">Invoice Matching, Upload grid csv</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{matchInvoices(data, fileInfo)}}/>
-                <span
-                    className="py-2"
-                    style={{
-                        color: statusInvoiceMatching === "Waiting for file" ? "grey" :
-                            statusInvoiceMatching === "File loaded, Fetching data..." ? "orange" :
-                            statusInvoiceMatching === "Data Fetched, Processing..." ? "blue" :
-                            // statusInvoiceMatching === "Success, see console for more details" ? "green" :
-                            statusInvoiceMatching === "Complete, check console" ? "green" :
-                            statusInvoiceMatching === "Uploading..." ? "blue" :
-                            "red"
-                    }}
-                    >
-                    {statusInvoiceMatching}
-                </span>
-                <button onClick={uploadInvoices} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Upload Invoices</button>
-                <span className="py-2">Vouchers</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{handleVoucher(data, fileInfo)}}/>
-                <span
-                    className="py-2"
-                    style={{
-                        color: status === "Waiting for file" ? "grey" :
-                            status === "Processing..." ? "orange" :
-                            status === "Sorted, creating Vouchers..." ? "blue" :
-                            status === "Vouchers created, waiting to upload..." ? "green" :
-                            status === "Uploading..." ? "blue" :
-                            status === "Uploaded" ? "green" :
-                            "red"
-                    }}
-                    >
-                    {status}
-                </span>
-                <button onClick={uploadVouchers} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Upload Vouchers</button>
-                <button onClick={verifyVouchers} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Verify Vouchers</button>
-                <button onClick={setExRateVouchers} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Set Ex-Rate Vouchers</button>
-                </div>
-                <span className="py-2">Jobs</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{handleJobData(data, fileInfo)}}/>
-                <button onClick={uploadJobs} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Upload Jobs</button>
-                <span className="py-2">Charges</span>
-                <CSVReader parserOptions={parserOptions} onFileLoaded={(data, fileInfo)=>{handleCharges(data, fileInfo)}}/>
-                <button onClick={uploadJobs} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>Upload & Link Charges</button>
-            
-            </Col> */}
+        <Row md={24} style={{
+            display: 'flex',
+            alignContent: 'middle'
+        }}>
+            <Col md={5}>
+                <button onClick={()=>{backup()}} style={{width: 'auto'}} className='btn-custom'>1. Backup data from Climax DB</button>
+            </Col>
             <Col md={12}>
-                {/* <button onClick={()=>{importCOA()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>1. Import COA from Climax DB</button> */}
-                {/* <button onClick={()=>{getCOATree()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>2. Console COA from Odyssey DB</button> */}
-                {/* <button onClick={()=>{importCharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>3. Import Charges from Climax DB</button> */}
-                {/* <button onClick={()=>{importVouchers()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>4. Import Vouchers from Climax DB</button> */}
-                {/* <button onClick={()=>{importParties()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>5. Import Parties from Climax DB</button> */}
-                {/* <button onClick={()=>{importJobs()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>6. Import Jobs from Climax DB</button> */}
-                {/* <button onClick={()=>{importAirPorts()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>7. Import Airports from Climax DB</button> */}
-                {/* <button onClick={()=>{importEmployees()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>8. Import Employees from Climax DB</button> */}
-                {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
-                {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
-                {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
-                <button onClick={()=>{backup()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>1. Backup data from Climax DB</button>
+            {!['Idle', 'Success'].includes(status) && <Spin />}
+            <h2 style={{
+                padding: '0',
+                margin: '0'
+            }}>{status}</h2>
             </Col>
         </Row>
     )

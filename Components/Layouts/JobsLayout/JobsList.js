@@ -11,69 +11,64 @@ import moment from 'moment';
 import JobsBackupData from './Backup/BackupModal';
 import { delay } from "/functions/delay"
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const SEJobList = ({ jobsData, sessionData, type }) => {
   const queryClient = useQueryClient();
   const changedValues = useSelector((state) => state.persistValues);
   const companyId = useSelector((state) => state.company.value);
-  const [records, setRecords] = useState([]);
   const dispatch = useDispatch();
   const [isOpen,setIsOpen] = useState(false);
-  //search state
-  const [query, setQuery] = useState(null);
-  //pagination states
-  const [currentPage,setCurrentPage] = useState(1);
-  const [recordsPerPage] = useState(20);
 
-  const indexOfLast = currentPage * recordsPerPage;
-  const indexOfFirst = indexOfLast - recordsPerPage;
-  const currentRecords = (query!='' && query!=null && query!=undefined)?records.filter((x)=>{
-    return  x.jobNo?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.Client?.name?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.fd?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.freightType?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.nomination?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.pod?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.pol?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.weight?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.Bl?.hbl?.toLowerCase().includes(query.toLowerCase()) ||
-      x?.Bl?.mbl?.toLowerCase().includes(query.toLowerCase()) 
-  }) : records?.slice(indexOfFirst, indexOfLast);
-  const noOfPages = Math.ceil(records?.length / recordsPerPage);
-
-  useEffect(() => {
-    if (jobsData.status == "success") {
-      // console.log(jobsData)
-      setRecords(jobsData.result);
-    }
-  }, [])
-  
-  useEffect(() => {
-    setRecords(jobsData.result)
-  }, [jobsData])
-
-  const [firstCall, setFirstCall] = useState(false)
-
-  useEffect(() => {
-    if (currentRecords.length > 0 && !firstCall) {
-      // console.log("Records: ", currentRecords);
-      getCounts(records);
-      setFirstCall(true);
-    }
-  }, [currentRecords, firstCall]); // Include firstCall here to avoid React warning
   
 
-  const getCounts = async (data) => {
-    // console.log("Job IDs", data);
-    if (data.length > 0) {
-      const result = await axios.post(
-        `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getCounts`,
-        { data } // data goes in the body
-      );
-      // console.log("Result:", result.data.result);
-      setRecords(result.data.result);
-    }
-  };
+const [jobs, setJobs] = useState([]);
+const [page, setPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
+const [loading, setLoading] = useState(false);
+
+const [searchInput, setSearchInput] = useState("");
+const [search, setSearch] = useState("");
+
+
+useEffect(() => {
+  const t = setTimeout(() => {
+    setSearch(searchInput);
+    setPage(1);
+  }, 500);
+
+  return () => clearTimeout(t);
+}, [searchInput]);
+
+const fetchJobs = async (pageNo = 1) => {
+  if (loading) return;
+  setLoading(true);
+  try {
+    const res = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_SEAJOB, {
+      params:{ companyid: `${Cookies.get('companyId')}`, operation: type, page: pageNo, limit: 20, search }
+    })
+    console.log("Jobs fetched: ", res.data);
+    setJobs(res.data.result);
+    setTotalPages(res.data.totalPages);
+    setPage(pageNo);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchJobs(1);
+}, []);
+
+useEffect(() => {
+  fetchJobs(1);
+}, [search]);
+
+useEffect(() => {
+  fetchJobs(page);
+}, [page]);
 
   return (
     <>
@@ -86,19 +81,15 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
               </h5>
             </Col>
             <Col md={4}>
-              <Input type="text" placeholder="Enter client,wieght or Job no" size='sm' onChange={e => setQuery(e.target.value)} />
+              <Input
+                placeholder="Enter client, weight or Job No"
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+              />
             </Col>
             <Col md={2} className='text-end'>
-              {/* <button className='btn-custom left px-4' onClick={()=>setIsOpen(true)}
-              >Old Jobs</button>
-              {isOpen && <JobsBackupData isOpen={isOpen} onClose={()=>setIsOpen(false)} type={type}/>} */}
             </Col>
             <Col md={1}>
-              <button className='btn-custom left px-4'
-                onClick={() => {
-                  Router.push(`/seaJobs/jobList`)
-                }}
-              >List</button>
             </Col>
             <Col md={1}>
               <button className='btn-custom left'
@@ -123,7 +114,7 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
             </Col>
           </Row>
           <hr className='my-2' />
-          <div className='mt-3' style={{ maxHeight: "65vh", overflowY: 'auto' }}>
+          <div className='mt-3' style={{ maxHeight: "63vh", overflowY: 'auto' }}>
             <Table className='tableFixHead'>
               <thead>
                 <tr>
@@ -138,7 +129,7 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
               </thead>
               <tbody>
                 {
-                  currentRecords?.map((x, index) => {
+                  jobs?.map((x, index) => {
                     return (
                       <tr key={index} className='f row-hov'
                         onClick={() => {
@@ -222,10 +213,9 @@ const SEJobList = ({ jobsData, sessionData, type }) => {
               </tbody>
             </Table>
           </div>
-          {(query=="" || query==null || query==undefined ) &&
-          <div className='d-flex justify-content-end items-end my-4'style={{maxWidth:"100%"}} >
-            <Pagination noOfPages={noOfPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-          </div>}
+          <div className='d-flex justify-content-end items-end mt-4'style={{maxWidth:"100%"}} >
+            <Pagination noOfPages={totalPages} currentPage={page} setCurrentPage={setPage}/>
+          </div>
         </div>
       }
     </>

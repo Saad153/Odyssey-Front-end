@@ -30,17 +30,30 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-
   const [loading, setLoading] = useState(false);
+
+  const [searchInput, setSearchInput] = useState(state.search || "");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      dispatch(setField({ field: "search", value: searchInput }));
+    }, 500); // 👈 delay in ms
+
+    return () => clearTimeout(handler);
+  }, [searchInput]);
 
   const fetchOldVouchers = async (pageNum = 1) => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS,
-        { headers: { companyid: Cookies.get("companyId"), page: pageNum, limit: 50 } }
-      );
+      const response = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS, {
+        params: {
+          companyid: Cookies.get("companyId"),
+          page: pageNum,
+          limit: 50,
+          search: state.search || ""
+        }
+      });
 
       const { result, totalPages, total } = response.data;
       setTotalPages(totalPages);
@@ -93,15 +106,14 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
     }
   };
 
-
-    const [first, setFirst] = useState(false)
   useEffect(() => {
-    if(state.oldVouchers.length == 0 && !first){
-      // dispatch(setField({ field: 'selectedAccount', value: selectedAccount }));
-      fetchOldVouchers();
-      setFirst(true)
-    }
-  })
+    fetchOldVouchers(1);
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+    fetchOldVouchers(1);
+  }, [state.search]);
 
   const fetchAccounts = async () => {
     console.log("Fetching Accounts for type:", state.type)
@@ -399,18 +411,19 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
             <Select.Option value="CHF">CHF</Select.Option>
           </Select>
         </Col>
-        <Col md={5}>
-          <Input
-            placeholder='Search...'
-            value={state.search}
-            disabled={state.selectedAccount!=""&&state.selectedAccount!=undefined}
-            onChange={(e) => {dispatch(setField({ field: 'search', value: e.target.value }))}}
-          ></Input>
+        <Col md={5}>        
+        <Input
+          placeholder="Search..."
+          value={searchInput}
+          disabled={state.selectedAccount !== "" && state.selectedAccount !== undefined}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
         </Col>
       </Row>
       <hr></hr>
+      <div style={{overflowY: 'auto', maxHeight: '350px'}}>
       {(state.selectedAccount==""||state.selectedAccount==undefined)&&<table>
-        <thead style={{backgroundColor: '#f3f3f3', color: 'black'}}>
+        <thead className='sticky-header' style={{backgroundColor: '#f3f3f3', color: 'black'}}>
           <tr>
             <th style={{ width: '7%', padding: 10 }}>Voucher No</th>
             <th style={{ width: '20%', padding: 10 }}>Name</th>
@@ -422,30 +435,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
           </tr>
         </thead>
         <tbody>
-          {state.oldVouchers.length > 0 && state.oldVouchers.filter((x) => {
-            if(state.search.length > 0){
-              if(x?.name?.toLowerCase().includes(state.search.toLowerCase())){
-                return x
-              }
-              if(x?.party?.toLowerCase().includes(state.search.toLowerCase())){
-                return x
-              }
-              if(x?.type?.toLowerCase().includes(state.search.toLowerCase())){
-                return x
-              }
-              if(x?.data?.toLowerCase().includes(state.search.toLowerCase())){
-                return x
-              }
-              if(x?.currency?.toLowerCase().includes(state.search.toLowerCase())){
-                return x
-              }
-              if(x?.amount?.toString().toLowerCase().includes(state.search.toLowerCase())){
-                return x
-              }
-            }else{
-              return x
-            }
-          }).map((x, i) => {
+          {state.oldVouchers.length > 0 && state.oldVouchers.map((x, i) => {
             return (
               <tr key={i} style={{borderBottom: '1px solid #d7d7d7', cursor: 'pointer'}} onClick={()=>{
                 openOldVouchers(x)
@@ -465,27 +455,16 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         {state.oldVouchers.length > 0 && (
           <tfoot>
             <tr>
-              <td colSpan="7" style={{ textAlign: "center", padding: "10px" }}>
-                <button
-                  disabled={page <= 1}
-                  onClick={() => fetchOldVouchers(page - 1)}
-                  style={{ marginRight: 10 }}
-                >
-                  Prev
-                </button>
-                Page {page} of {totalPages}
-                <button
-                  disabled={page >= totalPages}
-                  onClick={() => fetchOldVouchers(page + 1)}
-                  style={{ marginLeft: 10 }}
-                >
-                  Next
-                </button>
+              <td colSpan="7" style={{ textAlign: "center", paddingTop: "20px" }}>
               </td>
             </tr>
           </tfoot>
         )}
       </table>}
+      </div>
+      <div style={{ textAlign: "center", paddingTop: "20px" }}>
+        <Pagination noOfPages={totalPages} currentPage={page} setCurrentPage={fetchOldVouchers}/>
+      </div>
       {!(state.selectedAccount==""||state.selectedAccount==undefined)&&<BillComp back={back} companyId={Cookies.get('companyId')} state={state} dispatch={dispatch} />}
       <Modal 
         open={state.delete}

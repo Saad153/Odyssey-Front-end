@@ -46,6 +46,8 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
       setTotalPages(totalPages);
       setPage(pageNum);
 
+      console.log("Fetched Old Vouchers:", result);
+
       const temp = [];
       result.forEach((x) => {
         x.invoice.forEach((y) => {
@@ -68,12 +70,13 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
             data: x.createdAt,
             currency: x.currency,
             amount:
-              x.Voucher_Heads.find(
-                (y) =>
-                  y.accountType === "partyAccount" ||
-                  y.accountType === "General" ||
-                  y.accountType === "Admin Expense"
-              )?.amount || 0.0,
+              x.Voucher_Heads
+                ?.filter(
+                  y =>
+                    ["partyAccount", "General", "Admin Expense"].includes(y.accountType) &&
+                    y.ChildAccountId === x.clientAssociation?.ChildAccountId
+                )
+                .reduce((sum, y) => sum + Number(y.amount || 0), 0) || 0,
             partyId: x.partyId,
             x: x,
           }))

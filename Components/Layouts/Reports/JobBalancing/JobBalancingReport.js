@@ -610,7 +610,7 @@ const JobBalancingReport = ({ result, query }) => {
     let balance = 0.00;
     list.filter((x) => {
         if (query.options == 'exclude0') {
-          return x.total -  x.paid != 0 && x.total - x.recieved != 0; // Directly check if balance is not zero
+          return (x.total -  x.paid != 0 && x.total - x.recieved != 0) || x.total == 0; // Directly check if balance is not zero
         }
         return true; // Keep all items if `query.options` is not 'exclude0'
       }).forEach((x) => {
@@ -620,7 +620,7 @@ const JobBalancingReport = ({ result, query }) => {
         balance = balance + parseFloat(x.total-x.recieved)
       }
     })
-    return balance >= 0 ? commas(balance) : (`(${commas(balance * -1)})`);
+    return balance != 0 ? commas(balance) : (`(${commas(balance * -1)})`);
   }
 
   const getAge = (date) => {

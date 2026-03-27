@@ -373,8 +373,22 @@ return (
           <span className='inv-value' 
           style={{cursor:'pointer'}}
           onClick={async ()=>{
-            await Router.push(`/seaJobs/export/${invoice?.SEJobId}`)
-            dispatchNew(incrementTab({"label":"SE JOB", "key":"4-3", "id":`${invoice?.SEJobId}`}))
+            if(invoice?.SE_Job?.jobNo.includes("SE")){
+              await Router.push(`/seaJobs/export/${invoice?.SEJobId}`)
+              dispatchNew(incrementTab({"label":"SE JOB", "key":"4-3", "id":`${invoice?.SEJobId}`}))
+            }
+            if(invoice?.SE_Job?.jobNo.includes("SI")){
+              await Router.push(`/seaJobs/import/${invoice?.SEJobId}`)
+              dispatchNew(incrementTab({"label":"SI JOB", "key":"4-3", "id":`${invoice?.SEJobId}`}))
+            }
+            if(invoice?.SE_Job?.jobNo.includes("AE")){
+              await Router.push(`/airJobs/export/${invoice?.SEJobId}`)
+              dispatchNew(incrementTab({"label":"AE JOB", "key":"4-3", "id":`${invoice?.SEJobId}`}))
+            }
+            if(invoice?.SE_Job?.jobNo.includes("AI")){
+              await Router.push(`/airJobs/import/${invoice?.SEJobId}`)
+              dispatchNew(incrementTab({"label":"AI JOB", "key":"4-3", "id":`${invoice?.SEJobId}`}))
+            }
           }}
           >{" "}{invoice?.SE_Job?.jobNo}</span>
          
@@ -445,6 +459,7 @@ return (
                 <th>Qty</th>
                 <th>Currency</th>
                 <th>Type</th>
+                <th>Rate</th>
                 <th>Amount</th>
                 <th>Disc</th>
                 <th>Tax</th>
@@ -471,6 +486,7 @@ return (
                   <td>{x.qty}</td>
                   <td>{x.currency}</td>
                   <td>{x.type=="Recievable"?"DN":"CN"}</td>
+                  <td>{x.rate_charge}</td>
                   <td>{x.amount}</td>
                   <td>{x.discount}</td>
                   <td>{x.tax_apply}</td>

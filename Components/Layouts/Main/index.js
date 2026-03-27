@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // <-- use this in Next.js 13+
-import VannaChat from './VannaChat';
+import AuditLog from './AuditLog';
 import UploadBackUp from './UploadBackUp';
 import Cookies from 'js-cookie';
 import OllamaChat from './ollama';
+import jwt_decode from 'jwt-decode';
 
 const Main = ({ sessionData, chartData }) => {
   const router = useRouter(); // get the router
@@ -27,10 +28,19 @@ const Main = ({ sessionData, chartData }) => {
   } 
 
   const [ allow, setAllow ] = React.useState(false);
+  const [ audit, setAudit ] = React.useState(false);
 
   useState(() => {
     if(username == 'isaadalam'){
       setAllow(true);
+    }
+  })
+  useState(() => {
+    let tempToken = Cookies.get('token');
+    if(tempToken == Cookies.get('token')){
+      let token = jwt_decode(tempToken);
+      console.log("Check Employee Access", token.access) 
+      token.access.includes("admin") && setAudit(true);
     }
   })
 
@@ -40,6 +50,7 @@ const Main = ({ sessionData, chartData }) => {
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
       {allow &&<UploadBackUp />}
+      {audit && <AuditLog /> }
     </div>
   );
 };

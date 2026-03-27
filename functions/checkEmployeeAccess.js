@@ -10,7 +10,7 @@ function checkEmployeeAccess(){
   if(Cookies.get("token") != null && Cookies.get("token") != "" && Cookies.get("token") != "undefined"){
     let tempToken = Cookies.get('token');
     if(tempToken == Cookies.get('token')){
-      token = jwt_decode(Cookies.get("token"));
+      token = jwt_decode(tempToken);
       console.log("Check Employee Access", token.access) 
     }else{
       logout();

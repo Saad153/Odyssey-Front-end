@@ -473,7 +473,6 @@ const makeInvoice = async (
       approve(res.data.result);
       await delay(500);
       await getHeadsNew(state.selectedRecord.id, dispatch, reset);
-      alert("Invoice Created Successfully");
     }
     setInvoiceBuffer(false);
   } catch (e) {

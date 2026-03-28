@@ -14,7 +14,7 @@ import { incrementTab } from '/redux/tabs/tabSlice';
 import Router from 'next/router';
 import InvoiceEditor from './InvoiceEditor';
 import PartySearch from '../Layouts/JobsLayout/Jobs/ChargesComp/PartySearch';
-import { set } from 'js-cookie';
+import Cookies, { set } from 'js-cookie';
 import { DeleteOutlined, PrinterOutlined, RightOutlined } from '@ant-design/icons';
 import { checkEmployeeAccess } from '../../functions/checkEmployeeAccess';
 
@@ -222,7 +222,8 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
       })
     }else{
       await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/unApprove`,{
-        id:data.resultOne.id
+        id:data.resultOne.id,
+        employeeId: Cookies.get('loginId')
       })
       setInvoice({
         ...invoice,

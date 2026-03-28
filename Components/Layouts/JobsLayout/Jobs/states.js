@@ -369,81 +369,119 @@ const calculateChargeHeadsTotal = (chageHeads, type) => {
   return obj
 }
 
-const autoInvoice = async (list, companyId, reset, type, dispatch, state, setInvoiceBuffer) => {
-  let tempList = list.filter((x)=>x.check);
-  const groupPartiesByName = (data) => {
-    console.log("Data to group: ", data)
-    return data.reduce((groups, party) => {
-      if (!groups[party.partyId]) {
-        groups[party.partyId] = [];
-      }
-      groups[party.partyId].push(party);
-      return groups;
-    }, {});
-  };
-  
-  const groupedParties = groupPartiesByName(tempList);
-  Object.values(groupedParties).forEach((group) => {
-    try{
-      let tag = ""
-      let type = ""
-      group.forEach((charge, i)=>{
-        group.forEach((ch, j)=>{
-          if(charge.charge==ch.charge && i != j){
-            tag = charge.particular
-            if(charge.partyType=='agent'){
-              type='agent'
-            }
+const autoInvoice = async (
+  list,
+  companyId,
+  reset,
+  invoiceType,
+  dispatch,
+  state,
+  setInvoiceBuffer
+) => {
+  const tempList = list.filter(x => x.check);
+
+  const grouped = tempList.reduce((acc, item) => {
+    acc[item.partyId] ||= [];
+    acc[item.partyId].push(item);
+    return acc;
+  }, {});
+
+  for (const group of Object.values(grouped)) {
+    try {
+      let tag = "";
+      let detectedType = "";
+
+      const seen = new Set();
+
+      for (const charge of group) {
+        if (seen.has(charge.charge)) {
+          tag = charge.particular;
+          if (charge.partyType === "agent") {
+            detectedType = "agent";
           }
-        })
-      })
-      if(tag!="" && type!="agent"){
-        openNotification("Error", `Two instances of the same charge: ${tag}`, "red")
-      }else{
-        makeInvoice(group, companyId, reset, type, dispatch, state, setInvoiceBuffer)
+          break;
+        }
+        seen.add(charge.charge);
       }
-    }catch(e){
-      console.log(e)
+
+      if (tag && detectedType !== "agent") {
+        openNotification(
+          "Error",
+          `Two instances of the same charge: ${tag}`,
+          "red"
+        );
+        continue;
+      }
+      await makeInvoice(
+        group,
+        companyId,
+        reset,
+        invoiceType,
+        dispatch,
+        state,
+        setInvoiceBuffer
+      );
+    } catch (e) {
+      console.error("AutoInvoice Error:", e);
     }
-  });
-}
+  }
+};
 
-const makeInvoice = async(list, companyId, reset, type, dispatch, state, setInvoiceBuffer) => {
-  let tempList1 = list
-  tempList1.forEach((x)=>{
-    if(x.description && x.invoiceType.includes("Invoice")){
-      if(x.type == "Payble"){
-        x.amount = parseFloat(x.amount) * -1
-        x.net_amount = parseFloat(x.net_amount) * -1
-        x.local_amount = parseFloat(x.local_amount) * -1
-      }
-    }else if(x.description && x.invoiceType.includes("Bill")){
-      if(x.type == "Recievable"){
-        x.amount = parseFloat(x.amount) * -1
-        x.net_amount = parseFloat(x.net_amount) * -1
-        x.local_amount = parseFloat(x.local_amount) * -1
-      }
+const makeInvoice = async (
+  list,
+  companyId,
+  reset,
+  type,
+  dispatch,
+  state,
+  setInvoiceBuffer
+) => {
+  const tempList = list.map(x => ({ ...x }));
+
+  for (const x of tempList) {
+    const amount = Math.abs(parseFloat(x.amount || 0));
+    const net = Math.abs(parseFloat(x.net_amount || 0));
+    const local = Math.abs(parseFloat(x.local_amount || 0));
+
+    if (x.description && x.invoiceType?.includes("Invoice") && x.type === "Payble") {
+      x.amount = -amount;
+      x.net_amount = -net;
+      x.local_amount = -local;
     }
 
-  })
-  let result1, result2;
-  tempList1.length>0?
+    if (x.description && x.invoiceType?.includes("Bill") && x.type === "Recievable") {
+      x.amount = -amount;
+      x.net_amount = -net;
+      x.local_amount = -local;
+    }
+  }
 
-    result1 = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_NEW,{
-      chargeList:tempList1, companyId, type:type, employeeId: Cookies.get("loginId")
-    }).then(async(x)=>{
-      if(x.data.status=="success"){
-        console.log("Data given to approve",x.data.result)
-        approve(x.data.result)
-        await delay(500)
-        await getHeadsNew(state.selectedRecord.id, dispatch, reset).then(async ()=>{
-          await setInvoiceBuffer(false)
-        })
+  try {
+    if (!tempList.length) return;
+
+    const res = await axios.post(
+      process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_NEW,
+      {
+        chargeList: tempList,
+        companyId,
+        type,
+        employeeId: Cookies.get("loginId"),
       }
-    })
-  :null
-  dispatch({ type: 'toggle', fieldName: 'chargeLoad', payload: false });
-}
+    );
+
+    if (res.data?.status === "success") {
+      approve(res.data.result);
+      await delay(500);
+      await getHeadsNew(state.selectedRecord.id, dispatch, reset);
+      alert("Invoice Created Successfully");
+    }
+    setInvoiceBuffer(false);
+  } catch (e) {
+    console.error("MakeInvoice Error:", e);
+  } finally {
+    dispatch({ type: "toggle", fieldName: "chargeLoad", payload: false });
+  }
+};
 
 const getInvoices = async(id, dispatch) => {
   let result = [];

@@ -379,28 +379,24 @@ const DirectJob = ({ id }) => {
     getData();
     }, [currentPage, search]); // 🔥 re-fetch on search & page
 
-        useEffect(() => {
-        const fetchreceivingAccount = async () => {
-        //   dispatch(setField({ field: 'load', value: true }))
-          try{
-            await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
-              headers: {
-                type: state.directJob_TransMode,
-                // companyid: companyId,
-              }
-            }).then((x) => {
-              console.log(x.data.result)
-              dispatch(setDJField({ field: 'directJob_SettlementAccounts', value: x.data.result }))
-            //   dispatch(setField({ field: 'load', value: false }))
-            })
-          }catch(e){
-            console.log(e)
-          }
+    useEffect(() => {
+    const fetchreceivingAccount = async () => {
+        try{
+        await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
+            headers: {
+            type: state.directJob_TransMode,
+            }
+        }).then((x) => {
+            dispatch(setDJField({ field: 'directJob_SettlementAccounts', value: x.data.result }))
+        })
+        }catch(e){
+        console.log(e)
         }
-        fetchreceivingAccount()
-      }, [state.directJob_TransMode])
+    }
+    fetchreceivingAccount()
+    }, [])
 
-      console.log(state)
+    console.log(state)
 
     return (
         <div className='base-page-layout'>
@@ -453,7 +449,7 @@ const DirectJob = ({ id }) => {
                         className="delete-btn1"
                         disabled={loading}
                         onClick={() => {
-                            // console.log("Reset Direct Job State")
+                            console.log("Reset Direct Job State")
                             // dispatch(resetDirectJob())
                             // dispatch(setDJField({ field: 'directJob_Id', value: 'new' }))
                             // setShow(true)

@@ -57,7 +57,7 @@ const Client = ({sessionData, clientData}) => {
   const dispatchNew = useDispatch();
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
   const { records, allClients } = state;
-  const [searchBy , setSearchBy] = useState("name");
+  const [searchBy , setSearchBy] = useState("name", "types");
 
   useEffect(()=>{ 
     if(sessionData.isLoggedIn==false){
@@ -103,7 +103,8 @@ const Client = ({sessionData, clientData}) => {
     const data = allClients.filter((x) => 
    
       x.name.toLowerCase().includes(searchValue) || 
-      x?.code?.toLowerCase().includes(searchValue)
+      x?.code?.toLowerCase().includes(searchValue) || 
+      x?.types?.toLowerCase().includes(searchValue)
     );
   
     dispatch({ type: 'toggle', fieldName: 'records', payload: data });
@@ -118,13 +119,14 @@ const Client = ({sessionData, clientData}) => {
         options={
           [
             {value : "name", label:"Name"},
-            {value : "code", label:"Code"}
+            {value : "code", label:"Code"},
+            {value : "types", label:"Type"},
           ]
         
         } defaultValue={"name"}
 
       />
-      <Input style={{width:"290px", marginLeft:"5px", borderRadius:"5px"}} placeholder={searchBy == 'name' ? "Type Name" : "Type Code"}
+      <Input style={{width:"290px", marginLeft:"5px", borderRadius:"5px"}} placeholder={searchBy == 'name' ? "Type Name" : searchBy == 'code' ? "Type Code" : "Type"}
         onChange={(e) => onSearch(e)}
       />
     </Col>

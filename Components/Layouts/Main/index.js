@@ -37,7 +37,7 @@ const Main = ({ sessionData, chartData }) => {
   })
   useState(() => {
     let tempToken = Cookies.get('token');
-    if(tempToken == Cookies.get('token')){
+    if(tempToken){
       let token = jwt_decode(tempToken);
       console.log("Check Employee Access", token.access) 
       token.access.includes("admin") && setAudit(true);

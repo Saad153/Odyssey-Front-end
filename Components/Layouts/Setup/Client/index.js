@@ -148,8 +148,9 @@ const Client = ({sessionData, clientData}) => {
           <tr>
           <th>Code</th>
             <th>Name</th>
-            <th>Contact Persons</th>
+            {/* <th>Contact Persons</th> */}
             <th>Telephones</th>
+            <th>Types</th>
             <th>Address</th>
             <th>Status</th>
             <th>Delete</th>
@@ -167,14 +168,18 @@ const Client = ({sessionData, clientData}) => {
               dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}><span className='blue-txt fw-7'>{x.name}</span></td>
-            <td onClick={()=>{
+            {/* <td onClick={()=>{
               dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
-            }}>{x.person1} {x.mobile1}<br/> {x.person2} {x.mobile2}<br/> </td>
+            }}>{x.person1} {x.mobile1}<br/> {x.person2} {x.mobile2}<br/> </td> */}
             <td onClick={()=>{
               dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}>{x.telephone1}<br/>{x.telephone2}</td>
+            <td onClick={()=>{
+              dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
+              Router.push(`/setup/client/${x.id}`);
+            }}>{x.types}</td>
             <td onClick={()=>{
               dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);

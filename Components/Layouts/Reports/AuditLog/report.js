@@ -222,35 +222,6 @@ const AuditReport = ({ query, result }) => {
                 </Col>
             </Row>
             <div>
-            {/* <div class="audit-container" style={{marginTop: '10px'}}>
-              <table class="audit-table" style={{overflow: 'auto'}}>
-                <thead>
-                  <tr>
-                    <th class="col-sno">S #</th>
-                    <th class="col-datetime">Date Time</th>
-                    <th class="col-user">User Log</th>
-                    <th class="col-form">Form</th>
-                    <th class="col-action">Action</th>
-                    <th class="col-doc">Doc #</th>
-                    {/* <th class="col-remarks">Remarks</th> 
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentRecords.map((r, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{moment(r.createdAt).format('DD-MM-YYYY')}</td>
-                      <td>{r.Employee?.name}</td>
-                      <td>{r.formName}</td>
-                      <td>{r.type}</td>
-                      <td>{r.docNo}</td>
-                       <td>{r.remarks}</td> 
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div> */}
-
             <div className="table-box">
                       <div className="table-scroll">
                         <table className="summary">
@@ -274,8 +245,6 @@ const AuditReport = ({ query, result }) => {
                         <tbody>
                           {Object.entries(groupedRecords).map(([groupName, groupRows]) => (
                             <React.Fragment key={groupName}>
-                              
-                              {/* GROUP HEADER ROW */}
                               <tr className="group-row">
                                 <td colSpan={15} className="group-title">
                                   

@@ -85,12 +85,23 @@ const Ledger = () => {
           <h4 className='fw-7 m-0'>Ledger</h4>
           <button className='btn-custom my-1 px-4' onClick={() => {
           if (account != "" && account != null) {
-            Router.push({ pathname: `/reports/ledgerReport/${account}/`, query: { from: moment(from).format("DD-MM-YYYY").toString(), to: moment(to).format("DD-MM-YYYY").toString(), name: name, company: company, currency: currency } });
-            dispatch(incrementTab({
-              "label": "Ledger Report",
-              "key": "5-7",
-              "id": `${account}?from=${moment(from).format("DD-MM-YYYY").toString()}&to=${moment(to).format("DD-MM-YYYY").toString()}&name=${name}&company=${company}&currency=${currency}`
-            }))
+          Router.push({
+            pathname: `/reports/ledgerReport/${account}`,
+            query: {
+              from: moment(from).format("DD-MM-YYYY"),
+              to: moment(to).format("DD-MM-YYYY"),
+              name,
+              company,
+              currency,
+            },
+          });
+          dispatch(
+            incrementTab({
+              label: "Ledger Report",
+              key: "5-7",
+              id: Router.asPath, // ✅ single source of truth
+            })
+          );
           }
         }
         }> Go </button>

@@ -392,25 +392,27 @@ const Voucher = ({ id }) => {
   useEffect(()=>{
     if(state.settlementAccount!=undefined){
       // console.log(state.settlementAccounts.find((x)=>x.id==state.settlementAccount).title)
-      console.log(state.settlementAccount)
-      axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCEHR_LEDGER_FOR_CLOSING,{
-        headers:{
-          currency:'PKR',
-          id:state.settlementAccount,
+      console.log("Settlement Account for Closing Balance:", state.settlementAccount)
+      axios.get(
+        process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCEHR_LEDGER_FOR_CLOSING,
+        {
+          headers: {
+            currency: "PKR",
+            id: state.settlementAccount,
+            company: CompanyId
+          },
         }
-      }).then((x)=>{
-        if(x?.data?.status=="success"){
-          let closingBalance = 0;
-          x?.data?.result?.forEach((x)=>{
-            x.type == "debit" ?
-            closingBalance = closingBalance + parseFloat(x.defaultAmount): 
-            closingBalance = closingBalance - parseFloat(x.defaultAmount)
-          })
-          // setClosing(closingBalance)
-          console.log("Closing Balance:", closingBalance)
-          dispatch(setField({ field: 'closingBalance', value: closingBalance }))
+      ).then((res) => {
+        if (res.data.status === "success") {
+          console.log(res.data.closingBalance)
+          dispatch(
+            setField({
+              field: "closingBalance",
+              value: res.data.closingBalance,
+            })
+          );
         }
-      })
+      });
     }else{
       dispatch(setField({ field: 'closingBalance', value: 0 }))
     }

@@ -376,7 +376,8 @@ const autoInvoice = async (
   invoiceType,
   dispatch,
   state,
-  setInvoiceBuffer
+  setInvoiceBuffer,
+  shipDate
 ) => {
   const tempList = list.filter(x => x.check);
 
@@ -419,7 +420,8 @@ const autoInvoice = async (
         invoiceType,
         dispatch,
         state,
-        setInvoiceBuffer
+        setInvoiceBuffer,
+        shipDate
       );
     } catch (e) {
       console.error("AutoInvoice Error:", e);
@@ -434,7 +436,8 @@ const makeInvoice = async (
   type,
   dispatch,
   state,
-  setInvoiceBuffer
+  setInvoiceBuffer,
+  shipDate
 ) => {
   const tempList = list.map(x => ({ ...x }));
 
@@ -458,7 +461,6 @@ const makeInvoice = async (
 
   try {
     if (!tempList.length) return;
-
     const res = await axios.post(
       process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_NEW,
       {
@@ -466,6 +468,7 @@ const makeInvoice = async (
         companyId,
         type,
         employeeId: Cookies.get("loginId"),
+        shipDate
       }
     );
 

@@ -199,7 +199,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
             setInvoiceBuffer(false)
             openNotification('Error', `No Client Selected!`, 'red');
           }else{
-            await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer).then(()=>{
+            await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer, allValues.shipDate).then(()=>{
             });
           }
         }
@@ -213,7 +213,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
             setInvoiceBuffer(false)
             openNotification('Error', `No Vendor Selected!`, 'red');
           }else{
-            await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer);
+            await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer, allValues.shipDate);
           }
         }
       }}>Auto Bill</div>
@@ -226,7 +226,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
             setInvoiceBuffer(false)
             openNotification('Error', `No Agent Selected!`, 'red');
           }else{
-            await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer);
+            await autoInvoice(temp, companyId, reset, operationType, dispatch, state, setInvoiceBuffer, allValues.shipDate);
           }
         }
       }}>Auto Agent Invoice</div>

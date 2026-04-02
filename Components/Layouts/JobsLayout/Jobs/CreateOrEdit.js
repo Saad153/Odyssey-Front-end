@@ -30,7 +30,7 @@ import { useQueryClient } from '@tanstack/react-query';
 const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) => {
   const queryClient = useQueryClient();
   const {register, control, handleSubmit, reset, formState:{errors}, watch, getValues } = useForm({
-    resolver:yupResolver(SignupSchema), defaultValues:state.values
+    resolver:yupResolver(SignupSchema), defaultValues:state.values,
   });
   const approved = useWatch({control, name:"approved"});
   const subType = useWatch({control, name:"subType"});
@@ -136,7 +136,12 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
 
 
   const onSubmit = async(data) => {
-    data.equipments = state.equipments
+    if(type == 'AE' || type == 'AI'){
+      if(!data.departureDate){
+        openNotification('Error', `Departure Date is required for Air Jobs!`, 'red')
+        return;
+      }
+    }    data.equipments = state.equipments
     data.customAgentId = data.customCheck.length>0?data.customAgentId:null;
     data.transporterId = data.transportCheck.length>0?data.transporterId:null;
     data.VoyageId = data.VoyageId!=""?data.VoyageId:null;
@@ -185,6 +190,12 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
 
   const onEdit = async(data) => {
 
+    if(type == 'AE' || type == 'AI'){
+      if(!data.departureDate){
+        openNotification('Error', `Departure Date is required for Air Jobs!`, 'red')
+        return;
+      }
+    }
     data.equipments = state.equipments
     data.customAgentId = data.customCheck.length>0?data.customAgentId:null;
     data.transporterId = data.transportCheck.length>0?data.transporterId:null;

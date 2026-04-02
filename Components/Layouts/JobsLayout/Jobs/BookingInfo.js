@@ -399,7 +399,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
               name='airLineId' control={control} label='' disabled={getStatus(approved)} options={state.fields.vendor.airLine} width={"100%"} />
           </>}
           <Carrier state={state} register={register} control={control} pageLinking={pageLinking} dispatch={dispatch}
-            getStatus={getStatus} approved={approved} VoyageId={VoyageId} vesselId={vesselId} type={type}
+            getStatus={getStatus} approved={approved} VoyageId={VoyageId} vesselId={vesselId} type={type} errors={errors}
           />
         </Col>
         <Col md={3}><Space />

@@ -7,7 +7,8 @@ import Cookies from "js-cookie";
 
 const SignupSchema = yup.object().shape({
   ClientId: yup.string().required("Client is required"),
-  consigneeId: yup.string().required("Consignee is required"),
+  shipperId: yup.string().required("Shipper is required"),
+  commodityId: yup.string().required("Commodity is required"),
 });
 
 function recordsReducer(state, action){

@@ -7,7 +7,7 @@ import Dates from './Dates';
 import { Popover } from "antd";
 import { Row, Col } from "react-bootstrap";
 
-const Carrier = ({state, register, control, pageLinking, dispatch, getStatus, approved, VoyageId, vesselId, type}) => {
+const Carrier = ({state, register, control, pageLinking, dispatch, getStatus, approved, VoyageId, vesselId, type, errors}) => {
     // console.log("state carrier",state)
     
     function getVoyageNumber (id) {
@@ -125,7 +125,8 @@ const Carrier = ({state, register, control, pageLinking, dispatch, getStatus, ap
 
             <Col md={6}>
                 <div className='my-2'></div>
-                <DateComp register={register} name='departureDate' control={control} label='Departure' disabled={getStatus(approved)} />
+                {errors.departureDate && <p className='text-danger'>Departure Date is required</p>}
+                <DateComp register={register} required name='departureDate' control={control} label='Departure' disabled={getStatus(approved)} />
             </Col>
             <Col md={6}>
                 <div className='my-2'></div>

@@ -107,7 +107,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
         );
         Router.push(type=="SE"?`/seaJobs/export/bl/${x.data.result}`:type=="SI"?`/seaJobs/import/bl/${x.data.result}`:type=="AE"?`/airJobs/export/bl/${x.data.result}`:`/airJobs/import/bl/${x.data.result}`);
       } else if(x.data.status == 'warning') {
-        openNotification("Error",x.data.result,"red");
+        openNotification("Warning",x.data.result,"orange");
       } else {
         openNotification("Error","something went wrong, try again with correct values","red");
       }
@@ -170,6 +170,9 @@ const BlComp = ({id, blData, partiesData, type}) => {
       .then(async(x) => {
         if (x.data.status == "error") {
           openNotification("Error", "Something went wrong", "red");
+          set("load", false);
+        } else if (x.data.status == "warning") {
+          openNotification("Warning", x.data.result, "orange");
           set("load", false);
         } else {
           openNotification("Success", "Bl Eidted Successfully", "green");

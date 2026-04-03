@@ -121,37 +121,37 @@ const JobPL = () => {
         <div className="page-header">
             <h4 className='fw-7 m-0'>Job Profit & Loss</h4>
             <button className='btn-custom my-1 px-4'
-          onClick={() => {
-            Router.push({
-              pathname: `/reports/jobPLReport/report`,
-              query: {
-                to: moment(to).toString(),
-                from: moment(from).toString(),
-                client: client,
-                company: company,
-                subtype:subType,
-                jobtype: jobType,
-                overseasagent: overSeasagent,
-                salesrepresentative: salesRepresentative,
-                report: reportType
-              }
-            });
-            let url = `?to=${to}&from=${from}`;
-            client? url = url + `&client=${client}`: null;
-            company? url = url + `&company=${company}`: null;
-            subType? url = url + `&subtype=${subType}`: null;
-            jobType? url = url + `&jobtype=${jobType}`: null;
-            salesRepresentative? url = url + `&salesrepresentative=${salesRepresentative}`: null;
-            reportType? url = url + `&report=${reportType}`: null;
-            overSeasagent? url = url + `&overseasagent=${overSeasagent}`: null;
-            
-            dispatchNew(incrementTab({
-              "label": "Job Profit & Loss", "key": "5-4-1",
-              "id": url 
-            }));
-          }}
-          disabled={state.load}
-        >
+              onClick={() => {
+                Router.push({
+                  pathname: `/reports/jobPLReport/report`,
+                  query: {
+                    to: moment(to).toString(),
+                    from: moment(from).toString(),
+                    client: client,
+                    company: company,
+                    subtype:subType,
+                    jobtype: jobType,
+                    overseasagent: overSeasagent,
+                    salesrepresentative: salesRepresentative,
+                    report: reportType
+                  }
+                });
+                let url = `?to=${to}&from=${from}`;
+                client? url = url + `&client=${client}`: null;
+                company? url = url + `&company=${company}`: null;
+                subType? url = url + `&subtype=${subType}`: null;
+                jobType? url = url + `&jobtype=${jobType}`: null;
+                salesRepresentative? url = url + `&salesrepresentative=${salesRepresentative}`: null;
+                reportType? url = url + `&report=${reportType}`: null;
+                overSeasagent? url = url + `&overseasagent=${overSeasagent}`: null;
+                
+                dispatchNew(incrementTab({
+                  "label": "Job Profit & Loss", "key": "5-4-1",
+                  "id": url 
+                }));
+              }}
+              disabled={state.load}
+            >
           {state.load ? <Spinner size='sm' /> : "Go"}
         </button>
         </div>
@@ -205,6 +205,7 @@ const JobPL = () => {
               style={{ width: "100%" }}
               className='select-modern' 
               type={"representative"}
+              disabled={reportType === "summary"}
               options={state.salesRepresentative.map((item) => ({ value: item.id, label: item.name }))}
               filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
               onChange={(e) => {
@@ -228,6 +229,7 @@ const JobPL = () => {
             style={{ width: "100%" }}
             className='select-modern' 
             type={"agent"}
+            disabled={reportType === "summary"}
             options={state.overseas.map((item)=> ({value: item.id, label: `(${item.code}) ${item.name}`}))}
             filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             onChange={(e) => {
@@ -250,6 +252,7 @@ const JobPL = () => {
             placeholder={"Client"} 
             style={{ width: "100%" }}
             className='select-modern' 
+            disabled={reportType === "summary"}
             options={state.clients.map((item)=> ({value: item.id, label: `(${item.code}) ${item.name}`}))}
             filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             onChange={(e) => {
@@ -275,6 +278,7 @@ const JobPL = () => {
             <Radio.Group onChange={(e) => dispatchNew(setReportType(e.target.value))} value={reportType}>
               <Radio value={"viewer"}>Viewer</Radio>
               <Radio value={"grid"}>Grid</Radio>
+              <Radio value={"summary"}>Summary</Radio>
             </Radio.Group>
             </div>
           </Col>

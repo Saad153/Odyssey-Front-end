@@ -134,38 +134,48 @@ const Voyage = ({vesselsData}) => {
   }
   
   const onSubmit = async(data) => {
-    set('submitLoad', true);
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VOYAGE,{...data, VesselId:state.selectedRecord.id})
-    .then((x)=>{
-      if(x.data.status=="success"){
-        openNotification("Success", "Voyage Created", "green");
-        refetch();
-      }else{
-        openNotification("Error", "Something Went Wrong", "red")
-      }
-    }); 
-    await delay(200);
-    set('submitLoad', false);
-    dispatch({ type: 'modalOff' })
-    await getRecords(state.selectedRecord.id);
+    if(data.SailingDate!="" && data.SailingDate!=undefined){
+      set('submitLoad', true);
+      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VOYAGE,{...data, VesselId:state.selectedRecord.id})
+      .then((x)=>{
+        if(x.data.status=="success"){
+          openNotification("Success", "Voyage Created", "green");
+          refetch();
+        }else{
+          openNotification("Error", "Something Went Wrong", "red")
+        }
+      }); 
+      await delay(200);
+      set('submitLoad', false);
+      dispatch({ type: 'modalOff' })
+      await getRecords(state.selectedRecord.id);
+    } else {
+      openNotification("Error", "Sailing Date is Required", "red")
+      return;
+    }
   };
 
   const onEdit = async(data) => {
-    set('submitLoad', true);
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VOYAGE,{...data, VesselId:state.selectedRecord.id})
-    .then((x)=>{
-      if(x.data.status=="success"){
-        openNotification("Success", "Voyage Updated", "green");
-        refetch();
-      }else{
-        openNotification("Error", "Something Went Wrong", "red")
-      }
-    }); 
-
-    await delay(200);
-    set('submitLoad', false);
-    dispatch({ type: 'modalOff' })
-    await getRecords(state.selectedRecord.id);
+    if(data.SailingDate!="" && data.SailingDate!=undefined){
+      set('submitLoad', true);
+      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VOYAGE,{...data, VesselId:state.selectedRecord.id})
+      .then((x)=>{
+        if(x.data.status=="success"){
+          openNotification("Success", "Voyage Updated", "green");
+          refetch();
+        }else{
+          openNotification("Error", "Something Went Wrong", "red")
+        }
+      }); 
+  
+      await delay(200);
+      set('submitLoad', false);
+      dispatch({ type: 'modalOff' })
+      await getRecords(state.selectedRecord.id);
+    } else {
+      openNotification("Error", "Sailing Date is Required", "red")
+      return;
+    }
    };
 
   const onError = (errors) => console.log(errors);

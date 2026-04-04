@@ -1,23 +1,29 @@
 import React from 'react';
-import Summary from '/Components/Layouts/Reports/JobPL/Summary';
+import Comparative from '/Components/Layouts/Reports/JobPL/Comparative';
 import axios from 'axios';
 
-const summary = ({query, result}) => {
+const comparative = ({query, result}) => {
   return (
-    <Summary query={query} result={result} />
+    <Comparative query={query} result={result} />
   )
 }
 
-export default summary
+export default comparative
 
 export async function getServerSideProps(context) {
   const { query } = context;
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/jobPnLSummary`,
+      `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/jobPnLComparison`,
       {
-        params: { ...query } // ✅ correct
+        params: { ...query,
+            from1: query.from,
+            to1: query.to,
+            from2: query.from2,
+            to2: query.to2,
+            includeFields: query.includeFields
+         } // ✅ correct
       }
     );
 

@@ -10,7 +10,8 @@ import moment from 'moment';
     reportType: "viewer",
     salesRepresentative:"",
     overSeasagent: "",
-    client:""
+    client:"",
+    metrics: 'vol,weight,shpVol,teu'
   };
 
   export const profitLossSlice = createSlice({
@@ -22,6 +23,12 @@ import moment from 'moment';
     },
     setTo(state, action) {
       state.to = action.payload;
+    },
+    setFrom2(state, action) {
+      state.from2 = action.payload;
+    },
+    setTo2(state, action) {
+      state.to2 = action.payload;
     },
     setCompany(state, action) {
       state.company = action.payload;
@@ -44,9 +51,12 @@ import moment from 'moment';
     setClient(state, action) {
       state.client = action.payload;
     },
+    setMetrics(state, action) {
+      state.metrics = action.payload;
+    }
   },
 })
 
-export const { setFrom, setTo, setCompany,setClient,setJobType,setOverSeasagent,setReportType,setSalesRepresentative,setSubType } = profitLossSlice.actions
+export const { setFrom, setTo, setFrom2, setTo2, setCompany,setClient,setJobType,setOverSeasagent,setReportType,setSalesRepresentative,setSubType, setMetrics } = profitLossSlice.actions
 
 export default profitLossSlice.reducer

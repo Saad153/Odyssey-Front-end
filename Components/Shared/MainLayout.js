@@ -183,6 +183,12 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/reports/jobPLReport/report"){
       setToggleState('5-4-1');
     }
+    if(newRouter.pathname==="/reports/jobPLReport/summary"){
+      setToggleState('5-4-2');
+    }
+    if(newRouter.pathname==="/reports/jobPLReport/comparative"){
+      setToggleState('5-4-3');
+    }
     if(newRouter.pathname==="/airJobs/manifest/[id]"){
       setToggleState('7-8');
     }
@@ -390,6 +396,8 @@ const MainLayout = ({children}) => {
         else if(tabs.key=='5-3-1'){ tempTabActive.balanceSheetReport=true }
         else if(tabs.key=='5-4'){ tempTabActive.jobPlReport=true }
         else if(tabs.key=='5-4-1'){ tempTabActive.jobPlReportPage=true }
+        else if(tabs.key=='5-4-2'){ tempTabActive.jobPlSummaryPage=true }
+        else if(tabs.key=='5-4-3'){ tempTabActive.jobPlComparativePage=true }
         else if(tabs.key=='5-5'){ tempTabActive.ledger=true }
         else if(tabs.key=='5-6'){ tempTabActive.invoiceBalancing=true }
         else if(tabs.key=='5-8'){ tempTabActive.invoiceBalancingReport=true }
@@ -507,6 +515,8 @@ const MainLayout = ({children}) => {
     else if(x.key=='5-3-1'){ Router.push('/reports/balanceSheet/Report') }
     else if(x.key=='5-4'){ Router.push('/reports/jobPLReport') }
     else if(x.key=='5-4-1'){ Router.push(`/reports/jobPLReport/report${setKey(x)}`) }
+    else if(x.key=='5-4-2'){ Router.push(`/reports/jobPLReport/summary${setKey(x)}`) }
+    else if(x.key=='5-4-3'){ Router.push(`/reports/jobPLReport/comparative${setKey(x)}`) }
     else if(x.key=='5-5'){ Router.push('/reports/ledger') }
     else if(x.key=='5-6'){ Router.push('/reports/invoiceBalancing') }
     else if(x.key=='5-7'){ Router.push(`/reports/ledgerReport/${setKey(x)}`) }

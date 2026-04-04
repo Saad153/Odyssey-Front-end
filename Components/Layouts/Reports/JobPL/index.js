@@ -11,9 +11,22 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import Router from "next/router";
 import { setFilterValues } from '/redux/filters/filterSlice';
-import { setFrom, setTo, setCompany, setClient,setJobType,setOverSeasagent,setReportType,setSalesRepresentative,setSubType } from '../../../../redux/profitLoss/profitLossSlice';
+import { setFrom, setTo, setFrom2, setTo2, setCompany, setClient,setJobType,setOverSeasagent,setReportType,setSalesRepresentative,setSubType, setMetrics } from '../../../../redux/profitLoss/profitLossSlice';
 import Search from 'antd/lib/input/Search';
 import axios from 'axios';
+import MetricSelector from './MetricSelector';
+
+// Utility function to add/remove items from comma-separated string
+const toggleMetric = (currentString, metric) => {
+  const items = currentString.split(',').map(s => s.trim()).filter(s => s !== '');
+  const index = items.indexOf(metric);
+  if (index > -1) {
+    items.splice(index, 1);
+  } else {
+    items.push(metric);
+  }
+  return items.join(',');
+};
 
 const JobPL = () => {
   const dispatchNew = useDispatch();
@@ -21,7 +34,9 @@ const JobPL = () => {
   const [state, dispatch] = useReducer(recordsReducer, initialState);
   const set = (obj) => dispatch({ type: 'set', payload: obj });
 
-  const { from, to, jobType,company,subType,salesRepresentative,overSeasagent,client,reportType  } = useSelector((state) => state.profitloss);
+  const { from, to, from2, to2, jobType,company,subType,salesRepresentative,overSeasagent,client,reportType, metrics  } = useSelector((state) => state.profitloss);
+
+  // const [metrics, setMetrics] = useState('vol,weight,shpVol,teu');
 
 
 
@@ -101,6 +116,7 @@ const JobPL = () => {
         overseasagent: values ? values.overSeasagent : undefined,
         client: values? values.client : undefined,
         reportType: values ? values.reportType : 'viewer',
+        metrics: values ? values.metrics : 'vol,weight,shpVol,teu',
       });
 
 
@@ -122,33 +138,95 @@ const JobPL = () => {
             <h4 className='fw-7 m-0'>Job Profit & Loss</h4>
             <button className='btn-custom my-1 px-4'
               onClick={() => {
-                Router.push({
-                  pathname: `/reports/jobPLReport/report`,
-                  query: {
-                    to: moment(to).toString(),
-                    from: moment(from).toString(),
-                    client: client,
-                    company: company,
-                    subtype:subType,
-                    jobtype: jobType,
-                    overseasagent: overSeasagent,
-                    salesrepresentative: salesRepresentative,
-                    report: reportType
-                  }
-                });
-                let url = `?to=${to}&from=${from}`;
-                client? url = url + `&client=${client}`: null;
-                company? url = url + `&company=${company}`: null;
-                subType? url = url + `&subtype=${subType}`: null;
-                jobType? url = url + `&jobtype=${jobType}`: null;
-                salesRepresentative? url = url + `&salesrepresentative=${salesRepresentative}`: null;
-                reportType? url = url + `&report=${reportType}`: null;
-                overSeasagent? url = url + `&overseasagent=${overSeasagent}`: null;
-                
-                dispatchNew(incrementTab({
-                  "label": "Job Profit & Loss", "key": "5-4-1",
-                  "id": url 
-                }));
+                if(reportType !== "summary" && reportType !== "comparative"){
+                  Router.push({
+                    pathname: `/reports/jobPLReport/report`,
+                    query: {
+                      to: moment(to).toString(),
+                      from: moment(from).toString(),
+                      client: client,
+                      company: company,
+                      subtype:subType,
+                      jobtype: jobType,
+                      overseasagent: overSeasagent,
+                      salesrepresentative: salesRepresentative,
+                      report: reportType
+                    }
+                  });
+                  let url = `?to=${to}&from=${from}`;
+                  client? url = url + `&client=${client}`: null;
+                  company? url = url + `&company=${company}`: null;
+                  subType? url = url + `&subtype=${subType}`: null;
+                  jobType? url = url + `&jobtype=${jobType}`: null;
+                  salesRepresentative? url = url + `&salesrepresentative=${salesRepresentative}`: null;
+                  reportType? url = url + `&report=${reportType}`: null;
+                  overSeasagent? url = url + `&overseasagent=${overSeasagent}`: null;
+                  
+                  dispatchNew(incrementTab({
+                    "label": "Job Profit & Loss", "key": "5-4-1",
+                    "id": url 
+                  }));
+                } else if(reportType === "summary"){
+                  Router.push({
+                    pathname: `/reports/jobPLReport/summary`,
+                    query: {
+                      to: moment(to).toString(),
+                      from: moment(from).toString(),
+                      client: client,
+                      company: company,
+                      subtype:subType,
+                      jobtype: jobType,
+                      overseasagent: overSeasagent,
+                      salesrepresentative: salesRepresentative,
+                      report: reportType,
+                      includeFields: metrics
+                    }
+                  });
+                  let url = `?to=${to}&from=${from}`;
+                  client? url = url + `&client=${client}`: null;
+                  company? url = url + `&company=${company}`: null;
+                  subType? url = url + `&subtype=${subType}`: null;
+                  jobType? url = url + `&jobtype=${jobType}`: null;
+                  salesRepresentative? url = url + `&salesrepresentative=${salesRepresentative}`: null;
+                  reportType? url = url + `&report=${reportType}`: null;
+                  overSeasagent? url = url + `&overseasagent=${overSeasagent}`: null;
+                  
+                  dispatchNew(incrementTab({
+                    "label": "Job PnL Summary", "key": "5-4-2",
+                    "id": url 
+                  }));
+                } else if(reportType === "comparative"){
+                  Router.push({
+                    pathname: `/reports/jobPLReport/comparative`,
+                    query: {
+                      to: moment(to).toString(),
+                      from: moment(from).toString(),
+                      to2: moment(to2).toString(),
+                      from2: moment(from2).toString(),
+                      client: client,
+                      company: company,
+                      subtype:subType,
+                      jobtype: jobType,
+                      overseasagent: overSeasagent,
+                      salesrepresentative: salesRepresentative,
+                      report: reportType,
+                      includeFields: metrics
+                    }
+                  });
+                  let url = `?to=${to}&from=${from}&to2=${to2}&from2=${from2}`;
+                  client? url = url + `&client=${client}`: null;
+                  company? url = url + `&company=${company}`: null;
+                  subType? url = url + `&subtype=${subType}`: null;
+                  jobType? url = url + `&jobtype=${jobType}`: null;
+                  salesRepresentative? url = url + `&salesrepresentative=${salesRepresentative}`: null;
+                  reportType? url = url + `&report=${reportType}`: null;
+                  overSeasagent? url = url + `&overseasagent=${overSeasagent}`: null;
+                  
+                  dispatchNew(incrementTab({
+                    "label": "Job PnL Comparative", "key": "5-4-3",
+                    "id": url 
+                  }));
+                }
               }}
               disabled={state.load}
             >
@@ -205,7 +283,7 @@ const JobPL = () => {
               style={{ width: "100%" }}
               className='select-modern' 
               type={"representative"}
-              disabled={reportType === "summary"}
+              disabled={reportType === "summary" || reportType === "comparative"}
               options={state.salesRepresentative.map((item) => ({ value: item.id, label: item.name }))}
               filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
               onChange={(e) => {
@@ -229,7 +307,7 @@ const JobPL = () => {
             style={{ width: "100%" }}
             className='select-modern' 
             type={"agent"}
-            disabled={reportType === "summary"}
+            disabled={reportType === "summary" || reportType === "comparative"}
             options={state.overseas.map((item)=> ({value: item.id, label: `(${item.code}) ${item.name}`}))}
             filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             onChange={(e) => {
@@ -252,7 +330,7 @@ const JobPL = () => {
             placeholder={"Client"} 
             style={{ width: "100%" }}
             className='select-modern' 
-            disabled={reportType === "summary"}
+            disabled={reportType === "summary" || reportType === "comparative"}
             options={state.clients.map((item)=> ({value: item.id, label: `(${item.code}) ${item.name}`}))}
             filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             onChange={(e) => {
@@ -279,6 +357,7 @@ const JobPL = () => {
               <Radio value={"viewer"}>Viewer</Radio>
               <Radio value={"grid"}>Grid</Radio>
               <Radio value={"summary"}>Summary</Radio>
+              <Radio value={"comparative"}>Comparative</Radio>
             </Radio.Group>
             </div>
           </Col>
@@ -296,6 +375,33 @@ const JobPL = () => {
               </div>
           </Col>
         </Row>
+        {reportType == 'comparative' && <Col md={4}>
+            <label>From</label>
+            <DatePicker 
+              allowClear={false} 
+              style={{width:"100%", borderRadius:"6px"}}
+              className='datePicker-modern' 
+              format="DD-MM-YYYY" 
+              value={moment(from2)} 
+              onChange={(e)=>{dispatchNew(setFrom2(moment(e).toString()))}}/>
+          </Col>}
+          {reportType == 'comparative' && <Col md={4}>
+            <label>To</label>
+            <DatePicker 
+              allowClear={false} 
+              style={{width:"100%", borderRadius:"6px"}}
+              className='datePicker-modern' 
+              format="DD-MM-YYYY" 
+              value={moment(to2)} 
+              onChange={(e)=>{dispatchNew(setTo2(moment(e).toISOString()))}}/>
+          </Col>}
+          {reportType == 'summary' || reportType == 'comparative' ? <Col md={4} className='d-flex align-items-end'>
+            <div>
+              <label>Metrics</label>
+              <MetricSelector />
+            </div>
+          </Col> : null}
+
         
       </div>
       <Modal title={"Job Profit & Loss Report"}

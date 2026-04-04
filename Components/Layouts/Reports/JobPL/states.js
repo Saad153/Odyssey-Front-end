@@ -22,6 +22,8 @@ const initialState = {
   reportType:'viewer',
   to:moment().format("YYYY-MM-DD"),
   from:moment("2023-07-01").format("YYYY-MM-DD"),
+  to2:moment().format("YYYY-MM-DD"),
+  from2:moment("2023-07-01").format("YYYY-MM-DD"),
   client:'',
   records:[],
   subType:'',

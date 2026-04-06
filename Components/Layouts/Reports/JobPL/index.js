@@ -349,9 +349,9 @@ const JobPL = () => {
         </Row>
         </div></Col>
         
-       <Row className="mt-3">
+       <Row className="mt-3 g-2 align-items-stretch">
           <Col md={3}>
-            <div className="card-section">
+            <div className="card-section h-100">
             <h5 className="form-label">Report Types</h5>
             <Radio.Group onChange={(e) => dispatchNew(setReportType(e.target.value))} value={reportType}>
               <Radio value={"viewer"}>Viewer</Radio>
@@ -363,46 +363,59 @@ const JobPL = () => {
           </Col>
 
           <Col md={6}>
-          <div className="card-section">
+          <div className="card-section h-100">
             <h5>Job Types</h5>
             <Checkbox.Group options={plainOptions} value={jobType} onChange={(e) => dispatchNew(setJobType(e))} />
               </div>
           </Col>
           <Col md={3}>
-          <div className="card-section">
+          <div className="card-section h-100">
             <h5>Sub Types</h5>
             <Checkbox.Group options={typeOptions} value={subType} onChange={(e) => dispatchNew(setSubType(e)) } />
               </div>
           </Col>
         </Row>
-        {reportType == 'comparative' && <Col md={4}>
-            <label>From</label>
-            <DatePicker 
-              allowClear={false} 
-              style={{width:"100%", borderRadius:"6px"}}
-              className='datePicker-modern' 
-              format="DD-MM-YYYY" 
-              value={moment(from2)} 
-              onChange={(e)=>{dispatchNew(setFrom2(moment(e).toString()))}}/>
-          </Col>}
-          {reportType == 'comparative' && <Col md={4}>
-            <label>To</label>
-            <DatePicker 
-              allowClear={false} 
-              style={{width:"100%", borderRadius:"6px"}}
-              className='datePicker-modern' 
-              format="DD-MM-YYYY" 
-              value={moment(to2)} 
-              onChange={(e)=>{dispatchNew(setTo2(moment(e).toISOString()))}}/>
-          </Col>}
-          {reportType == 'summary' || reportType == 'comparative' ? <Col md={4} className='d-flex align-items-end'>
-            <div>
-              <label>Metrics</label>
-              <MetricSelector />
-            </div>
-          </Col> : null}
+        {(reportType === 'summary' || reportType === 'comparative') && (
+          <Row className="mt-3 g-2 align-items-stretch">
+            {reportType === 'comparative' && (
+              <>
+                <Col md={4}>
+                  <div className="card-section h-100">
+                    <h5 className="form-label">Compare From</h5>
+                    <DatePicker
+                      allowClear={false}
+                      style={{ width: "100%", borderRadius: "6px" }}
+                      className='datePicker-modern'
+                      format="DD-MM-YYYY"
+                      value={moment(from2)}
+                      onChange={(e) => { dispatchNew(setFrom2(moment(e).toString())) }}
+                    />
+                  </div>
+                </Col>
+                <Col md={4}>
+                  <div className="card-section h-100">
+                    <h5 className="form-label">Compare To</h5>
+                    <DatePicker
+                      allowClear={false}
+                      style={{ width: "100%", borderRadius: "6px" }}
+                      className='datePicker-modern'
+                      format="DD-MM-YYYY"
+                      value={moment(to2)}
+                      onChange={(e) => { dispatchNew(setTo2(moment(e).toISOString())) }}
+                    />
+                  </div>
+                </Col>
+              </>
+            )}
+            <Col md={reportType === 'comparative' ? 4 : 12}>
+              <div className="card-section h-100">
+                <h5 className="form-label">Metrics</h5>
+                <MetricSelector />
+              </div>
+            </Col>
+          </Row>
+        )}
 
-        
       </div>
       <Modal title={"Job Profit & Loss Report"}
         open={state.visible}

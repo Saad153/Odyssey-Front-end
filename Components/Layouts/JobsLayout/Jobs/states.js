@@ -378,7 +378,8 @@ const autoInvoice = async (
   dispatch,
   state,
   setInvoiceBuffer,
-  shipDate
+  shipDate,
+  departureDate
 ) => {
   const tempList = list.filter(x => x.check);
 
@@ -422,7 +423,8 @@ const autoInvoice = async (
         dispatch,
         state,
         setInvoiceBuffer,
-        shipDate
+        shipDate,
+        departureDate
       );
     } catch (e) {
       console.error("AutoInvoice Error:", e);
@@ -438,7 +440,8 @@ const makeInvoice = async (
   dispatch,
   state,
   setInvoiceBuffer,
-  shipDate
+  shipDate,
+  departureDate
 ) => {
   const tempList = list.map(x => ({ ...x }));
 
@@ -469,7 +472,8 @@ const makeInvoice = async (
         companyId,
         type,
         employeeId: Cookies.get("loginId"),
-        shipDate
+        shipDate,
+        departureDate
       }
     );
 

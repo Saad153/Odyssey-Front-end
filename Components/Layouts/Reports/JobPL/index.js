@@ -109,6 +109,8 @@ const JobPL = () => {
       set({
         from: values ? values.from : '',
         to: moment().format("YYYY-MM-DD"),
+        from2: values ? values.from2 : moment().subtract(1, 'month').startOf('month').format("YYYY-MM-DD"),
+        to2: values ? values.to2 : moment().subtract(1, 'month').endOf('month').format("YYYY-MM-DD"),
         jobType: values ? values.jobType : [],
         company: values? values.company : '',
         subType: values? values.subType : [],
@@ -123,7 +125,11 @@ const JobPL = () => {
 
     }
     else {
-      set({ jobType: plainOptions }); // Automatically check all job types if no filters
+      set({ 
+        jobType: plainOptions,
+        from2: moment().subtract(1, 'month').startOf('month').format("YYYY-MM-DD"),
+        to2: moment().subtract(1, 'month').endOf('month').format("YYYY-MM-DD")
+      }); // Automatically check all job types if no filters
     }
   }, [filters]);
 
@@ -138,6 +144,10 @@ const JobPL = () => {
             <h4 className='fw-7 m-0'>Job Profit & Loss</h4>
             <button className='btn-custom my-1 px-4'
               onClick={() => {
+                if (reportType === "comparative" && (!to2 || !from2)) {
+                  alert("Please select the second date range for comparison.");
+                  return;
+                }
                 if(reportType !== "summary" && reportType !== "comparative"){
                   Router.push({
                     pathname: `/reports/jobPLReport/report`,

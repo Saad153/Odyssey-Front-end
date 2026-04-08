@@ -59,9 +59,17 @@ const Ledger = () => {
     }
   }
 
-  useEffect(() => { if (company != "") 
-    getAccounts();
-   }, [company,account]);
+  useEffect(() => { 
+    if (company != "") {
+      getAccounts();
+    }
+  }, [company]);
+
+  useEffect(() => {
+    if (account && records.length > 0) {
+      getAccountName(records);
+    }
+  }, [account, records]);
 
 
   // useEffect(()=>{
@@ -85,23 +93,25 @@ const Ledger = () => {
           <h4 className='fw-7 m-0'>Ledger</h4>
           <button className='btn-custom my-1 px-4' onClick={() => {
           if (account != "" && account != null) {
-          Router.push({
-            pathname: `/reports/ledgerReport/${account}`,
-            query: {
-              from: moment(from).format("DD-MM-YYYY"),
-              to: moment(to).format("DD-MM-YYYY"),
-              name,
-              company,
-              currency,
-            },
-          });
-          dispatch(
-            incrementTab({
-              label: "Ledger Report",
-              key: "5-7",
-              id: Router.asPath, // ✅ single source of truth
-            })
-          );
+            const foundAccount = records?.find(x => x.value == account);
+            const accountName = foundAccount ? foundAccount.label : "";
+            Router.push({
+              pathname: `/reports/ledgerReport/${account}`,
+              query: {
+                from: moment(from).format("DD-MM-YYYY"),
+                to: moment(to).format("DD-MM-YYYY"),
+                name: accountName,
+                company,
+                currency,
+              },
+            });
+            dispatch(
+              incrementTab({
+                label: "Ledger Report",
+                key: "5-7",
+                id: `/${account}?from=${moment(from).format("DD-MM-YYYY")}&to=${moment(to).format("DD-MM-YYYY")}&name=${encodeURIComponent(accountName)}&company=${company}&currency=${currency}`,
+              })
+            );
           }
         }
         }> Go </button>

@@ -248,7 +248,7 @@ const getHeadsNew = async(id, dispatch, reset) => {
   let paybleCharges = [];
   let reciveableCharges = [];
   await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
-    headers:{"id": `${id}`, employeeId: Cookies.get("loginId")}
+    headers:{id: id, employeeId: Cookies.get("loginId")}
   }).then(async(x)=>{
     if(x.data.status=="success"){
 
@@ -312,7 +312,7 @@ const approveHeads = async(charges, state, dispatch, reset) => {
 async function getChargeHeads (id) {
   let charges = [];
   await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
-    headers:{"id": `${id}`, employeeId: Cookies.get("loginId")}
+    headers:{id: id, employeeId: Cookies.get("loginId")}
   }).then((x)=>{
     if(x.data.status=="success"){
       charges = x.data.result;

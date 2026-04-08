@@ -69,7 +69,7 @@ export async function getChargeHeads ({id}) {
   // console.log("getChargeHeads from apis is running")
   let charges = [];
   await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
-    headers:{"id": `${id}`}
+    headers:{id: id}
   }).then((x)=>{
     if(x.data.status=="success"){
       charges = x.data.result;

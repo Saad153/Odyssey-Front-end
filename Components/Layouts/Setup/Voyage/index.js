@@ -86,7 +86,7 @@ const Voyage = ({vesselsData}) => {
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
   const set = (a, b) => dispatch({type:'toggle', fieldName:a, payload:b});
   const [query, setQuery] = useState("");
-  const keys = ["name","code"];
+  const keys = ["name","code","carrier"];
 
   const { refetch } = useQuery({
     queryKey:['values'],
@@ -134,7 +134,7 @@ const Voyage = ({vesselsData}) => {
   }
   
   const onSubmit = async(data) => {
-    if(data.SailingDate!="" && data.SailingDate!=undefined){
+    if(data.exportSailDate!="" && data.exportSailDate!=undefined){
       set('submitLoad', true);
       await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VOYAGE,{...data, VesselId:state.selectedRecord.id})
       .then((x)=>{
@@ -156,7 +156,7 @@ const Voyage = ({vesselsData}) => {
   };
 
   const onEdit = async(data) => {
-    if(data.SailingDate!="" && data.SailingDate!=undefined){
+    if(data.exportSailDate!="" && data.exportSailDate!=undefined){
       set('submitLoad', true);
       await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VOYAGE,{...data, VesselId:state.selectedRecord.id})
       .then((x)=>{

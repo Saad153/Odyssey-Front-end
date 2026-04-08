@@ -1,21 +1,20 @@
 import Cookies from "js-cookie";
 import jwt_decode from 'jwt-decode';
+import logout from './logout';
 
 function checkEditAccess(){
 
     let token = null;
-    let firstCall
   if(Cookies.get("token") != null && Cookies.get("token") != "" && Cookies.get("token") != "undefined"){
     let tempToken = Cookies.get('token');
-    firstCall = false;
     if(tempToken == Cookies.get('token')){
       token = jwt_decode(Cookies.get("token"));
       // console.log(token.access) 
     }else{
       logout();
     }
-  }else if(!firstCall){
-    logout();
+  }else{
+    return false;
   }
 
   let levels = null;
@@ -24,21 +23,15 @@ function checkEditAccess(){
   }
 
   let access = false;
-  let newTemp = [];
-  if(levels.length > 0){
-    levels.split(",").forEach((x)=>{
-      newTemp.push(x)
+  if(levels && typeof levels === 'string' && levels.length > 0){
+    const accessArray = levels.split(",").map(x => x.trim());
+    accessArray.forEach((x)=>{
+      if(x === 'admin' || x === 'Edit'){
+        // console.log("Edit triggered")
+        access = true
+      }
     })
-
   }
-  newTemp.forEach((x)=>{
-    x = x.trim()
-    if(x == 'admin' || x == 'Edit'){
-      // console.log("Edit triggered")
-      access = true
-    }
-   
-  })
     
   return access
 }

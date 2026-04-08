@@ -448,7 +448,12 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
         <Col md={3}>
           {state.edit && <Notes state={state} dispatch={dispatch} />}
           {approved == "1" && <img src={'/approve.png'} height={100} />}
-        {charges != true && !canceled && <div onClick={() => dispatch({ type: "set", payload: { isModalOpen: true, } })}>
+        {charges != true && !canceled && <div onClick={() => {
+          if(approved == "1" && checkEditAccess()){
+            console.log("You Dont Have Access To Edit This Job", checkEditAccess())
+            dispatch({ type: "set", payload: { isModalOpen: true, } })
+          }
+          }}>
           <CheckGroupComp register={register} disabled={approved == "1" && !checkEditAccess()} name='approved' control={control} label=''
             options={[{ label: "Approve Job", value: "1" }]}
           />

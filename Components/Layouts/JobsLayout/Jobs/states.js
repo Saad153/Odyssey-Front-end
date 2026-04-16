@@ -394,23 +394,30 @@ const autoInvoice = async (
       let tag = "";
       let detectedType = "";
 
+      // composite uniqueness tracker
       const seen = new Set();
 
       for (const charge of group) {
-        if (seen.has(charge.charge)) {
-          tag = charge.particular;
+        // 👇 composite key
+        const uniqueKey = `${charge.charge}|${charge.size_type}|${charge.pp_cc}`;
+
+        if (seen.has(uniqueKey)) {
+          tag = `${charge.particular} (${charge.size_type}, ${charge.pp_cc})`;
+
           if (charge.partyType === "agent") {
             detectedType = "agent";
           }
           break;
         }
-        seen.add(charge.charge);
+
+        seen.add(uniqueKey);
       }
 
       if (tag && detectedType !== "agent") {
+        setInvoiceBuffer(false);
         openNotification(
           "Error",
-          `Two instances of the same charge: ${tag}`,
+          `Two instances of the same charge with same size & PP/CC detected: ${tag}`,
           "red"
         );
         continue;

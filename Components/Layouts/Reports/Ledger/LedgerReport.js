@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import MainTable from "./MainTable";
+import { Spinner } from "react-bootstrap";
 
 const LedgerReport = ({ voucherData, from, to, name, company, currency }) => {
   const [ledger, setLedger] = useState([]);
@@ -9,7 +10,7 @@ const LedgerReport = ({ voucherData, from, to, name, company, currency }) => {
   const [openingVoucher, setOpeningVoucher] = useState({});
   
   useEffect(() => {
-    // console.log(voucherData)
+    console.log(voucherData)
     if (name && voucherData.status == "success") {
       let result = voucherData.result
       if(currency!="PKR"){
@@ -43,6 +44,7 @@ const LedgerReport = ({ voucherData, from, to, name, company, currency }) => {
             tempArray.push({
               date: y.createdAt,
               voucherType: y["Voucher.type"],
+              vouchervType: y["Voucher.vType"],
               voucherId: y["Voucher.id"],
               amount: currency=="PKR" ? parseFloat(y.defaultAmount) : parseFloat(y.amount),
               checkDets: (chequeTemp.includes("null")||chequeTemp.includes("Invalid"))?"":chequeTemp,
@@ -73,7 +75,7 @@ const LedgerReport = ({ voucherData, from, to, name, company, currency }) => {
 
   return (
     <div className="base-page-layout">
-      <MainTable
+      {ledger.length>0 && <MainTable
         ledger={ledger}
         closing={closing}
         opening={opening}
@@ -83,8 +85,12 @@ const LedgerReport = ({ voucherData, from, to, name, company, currency }) => {
         currency={currency}
         from={from}
         to={to}
-      />
+      />}
+      {ledger.length==0 && <div style={{textAlign:"center", marginTop:50}}>
+        <Spinner animation="border" role="status"/>
+      </div>}
     </div>
   );
-};
+}
+
 export default React.memo(LedgerReport)

@@ -175,7 +175,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
           openNotification("Warning", x.data.result, "orange");
           set("load", false);
         } else {
-          openNotification("Success", "Bl Eidted Successfully", "green");
+          openNotification("Success", "Bl Edited Successfully", "green");
           set("load", false);
         }
       })

@@ -386,7 +386,7 @@ const setAndFetchBlData = async(reset, state, allValues, set, dispatch, blData) 
   reset(result);
 } 
 
-// Browser-safe: parses HTML, inspects <p> elements, and returns cleaned HTML
+// Browser-safe: parses HTML, inspects <p> elements, and returns cleaned plain text
 function cleanNullParagraphs(html) {
   // console.log("Original HTML:", html);
 
@@ -397,7 +397,7 @@ function cleanNullParagraphs(html) {
   const container = document.createElement('div');
   container.innerHTML = html;
 
-  // Collect kept <p> elements
+  // Collect kept text content (no HTML tags)
   const kept = [];
   container.querySelectorAll('p').forEach(p => {
     // Get visible text, normalize whitespace and lowercase for checks
@@ -419,11 +419,11 @@ function cleanNullParagraphs(html) {
 
     // Keep but normalize spacing inside tag
     const cleanText = text; // already trimmed/collapsed
-    kept.push(`<p> ${cleanText}</p>`);
+    kept.push(cleanText);
   });
 
-  const result = kept.join('');
-  // console.log("Cleaned HTML:", result);
+  const result = kept.join(' ');
+  // console.log("Cleaned text:", result);
   return result;
 }
 

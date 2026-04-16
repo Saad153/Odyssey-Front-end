@@ -6,6 +6,8 @@ import { groups, stamps } from "./groupData";
 import { CloseCircleOutlined } from "@ant-design/icons";
  import SelectSearchComp from "../../../Shared/Form/SelectSearchComp";
 import BlPrint from "./BlPrint";
+import BlPrintNEW from "./BlPrint_NEW";
+import BlPrintImage from "./BlPrintImage";
 import BlPrintModal from "./BlPrintModal";
 
 const Stamps = ({ state, control, register, useWatch, handleSubmit, fields, append, remove, onDelete, errors, data }) => {
@@ -13,7 +15,7 @@ const Stamps = ({ state, control, register, useWatch, handleSubmit, fields, appe
   const [borders, setBorders] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const allValues = useWatch({ control });
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState(2);
   const [visibleStamps, setVisibleStamps] = useState(false);
   const [checkModal, setCheckModal] = useState(false);
   const [cbm, setCbm] = useState(false);
@@ -31,17 +33,17 @@ const Stamps = ({ state, control, register, useWatch, handleSubmit, fields, appe
     setVisibleStamps(false);
   };
 
-  const border = borders ? "1px solid silver" : "1px solid white";
+  const border = !borders ? "1px solid silver" : "1px solid white";
   const line = borders ? "silver" : "white";
   const heading = borders ? "grey-txt" : "wh-txt";
   return (
   <div style={{ height: 600, overflowY: "auto", overflowX: "hidden" }}>
     <div style={{ display: "flex", flexDirection:"column", gap:"1rem" }}>
       <Radio.Group onChange={onChange} value={value}>
-        <Radio value={1}>Print On Blank Paper</Radio>
-        <Radio value={2}>Print</Radio>
+        <Radio value={1}>Print on Pre-Printed</Radio>
+        <Radio value={2}>Print On Blank Paper</Radio>
       </Radio.Group>
-      <button style={{width: '100px', justifyContent: "center"}} className="btn-custom" onClick={() => setShowModal(true)}>
+      <button type="button" style={{width: '100px', justifyContent: "center"}} className="btn-custom" onClick={() => {setShowModal(true)}}>
         Preview BL
       </button>
       <div style={{display:"flex", gap:"2rem"}}>
@@ -127,18 +129,20 @@ const Stamps = ({ state, control, register, useWatch, handleSubmit, fields, appe
         handleClose={() => setShowModal(false)}
         allValues={allValues}
         state={state}
-        borders={true}
-        heading="fw-6"
-        border="1px solid black"
+        borders={borders}
+        heading={heading}
+        border={border}
         stamps={stamps}
-        line="#000"
-        grossWeight={false}
-        netWeight={false}
-        containerData={false}
-        formE={false}
-        cbm={false}
+        line={line}
+        grossWeight={grossWeight}
+        netWeight={netWeight}
+        containerData={containerData}
+        formE={formE}
+        cbm={cbm}
       />
-    <BlPrint caller={true} state={state} allValues={{...allValues, jobData: data.result}} border={border} line={line} borders={borders} heading={heading} inputRef={inputRef} stamps={stamps} cbm={cbm} grossWeight={grossWeight} netWeight={netWeight}  containerData={containerData} formE={formE}/>
+    {/* <BlPrint caller={true} state={state} allValues={{...allValues, jobData: data.result}} border={border} line={line} borders={borders} heading={heading} inputRef={inputRef} stamps={stamps} cbm={cbm} grossWeight={grossWeight} netWeight={netWeight}  containerData={containerData} formE={formE}/> */}
+    {/* <BlPrintNEW caller={true} state={state} allValues={{...allValues, jobData: data.result}} border={border} line={line} borders={borders} heading={heading} inputRef={inputRef} stamps={stamps} cbm={cbm} grossWeight={grossWeight} netWeight={netWeight}  containerData={containerData} formE={formE}/> */}
+    <BlPrintImage caller={true} state={state} allValues={{...allValues, jobData: data.result}} border={border} line={line} borders={borders} heading={heading} inputRef={inputRef} stamps={stamps} cbm={cbm} grossWeight={grossWeight} netWeight={netWeight}  containerData={containerData} formE={formE}/>
   </div>
 )};
 

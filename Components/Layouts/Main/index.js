@@ -15,11 +15,6 @@ const Main = ({ sessionData, chartData }) => {
     if (!sessionData?.isLoggedIn) {
       router.push("/login"); // navigate using new router
     }
-    // const ws = new WebSocket("http://localhost:8000/api/vanna/v2/chat_websocket");
-    // ws.onopen = () => console.log("connected");
-    // ws.onmessage = (msg) => console.log("message", msg.data);
-    // ws.onerror = (err) => console.log("error", err);
-    // ws.onclose = () => console.log("closed");
   }, [sessionData, router]);
 
   const ollama = async () => {
@@ -30,19 +25,19 @@ const Main = ({ sessionData, chartData }) => {
   const [ allow, setAllow ] = React.useState(false);
   const [ audit, setAudit ] = React.useState(false);
 
-  useState(() => {
+  useEffect(() => {
     if(username == 'isaadalam'){
       setAllow(true);
     }
-  })
-  useState(() => {
+  }, [username])
+  useEffect(() => {
     let tempToken = Cookies.get('token');
     if(tempToken){
       let token = jwt_decode(tempToken);
       console.log("Check Employee Access", token.access) 
       token.access.includes("admin") && setAudit(true);
     }
-  })
+  }, [username])
 
   return (
     <div className="base-page-layout">

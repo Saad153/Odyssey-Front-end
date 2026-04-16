@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import { Modal, Button } from "react-bootstrap";
 import BlPrint from "./BlPrint"; // your component
+import BlPrintNEW from "./BlPrint_NEW";
+import BlPrintImage from "./BlPrintImage";
 
 const BlPrintModal = ({
   show,
@@ -33,7 +35,7 @@ const BlPrintModal = ({
       </Modal.Header>
       <Modal.Body style={{ overflowX: "auto", height: '1000px' }}>
         <div style={{ overflowX: "auto", margin: "10px" }}>
-            <BlPrint
+            <BlPrintImage
             caller={false}
             allValues={allValues}
             state={state}

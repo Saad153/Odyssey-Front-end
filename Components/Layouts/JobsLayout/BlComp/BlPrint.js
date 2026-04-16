@@ -11,20 +11,43 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
 
   return (
     <div style={{width: '10%', marginBottom: '10px'}}>
+    <style>{`
+      @media print {
+        @page {
+          size: auto;
+          margin: 0;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        .bl-section-container {
+          page-break-after: auto;
+        }
+        .bl-description-section {
+          page-break-inside: auto;
+          orphans: 3;
+          widows: 3;
+        }
+        .bl-fixed-section {
+          page-break-before: avoid;
+          page-break-inside: avoid;
+        }
+      }
+    `}</style>
     {caller == true &&  <ReactToPrint
       content={() => inputRef}
       trigger={() => (<div className="div-btn-custom text-center p-2">Print</div>)}
     />}
     <div
       style={{
-        width: "215mm",
-        height: "320mm",
-        border: "1px solid #000", // optional, for visualization
+        width: "100%",
+        border: "1px solid #000",
         boxSizing: "border-box",
-        padding: "0mm", // optional
+        padding: "0mm",
         position: 'absolute',
         marginBottom: '10px',
-        ...( caller ? { display: "none" } : {} ) // conditional style
+        ...( caller ? { display: "none" } : {} )
       }}
     >
       <div style={{padding: '0', margin: '0'}} ref={(response) => (inputRef = response)}>
@@ -164,8 +187,8 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                 </div>
               </Col>
             </Row>
-            {/* 4th row starts  */}
-            <div style={{ height: '85mm' }}>
+            {/* 4th row starts - Description section with flexible height for page breaks */}
+            <div style={{ minHeight: '85mm', pageBreakInside: 'auto' }}>
               <Row style={{ borderTop: border, minHeight: '10mm' }}>
                 <Col style={{ borderRight: border, maxHeight: 5, minWidth: 170, maxWidth: 170 }} className="px-0">
                   <div style={{ height: 42 }}>
@@ -197,13 +220,13 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                 </Col>
               </Row>
               {/* 5th row  */}
-              <Col>
+              <Col className="bl-description-section">
                 <Col style={{ display: "flex", color:"black", fontWeight:"600", marginTop:10 }}>
                   <Col md={2}>
                     <div className="bl-print" >{parse(cleanNullParagraphs(state.marksContent))}</div>
                     </Col>
-                  <Col md={2}>{state.noOfPckgs}</Col>
-                  <Col md={4}>
+                  <Col md={2}>{cleanNullParagraphs(state.noOfPckgs)}</Col>
+                  <Col md={4} style={{ overflowWrap: 'break-word', wordBreak: 'break-word', pageBreakInside: 'auto' }}>
                       <div className="bl-print" >
                         {allValues.stamps?.length>0 && allValues.stamps.map((x)=> x?.stamp_group == "4"?stamps[Number(x.code)-1].label:"")}{parse(cleanNullParagraphs(state.descOfGoodsContent))}
                       </div>
@@ -251,7 +274,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                   </div>
                   </Col>
                 </Col>
-                <Col style={{ display: "flex", justifyContent: "space-between", marginTop: "20px"}}>
+                <Col style={{ display: "flex", justifyContent: "space-between", marginTop: "20px"}} className="bl-fixed-section">
                   <Col md={3} className="bl-print" style={{marginTop: "50px"}} >
                     <p className="bl-print" style={{  borderBottom: border }}>CONTAINER NO .SIZE SEAL</p>
                     { !containerData &&
@@ -347,7 +370,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
               </Col>
               <Col style={{ margin:0, paddingBottom:3 }} className={`${heading} fs-11`}>
                 Date & Place of issue
-                <p  style={{color:'black', margin: '0px'}}><b> {moment(allValues?.issueDate).format('DD/MMM/YYYY') + " | " + allValues.issuePlace}</b></p>
+                <p  style={{color:'black', margin: '0px'}}><b>{moment(allValues?.issueDate).format('DD/MMM/YYYY') + " | " + allValues.issuePlace}</b></p>
               </Col>
             </Row>
             <div style={{ height: 1, width: "100%", backgroundColor: line }}></div>

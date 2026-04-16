@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { Modal, Button } from "react-bootstrap";
 import BlPrint from "./BlPrint"; // your component
-import BlPrintNEW from "./BlPrint_NEW";
 import BlPrintImage from "./BlPrintImage";
 
 const BlPrintModal = ({

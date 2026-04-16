@@ -1,8 +1,10 @@
 import React from 'react';
 import PrintTopHeader from '../../../Shared/PrintTopHeader';
 import moment from 'moment';
-import { Table } from 'antd';
+import { Table, Button } from 'antd';
 import { render } from 'sass';
+import exportExcelFile from '../../../../functions/exportExcelFile';
+import { FileExcelOutlined } from '@ant-design/icons';
 
 const commas = (a) => a == 0 ? '0.00' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
@@ -73,11 +75,65 @@ const Summary = ({ query, result }) => {
             render: (text) => <span>{commas(text)}</span>
         });
     }
+    const handleExport = () => {
+    if (!result?.result || result.result.length === 0) {
+        alert('No data available to export');
+        return;
+    }
 
+    const fromDate = moment(query.from).format("DD-MM-YYYY");
+    const toDate = moment(query.to).format("DD-MM-YYYY");
+
+    const flatColumns = columns.map(col => ({
+        header: col.title,
+        key: col.dataIndex
+    }));
+
+    const flatData = result.result.map(item => ({
+        ...item,
+        totalRevenue: commas(item.totalRevenue),
+        totalExpense: commas(item.totalExpense),
+        totalProfitLoss: commas(item.totalProfitLoss),
+        GP: commas(item.GP),
+        totalVol: item.totalVol ? commas(item.totalVol) : "",
+        totalWeight: item.totalWeight ? commas(item.totalWeight) : "",
+        totalTeu: item.totalTeu ? commas(item.totalTeu) : "",
+        totalShpVol: item.totalShpVol ? commas(item.totalShpVol) : "",
+    }));
+
+    exportExcelFile(flatData, flatColumns, {
+        title:
+        query.company == '1'
+            ? 'SEA NET SHIPPING & LOGISTICS'
+            : query.company == '2'
+            ? 'AIR CARGO SERVICES'
+            : 'SEANET + AIR CARGO',
+        address: 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi',
+        dateRange: `Date: From ${fromDate} To ${toDate}`,
+        fileName: `Comparative_Report_${fromDate}_${toDate}.xlsx`,
+    });
+    };
     console.log(result)
     return (
         <div className='base-page-layout' >
-            <PrintTopHeader company={query.company} from={moment(query.from).format("DD-MM-YYYY")} to={moment(query.to).format("DD-MM-YYYY")} />
+            <div style={{ position: 'relative', marginBottom: '20px' }}>
+                <PrintTopHeader company={query.company} from={moment(query.from).format("DD-MM-YYYY")} to={moment(query.to).format("DD-MM-YYYY")} />
+                <Button
+                    className="btn-custom-excel my-1 px-2"
+                    onClick={handleExport}
+                    style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        backgroundColor: '#28a745',
+                        borderRadius: '10px',
+                        borderColor: '#28a745',
+                        color: '#ffffff',
+                    }}
+                >
+                    <FileExcelOutlined /> Export to Excel
+                </Button>
+            </div>
             <Table columns={columns} dataSource={result.result}></Table>
         </div>
     );

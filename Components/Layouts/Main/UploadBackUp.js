@@ -31,11 +31,12 @@ const Upload_CoA = () => {
         // await importLGJobs();
         // await importVouchers();
         // await FixAirJobs();
-        await FixSeaJobs();
+        // await FixSeaJobs();
         // await checkInvoices()
         // await importAirPorts()
         // await importEmployees()
         // await importAECharges()
+        await fixSalesRep()
         setStatus("Success")
     }
 
@@ -44,6 +45,18 @@ const Upload_CoA = () => {
     const [V, setVendors] = useState(false);
     const [CV, setCV] = useState(false);
     const [GL, setNonGl] = useState(false);
+
+    const fixSalesRep = async () => {
+        try{
+            const result = await axios.get("http://localhost:8081/jobs/getSalesRep");
+            console.log("Sales Rep Data:", result.data.result);
+            const response = await axios.post("http://localhost:8084/seaJob/fixSalesRep", result.data.result);
+            console.log("Sales Rep Fixed:", response);
+
+        }catch(e){
+            console.error("Error fixing sales rep:", e)
+        }
+    }
 
     const importLGJobs = async () => {
         try{

@@ -29,7 +29,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) => {
   const queryClient = useQueryClient();
-  const {register, control, handleSubmit, reset, formState:{errors}, watch, getValues } = useForm({
+  const {register, control, handleSubmit, reset, formState:{errors}, watch, getValues, setValue } = useForm({
     resolver:yupResolver(SignupSchema), defaultValues:state.values,
   });
   const approved = useWatch({control, name:"approved"});
@@ -263,7 +263,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
       <Tabs defaultActiveKey={state.tabState} activeKey={state.tabState}
         onChange={(e)=> dispatch({type:'toggle', fieldName:'tabState', payload:e}) }>
       <Tabs.TabPane tab="Booking Info" key="1"> 
-        <BookingInfo handleSubmit={handleSubmit} onEdit={onEdit} companyId={companyId} control={control} register={register} 
+        <BookingInfo handleSubmit={handleSubmit} setValue={setValue} onEdit={onEdit} companyId={companyId} control={control} register={register} 
           errors={errors} state={state} useWatch={useWatch} dispatch={dispatch} reset={reset} id={id} type={type}
         />
       </Tabs.TabPane>

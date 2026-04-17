@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Popover, Tag, Modal } from "antd";
+import { Popover, Tag, Modal, Checkbox } from "antd";
 import SelectComp from '/Components/Shared/Form/SelectComp';
 import SelectSearchComp from '/Components/Shared/Form/SelectSearchComp';
 import CheckGroupComp from '/Components/Shared/Form/CheckGroupComp';
@@ -25,7 +25,7 @@ import { FaPlus } from "react-icons/fa6";
 import { getChargeHeads } from '../../../../apis/jobs';
 import { checkEditAccess } from '../../../../functions/checkEditAccess';
 
-const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, errors, state, useWatch, dispatch, reset, id, type }) => {
+const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, control, errors, state, useWatch, dispatch, reset, id, type }) => {
   const tabs = useSelector((state) => state.tabs.tabs)
   //const companyId = useSelector((state) => state.company.value);
   const dispatchNew = useDispatch();
@@ -51,6 +51,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
   const approved1 = useSelector((state) => state.invoice);
   const [charges, setCharges] = useState(false)
 
+  // const { handleSubmit, setValue } = useForm();
   useEffect(() => {
     const fetchChargeHeads = async () => {
       const result = await getChargeHeads({ id: state.selectedRecord.id });
@@ -74,7 +75,8 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
   }, [allValues.freightType])
 
   const handleOk = () => {
-    allValues.approved = approved
+    allValues.approved = approved[0] != 1 ? ['1'] : []
+    setValue("approved", approved == "1" ? [] : ['1']);
     handleSubmit(onEdit(allValues))
     dispatch({
       type: "set", payload: {
@@ -89,7 +91,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
         isModalOpen: false,
       }
     })
-    reset({ ...allValues, approved: approved[0] != 1 ? ['1'] : [] })
+    reset({ ...allValues, approved: approved })
   };
 
   const pageLinking = (pageType, value) => {
@@ -448,16 +450,18 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
         <Col md={3}>
           {state.edit && <Notes state={state} dispatch={dispatch} />}
           {approved == "1" && <img src={'/approve.png'} height={100} />}
-        {charges != true && !canceled && <div onClick={() => {
+        {charges != true && !canceled && 
+        <button type='button' className='btn-custom mt-1'
+        onClick={()=>{
           if(approved == "1" && checkEditAccess()){
             console.log("You Dont Have Access To Edit This Job", checkEditAccess())
             dispatch({ type: "set", payload: { isModalOpen: true, } })
+          }else{
+            dispatch({ type: "set", payload: { isModalOpen: true, } })
           }
-          }}>
-          <CheckGroupComp register={register} disabled={approved == "1" && !checkEditAccess()} name='approved' control={control} label=''
-            options={[{ label: "Approve Job", value: "1" }]}
-          />
-        </div>}
+        }}
+        >{approved == "1" ? "UnApprove" : "Approve"}</button>
+        }
           <hr />
           {id != "new" && <div style={{ display: "flex", flexWrap: "wrap", gap: "0.8rem" }}>
             <button className='btn-custom px-4' type="button"
@@ -516,7 +520,7 @@ const BookingInfo = ({ handleSubmit, onEdit, companyId, register, control, error
         <CustomBoxSelect reset={reset} useWatch={useWatch} control={control} state={state} dispatch={dispatch} />
       }
       <Modal open={state.isModalOpen} onOk={handleOk} onCancel={handleCancel} maskClosable={false}>
-        {approved == "1" ? "Are You Sure You Want To Approve This Job? " : "Are You Sure You Want To Unapprove This Job?"}
+        {approved != "1" ? "Are You Sure You Want To Approve This Job? " : "Are You Sure You Want To Unapprove This Job?"}
       </Modal>
     </>
   )

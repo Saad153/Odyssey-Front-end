@@ -6,7 +6,6 @@ import { groups, stamps } from "./groupData";
 import { CloseCircleOutlined } from "@ant-design/icons";
  import SelectSearchComp from "../../../Shared/Form/SelectSearchComp";
 import BlPrint from "./BlPrint";
-import BlPrintNEW from "./BlPrint_NEW";
 import BlPrintImage from "./BlPrintImage";
 import BlPrintModal from "./BlPrintModal";
 

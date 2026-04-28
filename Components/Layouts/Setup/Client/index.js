@@ -5,7 +5,7 @@ import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { incrementTab } from '/redux/tabs/tabSlice';
 import axios from 'axios';
-import {Input, Select} from 'antd'
+import { Input, Select, Pagination } from 'antd'
 import openNotification from '/Components/Shared/Notification';
 
 function recordsReducer(state, action){
@@ -58,6 +58,15 @@ const Client = ({sessionData, clientData}) => {
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
   const { records, allClients } = state;
   const [searchBy , setSearchBy] = useState("name", "types");
+
+  const pageSize = 30; // rows per page
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const paginatedRecords = records.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  )
+
 
   useEffect(()=>{ 
     if(sessionData.isLoggedIn==false){
@@ -159,7 +168,7 @@ const Client = ({sessionData, clientData}) => {
           </tr>
         </thead>
         <tbody>
-        {records?.map((x, index) => {
+        {paginatedRecords?.map((x, index) => {
           return (
           <tr key={index} className='f row-hov'>
             <td onClick={()=>{
@@ -209,6 +218,15 @@ const Client = ({sessionData, clientData}) => {
       </div>
     </Col>
     </Row>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={records.length}
+          onChange={(page) => setCurrentPage(page)}
+          showSizeChanger={false}
+        />
+      </div>
   </div>
   )
 }

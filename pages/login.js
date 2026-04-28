@@ -13,13 +13,44 @@ const login = ({sessionData}) => {
 
 export default login
 
-export async function getServerSideProps({req,res}){
-  const cookies = new Cookies(req, res)
-  const sessionRequest = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,{
-    headers:{"x-access-token": `${cookies.get('token')}`}
-  }).then((x)=>x.data);
+export async function getServerSideProps({ req }) {
+  try {
+    const token = req.cookies?.token || '';
 
-  return{
-      props: { sessionData:sessionRequest }
+    const sessionRequest = await axios.get(
+      process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,
+      {
+        headers: {
+          "x-access-token": token
+        }
+      }
+    );
+
+    return {
+      props: { sessionData: sessionRequest.data }
+    };
+
+  } catch (error) {
+    // 👇 THIS handles 401 safely
+    if (error.response?.status === 401) {
+      return {
+        props: {
+          sessionData: {
+            isLoggedIn: false
+          }
+        }
+      };
+    }
+
+    // Optional: log unexpected errors
+    console.error("SSR error:", error);
+
+    return {
+      props: {
+        sessionData: {
+          isLoggedIn: false
+        }
+      }
+    };
   }
 }

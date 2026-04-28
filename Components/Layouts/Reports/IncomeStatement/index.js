@@ -17,6 +17,8 @@ const IncomeStatement = () => {
   const [company, setCompany] = useState(1);
   const [from, setFrom] = useState(moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString());
   const [to, setTo] = useState(moment().toISOString());
+  const [from1, setFrom1] = useState(moment().month() < 6? moment().subtract(1, 'year').set({ month: 6, date: 1 }).toISOString(): moment().set({ month: 6, date: 1 }).toISOString());
+  const [to1, setTo1] = useState(moment().toISOString());
   const [currency, setCurrency] = useState("PKR");
   const [accountLevel, setAccountLevel] = useState("6");
   const [revenue, selectRevenue] = useState();
@@ -116,6 +118,16 @@ const IncomeStatement = () => {
         "id": `?from=${from}&to=${to}&company=${company}&currency=${currency}&accountLevel=${accountLevel}&expense=${expense}`
       }))
 
+    }else if(reportType == "CMP"){
+      Router.push({ 
+        pathname: `/reports/incomeStatement/comparitive`, 
+        query: { from: from, to: to, company: company, currency: currency, accountLevel:accountLevel, reportType:reportType  } 
+      });
+      dispatch(incrementTab({
+        "label": "IS Comparitive Report",
+        "key": "5-20",
+        "id": `?from=${from}&to=${to}&from1=${from1}&to1=${to1}&company=${company}&currency=${currency}&accountLevel=${accountLevel}&reportType=${reportType}`
+      }))
     }else if(reportType != null){
       Router.push({ 
         pathname: `/reports/incomeStatement/report`, 
@@ -126,11 +138,7 @@ const IncomeStatement = () => {
         "key": "5-12",
         "id": `?from=${from}&to=${to}&company=${company}&currency=${currency}&accountLevel=${accountLevel}&reportType=${reportType}`
       }))
-
-    }
-    
-    else{
-      
+    }else{
       Router.push({ 
         pathname: `/reports/incomeStatement/report`, 
         query: { from: from, to: to, company: company, currency: currency, accountLevel:accountLevel } 
@@ -258,7 +266,8 @@ const IncomeStatement = () => {
               setCompany(e.target.value);
             }}
           >
-            <Radio value={1}>SEA NET SHIPPING & LOGISTICS</Radio><br />
+            <Radio value={1}>SEA NET SHIPPING & LOGISTICS</Radio>
+            {/* <br /> */}
             {/* <Radio value={2}>CARGO LINKERS</Radio> */}
             <Radio value={3}>AIR CARGO SERVICES</Radio>
           </Radio.Group>
@@ -270,7 +279,9 @@ const IncomeStatement = () => {
             <h5>Report Types</h5>
             <Radio.Group className='mt-1'
               value={reportType} onChange={(e) => setReportType(e.target.value)}>
-              <Radio value={"TC"}>Two Column </Radio><br />
+              <Radio value={"TC"}>Two Column </Radio>
+              <Radio value={"CMP"}>Comparitive</Radio>
+              {/* <br /> */}
               <Radio value={"pnl"}>Profit & Loss Income Statement </Radio>
             </Radio.Group>
             </div>
@@ -293,14 +304,34 @@ const IncomeStatement = () => {
           </div>
         </Col>
         </Row>
-           {/* <Col md={4} style={{ border: '1px solid silver', marginLeft: 12, paddingRight: 40 }} className='py-1 mt-3'>
-            Report Types 
-            <Radio.Group 
-            value={reportType} onChange={(e) => setReportType(e.target.value)}>
-              <Radio value={"TC"}>Two Column </Radio>
-              <Radio value={"pnl"}>Profit & Loss Income Statement </Radio>
-            </Radio.Group>
-          </Col> */}
+        {reportType == 'CMP' && <div className="card-section mt-3">
+          <Row gutter={16} className='form-row'>
+            <b>Comparative Dates</b>
+            <Col md={3} className="mt-2">
+              <label>From</label>
+              <DatePicker 
+              allowClear={false} 
+              style={{width:"100%", borderRadius:"6px"}}
+              className='datePicker-modern' 
+              format="DD-MM-YYYY" 
+              value={moment(from1)} 
+              onChange={(e)=>{setFrom1(moment(e).toISOString())}}/>
+            </Col>
+            <Col md={3} className="mt-2">
+              <label>To</label>
+              <DatePicker
+              allowClear={false}
+              style={{width:"100%", borderRadius:"6px"}}
+              value={moment(to1)}
+              format="DD-MM-YYYY"
+              onChange={(e)=>{
+                setTo1(moment(e).toISOString())
+              }}
+              className='datePicker-modern'
+              />
+            </Col>
+          </Row>
+        </div>}
      </div>
     </div>
   )

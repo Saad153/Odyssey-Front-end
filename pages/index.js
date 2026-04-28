@@ -11,20 +11,34 @@ const index = ({sessionData, chartData}) => {
 
 export default index
 
-export async function getServerSideProps({req,res}){
-  
-  const cookies = new Cookies(req, res)
-  const sessionRequest = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,{
-    headers:{"x-access-token": `${cookies.get('token')}`}
-  }).then((x)=>x.data);
+export async function getServerSideProps({ req, res }) {
+  const cookies = new (require("cookies"))(req, res);
+  const token = cookies.get("token");
 
-  const chartData = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_DASHBOARD_DATA)
-  .then((x)=>x.data)
+  let sessionData = null;
 
-  return{
-    props: { 
-      sessionData:sessionRequest,
-      chartData:chartData
+  if (token) {
+    try {
+      const sessionRes = await axios.get(
+        process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,
+        {
+          headers: { "x-access-token": token },
+        }
+      );
+      sessionData = sessionRes.data;
+    } catch (err) {
+      sessionData = { isLoggedIn: false };
     }
   }
+
+  const chartData = await axios
+    .get(process.env.NEXT_PUBLIC_CLIMAX_GET_DASHBOARD_DATA)
+    .then((x) => x.data);
+
+  return {
+    props: {
+      sessionData,
+      chartData,
+    },
+  };
 }

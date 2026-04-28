@@ -156,6 +156,9 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/reports/incomeStatement/report"){
       setToggleState('5-12');
     }
+    if(newRouter.pathname==="/reports/incomeStatement/comparitive"){
+      setToggleState('5-20');
+    }
     if(newRouter.pathname==="/reports/ageingReport/report"){
       setToggleState('5-14');
     }
@@ -525,6 +528,7 @@ const MainLayout = ({children}) => {
     else if(x.key=='5-10'){ Router.push(`/reports/trialBalance/report/${setKey(x)}`) }
     else if(x.key=='5-11'){ Router.push(`/reports/incomeStatement`) }
     else if(x.key=='5-12'){ Router.push(`/reports/incomeStatement/report/${setKey(x)}`) }
+    else if(x.key=='5-20'){ Router.push(`/reports/incomeStatement/comparitive/${setKey(x)}`) }
     else if(x.key=='5-13'){ Router.push(`/reports/ageingReport`) }
     else if(x.key=='5-14'){ Router.push(`/reports/ageingReport/report/${setKey(x)}`) }
     else if(x.key=='5-15'){ Router.push(`/reports/auditLog`) }

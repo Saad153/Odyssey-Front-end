@@ -8,7 +8,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import Pagination from '../../Shared/Pagination';
 import { Input } from 'antd';
 import moment from 'moment';
-import JobsBackupData from './Backup/BackupModal';
+// import JobsBackupData from './Backup/BackupModal';
 import { delay } from "/functions/delay"
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -47,7 +47,7 @@ const fetchJobs = async (pageNo = 1) => {
     const res = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_SEAJOB, {
       params:{ companyid: `${Cookies.get('companyId')}`, operation: type, page: pageNo, limit: 20, search }
     })
-    console.log("Jobs fetched: ", res.data);
+    // console.log("Jobs fetched: ", res.data);
     setJobs(res.data.result);
     setTotalPages(res.data.totalPages);
     setPage(pageNo);

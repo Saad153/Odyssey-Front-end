@@ -118,7 +118,7 @@ const JobPL = () => {
         overseasagent: values ? values.overSeasagent : undefined,
         client: values? values.client : undefined,
         reportType: values ? values.reportType : 'viewer',
-        metrics: values ? values.metrics : 'vol,weight,shpVol,teu',
+        metrics: values ? values.metrics : '',
       });
 
 

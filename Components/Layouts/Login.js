@@ -29,10 +29,11 @@ const Login = ({sessionData}) => {
         }).then((x)=>{
           if(x.data.message=='Success'){
             let token = jwt_decode(x.data.token);
+            console.log(token)
             Cookies.set('token', x.data.token, { expires: 1 });
             Cookies.set('designation', token.designation, { expires: 1 });
             Cookies.set('username', token.username, { expires: 1 });
-            Cookies.set('loginId', token.loginId, { expires: 1 });
+            Cookies.set('loginId', token.id, { expires: 1 });
             // Cookies.set('access', JSON.stringify(token.access), { expires: 1 });
             Router.push('/');
           }else if(x.data.message=='Invalid'){

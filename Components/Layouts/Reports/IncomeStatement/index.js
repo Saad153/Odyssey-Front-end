@@ -121,7 +121,7 @@ const IncomeStatement = () => {
     }else if(reportType == "CMP"){
       Router.push({ 
         pathname: `/reports/incomeStatement/comparitive`, 
-        query: { from: from, to: to, company: company, currency: currency, accountLevel:accountLevel, reportType:reportType  } 
+        query: { from: from, to: to, from1: from1, to1: to1, company: company, currency: currency, accountLevel:accountLevel, reportType:reportType  } 
       });
       dispatch(incrementTab({
         "label": "IS Comparitive Report",

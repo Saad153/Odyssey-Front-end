@@ -44,8 +44,8 @@ const Main = ({ sessionData, chartData }) => {
       {/* {username == 'Saad' && <VannaChat /> } */}
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
-      {/* s<UploadBackUp /> */}
-      {audit && <AuditLog /> }
+      <UploadBackUp />
+      {/* {audit && <AuditLog /> } */}
     </div>
   );
 };

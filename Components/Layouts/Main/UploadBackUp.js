@@ -27,16 +27,16 @@ const Upload_CoA = () => {
         // await importCOA();
         // await importCharges();
         // await importParties();
-        // await importJobs();
+        await importJobs();
         // await importLGJobs();
-        // await importVouchers();
+        await importVouchers();
         // await FixAirJobs();
         // await FixSeaJobs();
         // await checkInvoices()
         // await importAirPorts()
         // await importEmployees()
         // await importAECharges()
-        await fixSalesRep()
+        // await fixSalesRep()
         setStatus("Success")
     }
 
@@ -765,7 +765,14 @@ const filterData = (map, filter) => {
 const importJobs = async () => {
     try{
         console.log("Fetching Air Jobs data")
-        const { data } = await axios.get("http://localhost:8081/jobs/getAll");
+        const result0 = await axios.get("http://localhost:8081/jobs/getAll");
+        const result1 = await axios.get("http://localhost:8081/jobs/getAll1");
+        console.log(result0)
+        console.log(result1)
+        const data = {
+            ...result0.data,
+            ...result1.data
+        }
         console.log("Air Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -787,7 +794,7 @@ const importJobs = async () => {
             UNPacking: createMap(data.Packing, "PackCode"),
             Gen_Vessel: createMap(data.Vessel, "Id"),
             Gen_Commodity: createMap(data.Commodity, "Id"),
-            Gen_DocumentType: createMap(data.DocumentType, "Id"),
+            // Gen_DocumentType: createMap(data.DocumentType, "Id"),
             GL_PropertiesLOV: createMap(data.PropertiesLOV, "Id"),
             Gen_Parties_Locations: createMap(data.Parties_Locations, "Id"),
             Gen_IncoTerms: createMap(data.IncoTerms, "Id"),
@@ -800,7 +807,7 @@ const importJobs = async () => {
             GL_COA: createMap(data.COA, "Id"),
             AExp_AirExportJob: createMap(data.AirExportJob, "Id"),
             AImp_AirImportJob: createMap(data.AirImportJob, "Id"),
-            Gen_JobCancelReason: createMap(data.JobCancelReason, "Id"),
+            // Gen_JobCancelReason: createMap(data.JobCancelReason, "Id"),
             Gen_ChargesVATCategory: createMap(data.ChargesVATCategory, "Id"),
             Gen_EquipmentSizeType: createMap(data.EquipmentSizeType, "EquipCode"),
             Gen_Charges: createMap(data.Charges, "Id"),
@@ -844,7 +851,7 @@ const importJobs = async () => {
 
         const tempInvoices = data.Invoices.map((i) => ({
             ...i,
-            GL_Voucher: filterVoucherData(lookupMaps.GL_Voucher, lookupMaps.GL_Voucher_Detail.get(i.GVDetailId).VoucherId),
+            GL_Voucher: filterVoucherData(lookupMaps.GL_Voucher, lookupMaps.GL_Voucher_Detail.get(i.GVDetailId)?.VoucherId),
             GL_Currencies: lookupMaps.GL_Currencies.get(i.CurrencyId),
             GL_InvMode: lookupMaps.GL_InvMode.get(i.InvoiceTypeId),
             Gen_Parties: lookupMaps.Gen_Parties.get(i.PartyId),
@@ -1027,7 +1034,7 @@ const importJobs = async () => {
             AirPortOfTranshipment: lookupMaps.Gen_UNAirport.get(job.AirPortOfTranshipmentId),
             AirPortOfLoading: lookupMaps.Gen_UNAirport.get(job.AirPortOfLoadingId),
             Terminal: lookupMaps.Gen_Parties_Locations.get(job.TerminalId),
-            DocumentType: lookupMaps.Gen_DocumentType.get(job.DocumentTypeId),
+            // DocumentType: lookupMaps.Gen_DocumentType.get(job.DocumentTypeId),
             SalesRep: lookupMaps.TAP_Employee.get(job.SalesRepId),
             Packages: lookupMaps.UNPacking.get(job.PackagesCode),
             Commodity: lookupMaps.Gen_Commodity.get(job.CommodityId),
@@ -1066,7 +1073,7 @@ const importJobs = async () => {
             SalesRep: lookupMaps.TAP_Employee.get(job.SalesRepId),
             Commodity: lookupMaps.Gen_Commodity.get(job.CommodityId),
             LocalVendor: lookupMaps.Gen_Parties.get(job.LocalVendorId),
-            DocumentType: lookupMaps.Gen_DocumentType.get(job.DocumentTypeId),
+            // DocumentType: lookupMaps.Gen_DocumentType.get(job.DocumentTypeId),
             CostCenter: lookupMaps.GL_PropertiesLOV.get(job.CostCenterId),
             SeaImportJob_ChargesPayb: lookupMaps.SImp_SeaImportJob_ChargesPayb.get(job.Id),
             SeaImportJob_ChargesRecv: lookupMaps.SImp_SeaImportJob_ChargesRecv.get(job.Id),

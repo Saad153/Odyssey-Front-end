@@ -27,9 +27,9 @@ const Upload_CoA = () => {
         // await importCOA();
         // await importCharges();
         // await importParties();
-        await importJobs();
+        // await importJobs();
         // await importLGJobs();
-        await importVouchers();
+        // await importVouchers();
         // await FixAirJobs();
         // await FixSeaJobs();
         // await checkInvoices()

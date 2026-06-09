@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import '../styles/main.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'antd/dist/antd.css';
@@ -24,8 +24,21 @@ function MyApp({ Component, pageProps:{ session, ...pageProps }, }) {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  Router.events.on("routeChangeStart", () => { setLoading(true) });
-  Router.events.on("routeChangeComplete", () => { setLoading(false)});
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => setLoading(true);
+    const handleRouteChangeEnd = () => setLoading(false);
+
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
+    Router.events.on('routeChangeComplete', handleRouteChangeEnd);
+    Router.events.on('routeChangeError', handleRouteChangeEnd);
+
+    return () => {
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
+      Router.events.off('routeChangeComplete', handleRouteChangeEnd);
+      Router.events.off('routeChangeError', handleRouteChangeEnd);
+    };
+  }, []);
 
   return (
     <>

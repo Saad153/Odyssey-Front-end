@@ -5,7 +5,7 @@ import { DatePicker, InputNumber, Radio, Select } from 'antd'
 import { setField, resetState } from '../../../../redux/openingInvoices/openingInvoicesSlice'
 import axios from 'axios'
 import Router from 'next/router'
-import openNotification from "/Components/Shared/Notification";
+import openNotification from "Components/Shared/Notification";
 import Cookies from 'js-cookie'
 import dayjs from 'dayjs'
 import moment from 'moment'

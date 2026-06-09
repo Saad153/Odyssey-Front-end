@@ -5,11 +5,11 @@ import { FileExcelOutlined } from '@ant-design/icons';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import { setAuditField } from '../../../../redux/audit/auditSlice';
 import axios from 'axios';
-import AuditReport from '/Components/Layouts/Reports/AuditLog/report';
+import AuditReport from 'Components/Layouts/Reports/AuditLog/report';
 
 const AuditLog = () => {
     const state = useSelector((state) => state.audit);

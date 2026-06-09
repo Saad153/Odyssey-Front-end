@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
-import InputNumComp from "/Components/Shared/Form/InputNumComp";
-import SelectComp from "/Components/Shared/Form/SelectComp";
-import InputComp from "/Components/Shared/Form/InputComp";
+import InputNumComp from "Components/Shared/Form/InputNumComp";
+import SelectComp from "Components/Shared/Form/SelectComp";
+import InputComp from "Components/Shared/Form/InputComp";
 import { InputNumber } from "antd";
 import { getStatus } from './states';
 

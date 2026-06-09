@@ -1,5 +1,5 @@
 import React from 'react';
-import OfficeVoucher from '/Components/Layouts/AccountsComp/OfficeVouchers/OfficeVoucher';
+import OfficeVoucher from 'Components/Layouts/AccountsComp/OfficeVouchers/OfficeVoucher';
 import axios from 'axios';
 
 const officeVoucher = ({voucherData, id, employeeData}) => {

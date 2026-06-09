@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
 import { recordsReducer, initialState } from './states';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from 'moment';
 import Router from 'next/router';
 

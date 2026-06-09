@@ -1,4 +1,4 @@
-import openNotification from "/Components/Shared/Notification";
+import openNotification from "Components/Shared/Notification";
 import { Col, Row, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -7,7 +7,7 @@ import Router from "next/router";
 import Cookies from 'js-cookie';
 import VoucherPrint from "./VoucherPrint";
 import Print from "./Print";
-import { setField, resetState } from '/redux/vouchers/voucherSlice';
+import { setField, resetState } from 'redux/vouchers/voucherSlice';
 import { DatePicker, Input, InputNumber, Select } from "antd";
 import { FaPrint } from "react-icons/fa6";
 import { CloseCircleOutlined } from "@ant-design/icons";

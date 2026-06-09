@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import { recordsReducer, initialState } from './states';
-import { getJobValues, getJobById } from '/apis/jobs';
+import { getJobValues, getJobById } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import CreateOrEdit from './CreateOrEdit';
 import { useSelector } from 'react-redux';
@@ -8,8 +8,8 @@ import Cookies from "js-cookie";
 
 const SeJob = ({id, type}) => {
 
-  const { data, isSuccess:dataSuccess } = useQuery({queryKey: ['values'], queryFn: getJobValues});
-  const { data:newdata, isSuccess, refetch } = useQuery({
+  const { data, isSuccess:dataSuccess, isLoading:dataLoading } = useQuery({queryKey: ['values'], queryFn: getJobValues});
+  const { data:newdata, isSuccess, isError, error, refetch, isLoading } = useQuery({
     queryKey:["jobData", {id, type}], queryFn: () => getJobById({id, type}),
   });
 
@@ -46,6 +46,10 @@ const SeJob = ({id, type}) => {
     }
   }
 
+  if(isLoading || dataLoading) return <div className='base-page-layout'><p>Loading...</p></div>;
+  if(isError) return <div className='base-page-layout'><p>Error loading job: {error?.message}</p></div>;
+  if(!dataSuccess) return <div className='base-page-layout'><p>Loading setup data...</p></div>;
+
   return (
   <div className='base-page-layout'>
     {state.fetched && 
@@ -59,6 +63,7 @@ const SeJob = ({id, type}) => {
         id={id}
       />
     }
+    {!state.fetched && isSuccess && <p>Ready to display job details...</p>}
   </div>
   )
 }

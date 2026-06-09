@@ -1,5 +1,5 @@
 import React from 'react';
-import TasksList from '/Components/Layouts/Tasks/TasksList';
+import TasksList from 'Components/Layouts/Tasks/TasksList';
 
 const index = () => {
   return (

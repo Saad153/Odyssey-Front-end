@@ -1,5 +1,5 @@
 import React from 'react';
-import Comparative from '/Components/Layouts/Reports/JobPL/Comparative';
+import Comparative from 'Components/Layouts/Reports/JobPL/Comparative';
 import axios from 'axios';
 
 const comparative = ({query, result}) => {

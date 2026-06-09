@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { AccountBookOutlined, HomeOutlined, SettingOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { HiOutlineDocumentSearch } from "react-icons/hi";
 import { IoMdArrowDropleft } from "react-icons/io";
 import { RiShipLine } from "react-icons/ri";
 import jwt_decode from 'jwt-decode';
 import { Router } from "next/router";
-import logout from '/functions/logout';
+import logout from 'functions/logout';
 let firstCall = true;
 let tempToken;
 

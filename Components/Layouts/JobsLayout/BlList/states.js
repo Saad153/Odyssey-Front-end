@@ -1,5 +1,5 @@
 import moment from "moment";
-import { delay } from "/functions/delay";
+import { delay } from "functions/delay";
 import axios from "axios";
 
 function recordsReducer(state, action){

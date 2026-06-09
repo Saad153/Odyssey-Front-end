@@ -5,7 +5,7 @@ import { Row, Col, Spinner, Table } from 'react-bootstrap';
 import { Input, Empty, Radio, Modal } from 'antd';
 import openNotification from '../../../Shared/Notification';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from "next/router"
 
 const InvoiceAndBills = ({invoiceData}) => {

@@ -1,31 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { Popover, Tag, Modal, Checkbox } from "antd";
-import SelectComp from '/Components/Shared/Form/SelectComp';
-import SelectSearchComp from '/Components/Shared/Form/SelectSearchComp';
-import CheckGroupComp from '/Components/Shared/Form/CheckGroupComp';
-import DateComp from '/Components/Shared/Form/DateComp';
-import TimeComp from '/Components/Shared/Form/TimeComp';
+import SelectComp from 'Components/Shared/Form/SelectComp';
+import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
+import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
+import DateComp from 'Components/Shared/Form/DateComp';
+import TimeComp from 'Components/Shared/Form/TimeComp';
 import { Row, Col } from 'react-bootstrap';
-import CustomBoxSelect from '/Components/Shared/Form/CustomBoxSelect';
-import Notes from "./Notes";
-import ports from "/jsonData/ports";
-import destinations from "/jsonData/destinations";
+import CustomBoxSelect from 'Components/Shared/Form/CustomBoxSelect';
+// import Notes from "./Notes";
+// import ports from "jsonData/ports";
+// import destinations from "jsonData/destinations";
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementTab, removeTab } from '/redux/tabs/tabSlice';
+import { incrementTab, removeTab } from 'redux/tabs/tabSlice';
 import { getStatus } from './states';
 import Router from 'next/router';
-import InputComp from '/Components/Shared/Form/InputComp';
-import { addBlCreationId } from '/redux/BlCreation/blCreationSlice';
-import Weights from './WeightComp';
-import BLInfo from './BLInfo';
-import airports from "/jsonData/airports";
-import Carrier from './Carrier';
-import AddPort from './AddPort';
+import InputComp from 'Components/Shared/Form/InputComp';
+import { addBlCreationId } from 'redux/BlCreation/blCreationSlice';
+// import Weights from './WeightComp';
+// import BLInfo from './BLInfo';
+// import airports from "jsonData/airports";
+// import Carrier from './Carrier';
+// import AddPort from './AddPort';
 import { FaPlus } from "react-icons/fa6";
 import { getChargeHeads } from '../../../../apis/jobs';
 import { checkEditAccess } from '../../../../functions/checkEditAccess';
+import dynamic from 'next/dynamic';
+
+const Weights = dynamic(() => import('./WeightComp'));
+const BLInfo = dynamic(() => import('./BLInfo'));
+const Carrier = dynamic(() => import('./Carrier'));
+const AddPort = dynamic(() => import('./AddPort'));
+const Notes = dynamic(() => import('./Notes'));
 
 const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, control, errors, state, useWatch, dispatch, reset, id, type }) => {
+
+  const [ports, setPorts] = useState({ ports: [] });
+  const [airports, setAirports] = useState([]);
+  const [destinations, setDestinations] = useState([]);
+
+  // Load only what's needed based on job type
+  useEffect(() => {
+    if (type === "SE" || type === "SI") {
+      import("jsonData/ports").then(m => setPorts(m.default));
+      import("jsonData/destinations").then(m => setDestinations(m.default));
+    }
+    if (type === "AE" || type === "AI") {
+      import("jsonData/airports").then(m => setAirports(m.default));
+      import("jsonData/destinations").then(m => setDestinations(m.default));
+    }
+  }, [type]);
+
   const tabs = useSelector((state) => state.tabs.tabs)
   //const companyId = useSelector((state) => state.company.value);
   const dispatchNew = useDispatch();

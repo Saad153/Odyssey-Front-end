@@ -1,5 +1,5 @@
 import React from 'react';
-import Voucher from '/Components/Layouts/AccountsComp/Voucher/';
+import Voucher from 'Components/Layouts/AccountsComp/Voucher/';
 import axios from 'axios';
 
 const voucher = ({id}) => {

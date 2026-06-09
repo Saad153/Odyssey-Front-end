@@ -4,7 +4,7 @@ import Router from 'next/router';
 import moment from 'moment';
 import axios from 'axios';
 import { DeleteOutlined } from '@ant-design/icons';
-import PopConfirm from '/Components/Shared/PopConfirm';
+import PopConfirm from 'Components/Shared/PopConfirm';
 import Cookies from 'js-cookie';
 
 const commas = (a) => { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") };

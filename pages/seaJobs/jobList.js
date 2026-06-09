@@ -1,5 +1,5 @@
 import React from 'react'
-import JobList from '/Components/Layouts/JobsLayout/JobList'
+import JobList from 'Components/Layouts/JobsLayout/JobList'
 import axios from 'axios'
 const jobList = ({data}) => {
   return (

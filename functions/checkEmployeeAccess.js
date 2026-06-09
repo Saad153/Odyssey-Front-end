@@ -1,5 +1,5 @@
-import { setAccesLevels } from '/functions/setAccesLevels';
-import logout from '/functions/logout';
+import { setAccesLevels } from 'functions/setAccesLevels';
+import logout from 'functions/logout';
 import Cookies from "js-cookie";
 import jwt_decode from 'jwt-decode';
 

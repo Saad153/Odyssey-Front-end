@@ -1,5 +1,5 @@
 import React from 'react';
-import Non_Gl_Parties from '/Components/Layouts/Setup/Non_Gl_Parties';
+import Non_Gl_Parties from 'Components/Layouts/Setup/Non_Gl_Parties';
 import axios from 'axios';
 import Cookies from 'cookies';
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { updateNotification } from '/functions/notifications';
+import { updateNotification } from 'functions/notifications';
 import { Spinner } from 'react-bootstrap';
 
 const Notifications = ({dispatch, incrementTab, Router,  moment}) => {

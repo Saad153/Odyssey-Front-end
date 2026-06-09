@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Form } from "react-bootstrap";
-import { getJobValues } from '/apis/jobs';
-import { incrementTab } from '/redux/tabs/tabSlice';
-import { setFilterValues } from "/redux/filters/filterSlice";
+import { getJobValues } from 'apis/jobs';
+import { incrementTab } from 'redux/tabs/tabSlice';
+import { setFilterValues } from "redux/filters/filterSlice";
 import { Select, Input, Checkbox, Radio, DatePicker, } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import moment from "moment";
-import PrintTopHeader from "/Components/Shared/PrintTopHeader";
+import PrintTopHeader from "Components/Shared/PrintTopHeader";
 import { Table, Row, Col } from "react-bootstrap";
 import { useRouter } from "next/router";
 import ExcelJS from "exceljs";

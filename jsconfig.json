@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "Components/*": ["Components/*"],
+      "redux/*": ["redux/*"],
+      "styles/*": ["styles/*"],
+      "functions/*": ["functions/*"],
+      "jsonData/*": ["jsonData/*"],
+      "apis/*": ["apis/*"]
+    }
+  }
+}

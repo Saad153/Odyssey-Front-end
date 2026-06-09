@@ -1,6 +1,6 @@
 import axios from "axios";
-import { delay } from '/functions/delay';
-import openNotification from "/Components/Shared/Notification";
+import { delay } from 'functions/delay';
+import openNotification from "Components/Shared/Notification";
 import moment from "moment";
 
 function recordsReducer(state, action){

@@ -1,5 +1,5 @@
 import React from 'react';
-import OfficeVouchers from '/Components/Layouts/AccountsComp/OfficeVouchers';
+import OfficeVouchers from 'Components/Layouts/AccountsComp/OfficeVouchers';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 

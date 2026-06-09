@@ -5,19 +5,19 @@ import moment from 'moment';
 import Cookies from 'js-cookie';
 import Router from 'next/router';
 import React, { useEffect ,useState} from 'react';
-import { getJobValues } from '/apis/jobs';
+import { getJobValues } from 'apis/jobs';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { createHistory } from './historyCreation';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import { yupResolver } from "@hookform/resolvers/yup";
-import DateComp from '/Components/Shared/Form/DateComp';
+import DateComp from 'Components/Shared/Form/DateComp';
 import { useForm, useFormContext, useWatch } from "react-hook-form";
-import InputComp from '/Components/Shared/Form/InputComp';
-import SelectComp from '/Components/Shared/Form/SelectComp';
-import SelectSearchComp from '/Components/Shared/Form/SelectSearchComp';
-import openNotification from '/Components/Shared/Notification';
-import CheckGroupComp from '/Components/Shared/Form/CheckGroupComp';
+import InputComp from 'Components/Shared/Form/InputComp';
+import SelectComp from 'Components/Shared/Form/SelectComp';
+import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
+import openNotification from 'Components/Shared/Notification';
+import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
 
 const SignupSchema = yup.object().shape({
     // code: yup.string().required('Required'),

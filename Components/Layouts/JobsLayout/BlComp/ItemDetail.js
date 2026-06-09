@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Col, Row, Table } from 'react-bootstrap';
 import { Input, InputNumber, Select } from 'antd';
 import { CloseCircleOutlined } from "@ant-design/icons";
-import CheckGroupComp from "/Components/Shared/Form/CheckGroupComp"
+import CheckGroupComp from "Components/Shared/Form/CheckGroupComp"
 
 const ItemDetail = ({control, register, state, useWatch, dispatch, reset}) => {
 

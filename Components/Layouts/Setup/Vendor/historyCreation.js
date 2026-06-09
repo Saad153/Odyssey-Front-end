@@ -1,4 +1,4 @@
-import { createHistoryFields, createHistoryCheck, createHistorySelect } from '/functions/historyChecks';
+import { createHistoryFields, createHistoryCheck, createHistorySelect } from 'functions/historyChecks';
 function createHistory(Representatives, oldRecord, data){
     let htmlString = '';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import Charges from '/Components/Layouts/Setup/Charges';
+import Charges from 'Components/Layouts/Setup/Charges';
 import axios from 'axios';
 import Cookies from 'cookies';
 

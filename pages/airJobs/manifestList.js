@@ -1,5 +1,5 @@
 import React from 'react'
-import  Manifest  from '/Components/Layouts/Manifest'
+import  Manifest  from 'Components/Layouts/Manifest'
 import axios from 'axios'
 
 const manifist = ({manifest}) => {

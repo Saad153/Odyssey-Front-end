@@ -4,7 +4,7 @@ import moment from "moment";
 import { DatePicker, Radio, Select } from "antd";
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from 'next/router';
 import { setFilterValues } from '../../../../redux/filters/filterSlice';
 import { setFrom, setTo, setCompany, setCurrency, setRecords, setAccount, setName, setFirst } from '../../../../redux/ledger/ledgerSlice';

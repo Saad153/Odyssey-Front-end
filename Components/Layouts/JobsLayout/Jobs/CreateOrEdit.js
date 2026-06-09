@@ -7,7 +7,7 @@ import Routing from './Routing';
 import Cookies from 'js-cookie';
 import Router from "next/router";
 import { Spinner } from 'react-bootstrap';
-import { checkEmployeeAccess} from '/functions/checkEmployeeAccess';
+import { checkEmployeeAccess} from 'functions/checkEmployeeAccess';
 
 const Invoice = dynamic(() => import('./Invoice'), {loading: () => <p>Loading...</p>,})
 const BookingInfo = dynamic(() => import('./BookingInfo'), {loading: () => <p>Loading...</p>,})
@@ -18,13 +18,13 @@ const LoadingProgram = dynamic(() => import('./Loading Program'), {loading: () =
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm, useWatch } from "react-hook-form";
-import { incrementTab, removeTab } from '/redux/tabs/tabSlice';
+import { incrementTab, removeTab } from 'redux/tabs/tabSlice';
 import { SignupSchema, getInvoices, baseValues } from './states';
 import { yupResolver } from "@hookform/resolvers/yup";
-import PopConfirm from '/Components/Shared/PopConfirm';
-import { createNotification } from '/functions/notifications';
-import openNotification from '/Components/Shared/Notification';
-import FullScreenLoader from '/Components/Shared/FullScreenLoader';
+import PopConfirm from 'Components/Shared/PopConfirm';
+import { createNotification } from 'functions/notifications';
+import openNotification from 'Components/Shared/Notification';
+import FullScreenLoader from 'Components/Shared/FullScreenLoader';
 import { useQueryClient } from '@tanstack/react-query';
 
 const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) => {

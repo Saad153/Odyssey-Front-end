@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import Cookies from 'js-cookie'
 import Vouchers from "./Vouchers";
-import { getJobValues } from '/apis/jobs';
+import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 // import { useFormikContext } from 'formik';
 import moment from 'moment';

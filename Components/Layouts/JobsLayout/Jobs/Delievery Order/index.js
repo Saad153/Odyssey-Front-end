@@ -1,4 +1,4 @@
-import openNotification from "/Components/Shared/Notification";
+import openNotification from "Components/Shared/Notification";
 import { useForm, useWatch } from "react-hook-form";
 import React, { useEffect, useRef, useState } from "react";
 import LoadingForm from "./LoadingForm";

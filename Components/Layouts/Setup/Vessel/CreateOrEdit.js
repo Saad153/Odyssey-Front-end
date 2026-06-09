@@ -1,16 +1,16 @@
 import { useForm } from "react-hook-form";
-import openNotification from '/Components/Shared/Notification';
-import SelectComp from '/Components/Shared/Form/SelectComp';
+import openNotification from 'Components/Shared/Notification';
+import SelectComp from 'Components/Shared/Form/SelectComp';
 import { yupResolver } from "@hookform/resolvers/yup";
-import InputComp from '/Components/Shared/Form/InputComp';
+import InputComp from 'Components/Shared/Form/InputComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import { Input } from 'antd';
 import * as yup from "yup";
 import axios from 'axios';
-import RadioComp from "/Components/Shared/Form/RadioComp";
+import RadioComp from "Components/Shared/Form/RadioComp";
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { getJobValues } from '/apis/jobs';
+import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from "js-cookie";
 

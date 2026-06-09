@@ -3,7 +3,7 @@ import { Col, Row } from "react-bootstrap";
 import InputComp from "../../Shared/Form/InputComp";
 import InputNumComp from "../../Shared/Form/InputNumComp";
 import TextAreaComp from "../../Shared/Form/TextAreaComp";
-import DateComp from "/Components/Shared/Form/DateComp";
+import DateComp from "Components/Shared/Form/DateComp";
 
 const Modal = ({index,  register, control}) => {
 

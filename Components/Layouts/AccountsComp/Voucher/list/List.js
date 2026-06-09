@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row, Col, Table } from 'react-bootstrap';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { RiDeleteBin2Fill, RiEdit2Fill } from "react-icons/ri";
-import PopConfirm from '/Components/Shared/PopConfirm';
-import Pagination from '/Components/Shared/Pagination';
+import PopConfirm from 'Components/Shared/PopConfirm';
+import Pagination from 'Components/Shared/Pagination';
 import Router from 'next/router';
 import moment from 'moment';
 import axios from 'axios';
 import { Input } from 'antd';
 import Cookies from 'js-cookie';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import { checkEmployeeAccess } from '../../../../../functions/checkEmployeeAccess';
 import { checkEditAccess } from '../../../../../functions/checkEditAccess';
-import { resetState } from '/redux/vouchers/voucherSlice';
+import { resetState } from 'redux/vouchers/voucherSlice';
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")
 
 const ListData = ({ voucherData }) => {

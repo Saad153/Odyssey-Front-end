@@ -1,11 +1,11 @@
-import { getNetInvoicesAmount } from '/functions/amountCalculations';
+import { getNetInvoicesAmount } from 'functions/amountCalculations';
 import { getAccounts, totalRecieveCalc, getInvoices, getTotal } from './states';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import PrintTranInfo from './PrintTranInfo';
 import { Empty, InputNumber, Checkbox } from 'antd';
 import { Spinner, Table, Col, Row } from 'react-bootstrap';
 import React, { useEffect } from 'react';
-import PrintTopHeader from '/Components/Shared/PrintTopHeader';
+import PrintTopHeader from 'Components/Shared/PrintTopHeader';
 import Gl from './Gl';
 
 const PrintTransaction = ({companyId, state, dispatch}) => {

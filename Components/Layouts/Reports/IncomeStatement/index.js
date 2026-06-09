@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Form } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
-import { setFilterValues } from '/redux/filters/filterSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
+import { setFilterValues } from 'redux/filters/filterSlice';
 import Router from 'next/router';
 import Cookies from "js-cookie";
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import DirectJobList from '/Components/Layouts/AccountsComp/directJob/list';
+import DirectJobList from 'Components/Layouts/AccountsComp/directJob/list';
 import Cookies from 'cookies';
 import axios from 'axios';
 

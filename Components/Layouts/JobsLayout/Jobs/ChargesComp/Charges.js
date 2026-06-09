@@ -1,20 +1,20 @@
 import { useWatch } from "react-hook-form";
 import { CloseCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
-import SelectSearchComp from "/Components/Shared/Form//SelectSearchComp";
-import InputNumComp from "/Components/Shared/Form/InputNumComp";
+import SelectSearchComp from "Components/Shared/Form//SelectSearchComp";
+import InputNumComp from "Components/Shared/Form/InputNumComp";
 import { Select, Modal, Tag, InputNumber } from 'antd';
 import { getVendors, getClients } from '../states';
-import SelectComp from "/Components/Shared/Form/SelectComp";
+import SelectComp from "Components/Shared/Form/SelectComp";
 import { Row, Col, Table, Spinner } from 'react-bootstrap';
-import PopConfirm from '/Components/Shared/PopConfirm';
+import PopConfirm from 'Components/Shared/PopConfirm';
 import React, { useEffect, useState } from 'react';
 import PartySearch from './PartySearch';
 import { saveHeads, calculateChargeHeadsTotal, makeInvoice, getHeadsNew, approveHeads, autoInvoice } from "../states";
 import { v4 as uuidv4 } from 'uuid';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import { checkEditAccess } from "../../../../../functions/checkEditAccess";
 import InputNumberComp from "../../../../Shared/Form/InputNumberComp";
-import { delay } from "/functions/delay";
+import { delay } from "functions/delay";
 
 
 

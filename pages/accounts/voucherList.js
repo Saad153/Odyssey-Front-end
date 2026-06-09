@@ -1,5 +1,5 @@
 import React from 'react';
-import VoucherList from '/Components/Layouts/AccountsComp/Voucher/VoucherList';
+import VoucherList from 'Components/Layouts/AccountsComp/Voucher/VoucherList';
 import Cookies from 'cookies';
 import axios from 'axios';
 

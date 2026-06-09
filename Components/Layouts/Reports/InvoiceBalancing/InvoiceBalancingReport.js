@@ -2,15 +2,15 @@ import moment from 'moment';
 import ReactToPrint from 'react-to-print';
 import { Spinner, Table } from "react-bootstrap";
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import PrintTopHeader from '/Components/Shared/PrintTopHeader';
+import PrintTopHeader from 'Components/Shared/PrintTopHeader';
 import Cookies from "js-cookie";
 import { AiFillPrinter } from "react-icons/ai";
 import { useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from 'next/router';
 import { AgGridReact } from 'ag-grid-react';
 import { CSVLink } from "react-csv";
-import Pagination from "/Components/Shared/Pagination";
+import Pagination from "Components/Shared/Pagination";
 import ExcelJS from "exceljs";
 import { FileExcelOutlined } from '@ant-design/icons';
 

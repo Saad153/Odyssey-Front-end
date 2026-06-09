@@ -1,8 +1,8 @@
-import TextAreaComp from '/Components/Shared/Form/TextAreaComp';
+import TextAreaComp from 'Components/Shared/Form/TextAreaComp';
 import { fetchJobsData, convetAsHtml, setJob } from './states';
-import SelectComp from '/Components/Shared/Form/SelectComp';
-import InputComp from '/Components/Shared/Form/InputComp';
-import DateComp from '/Components/Shared/Form/DateComp';
+import SelectComp from 'Components/Shared/Form/SelectComp';
+import InputComp from 'Components/Shared/Form/InputComp';
+import DateComp from 'Components/Shared/Form/DateComp';
 import React, { useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useSelector } from "react-redux";

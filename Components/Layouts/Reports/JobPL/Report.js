@@ -10,7 +10,7 @@ import { Spinner } from "react-bootstrap";
 import { AgGridReact } from 'ag-grid-react';
 import { CSVLink } from "react-csv";
 import ExcelJS from "exceljs";
-import Pagination from "/Components/Shared/Pagination";
+import Pagination from "Components/Shared/Pagination";
 import { FileExcelOutlined } from '@ant-design/icons';
 import { current } from '@reduxjs/toolkit';
 

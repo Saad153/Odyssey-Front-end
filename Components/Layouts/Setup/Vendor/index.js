@@ -2,9 +2,9 @@ import { Row, Col, Table } from 'react-bootstrap';
 import React, { useEffect, useReducer, useState } from 'react';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { Input, Select } from 'antd';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import { DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 

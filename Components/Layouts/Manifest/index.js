@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Row, Col, Table, Form, Spinner } from "react-bootstrap";
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { useDispatch } from 'react-redux';
 import Router from 'next/router';
 import { Modal, Input } from "antd";

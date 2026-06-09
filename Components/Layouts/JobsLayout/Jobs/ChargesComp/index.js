@@ -1,6 +1,6 @@
 import { useForm, useFieldArray, Controller, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getChargeHeads } from "/apis/jobs";
+import { getChargeHeads } from "apis/jobs";
 import { Row, Col } from 'react-bootstrap';
 import { setHeadsCache, getHeadsNew } from '../states';
 import { useSelector,useDispatch } from 'react-redux';

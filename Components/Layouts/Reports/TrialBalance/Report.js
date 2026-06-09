@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import PrintTopHeader from "/Components/Shared/PrintTopHeader";
+import PrintTopHeader from "Components/Shared/PrintTopHeader";
 import { Table } from "react-bootstrap";
-// import exportExcelFile from "/functions/exportExcelFile";
-import Pagination from "/Components/Shared/Pagination";
+// import exportExcelFile from "functions/exportExcelFile";
+import Pagination from "Components/Shared/Pagination";
 import ExcelJS from "exceljs";
 
 const Report = ({query, result}) => {

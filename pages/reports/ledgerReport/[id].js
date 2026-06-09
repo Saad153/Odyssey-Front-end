@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import LedgerReport from '/Components/Layouts/Reports/Ledger/LedgerReport';
+import LedgerReport from 'Components/Layouts/Reports/Ledger/LedgerReport';
 
 const paymentReceipt = ({voucherData, from, to, name, company, currency}) => {
   return <LedgerReport voucherData={voucherData} from={from} to={to} name={name} company={company} currency={currency} />

@@ -1,7 +1,7 @@
 import React from 'react';
 //import { useRouter } from 'next/router';
 import axios from "axios";
-import Jobs from '/Components/Layouts/JobsLayout/Jobs';
+import Jobs from 'Components/Layouts/JobsLayout/Jobs';
 
 const seExport = ({id, type}) => {
   return (
@@ -14,8 +14,15 @@ export default seExport
 
 export async function getServerSideProps(context) {
   const { params } = context;
+  
+  // Validate that id parameter exists
+  if (!params?.id) {
+    return {
+      notFound: true,
+    }
+  }
 
   return {
-    props: { id:params.id, type:"SE" }
+    props: { id: params.id, type: "SE" }
   }
 }

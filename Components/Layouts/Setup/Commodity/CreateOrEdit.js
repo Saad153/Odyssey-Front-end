@@ -1,14 +1,14 @@
 import { useForm, useWatch, useFormContext } from "react-hook-form";
-import CheckGroupComp from '/Components/Shared/Form/CheckGroupComp';
-import openNotification from '/Components/Shared/Notification';
-import SelectComp from '/Components/Shared/Form/SelectComp';
-import InputComp from '/Components/Shared/Form/InputComp';
+import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
+import openNotification from 'Components/Shared/Notification';
+import SelectComp from 'Components/Shared/Form/SelectComp';
+import InputComp from 'Components/Shared/Form/InputComp';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Row, Col, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import * as yup from "yup";
 import axios from 'axios';
-import { getJobValues } from '/apis/jobs';
+import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from "js-cookie";
 

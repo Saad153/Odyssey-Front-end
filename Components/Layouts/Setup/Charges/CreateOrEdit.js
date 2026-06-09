@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { useForm, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import InputComp from '/Components/Shared/Form/InputComp';
-import InputNumComp from '/Components/Shared/Form/InputNumComp';
-import SelectComp from '/Components/Shared/Form/SelectComp';
-import RadioComp from '/Components/Shared/Form/RadioComp';
+import InputComp from 'Components/Shared/Form/InputComp';
+import InputNumComp from 'Components/Shared/Form/InputNumComp';
+import SelectComp from 'Components/Shared/Form/SelectComp';
+import RadioComp from 'Components/Shared/Form/RadioComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import openNotification from '/Components/Shared/Notification';
-import { getJobValues } from '/apis/jobs';
+import openNotification from 'Components/Shared/Notification';
+import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
@@ -198,3 +198,4 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
 }
 
 export default React.memo(CreateOrEdit)
+

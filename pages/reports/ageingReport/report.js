@@ -1,7 +1,7 @@
 import React from 'react';
 import AgeingDetail from '../../../Components/Layouts/Reports/AgeingReport';
-import Summary from '/Components/Layouts/Reports/AgeingReport/AgeingSummary';
-import Weekly from '/Components/Layouts/Reports/AgeingReport/AgeingWeekly';
+import Summary from 'Components/Layouts/Reports/AgeingReport/AgeingSummary';
+import Weekly from 'Components/Layouts/Reports/AgeingReport/AgeingWeekly';
 import axios from 'axios';
 
 
@@ -41,3 +41,4 @@ export async function getServerSideProps(context) {
     }
   }
 }
+

@@ -1,4 +1,4 @@
-import Voyage from "/Components/Layouts/Setup/Voyage";
+import Voyage from "Components/Layouts/Setup/Voyage";
 import axios from "axios";
 import Cookies from "cookies";
 

@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
 import { Table, Row, Col, Spinner } from 'react-bootstrap';
-// import MediumModal from '/Components/Shared/Modals/MediumModal';
-// import CreateOrEdit from '/Components/Layouts/Setup/Employees/CreateOrEdit';
+// import MediumModal from 'Components/Shared/Modals/MediumModal';
+// import CreateOrEdit from 'Components/Layouts/Setup/Employees/CreateOrEdit';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { Input, Empty, Radio, Modal } from 'antd';
 import { LuBike } from "react-icons/lu";
 import InputComp from '../../Shared/Form/InputComp'

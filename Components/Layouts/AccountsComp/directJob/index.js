@@ -1,13 +1,13 @@
 import { DeleteOutlined, DollarOutlined, EditOutlined, LoadingOutlined, PlusOutlined, SaveOutlined, SearchOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Col, Input, Row, Pagination, InputNumber, Select, DatePicker, Checkbox, Modal } from "antd";
-import PopConfirm from '/Components/Shared/PopConfirm';
-import { incrementTab, removeTabNew } from '/redux/tabs/tabSlice';
+import PopConfirm from 'Components/Shared/PopConfirm';
+import { incrementTab, removeTabNew } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import Router from 'next/router';
 import { useEffect, useState } from "react";
-import { setDJField, resetDirectJob, updateDirectJobItem } from '/redux/directJob/directJobSlice';
+import { setDJField, resetDirectJob, updateDirectJobItem } from 'redux/directJob/directJobSlice';
 import { useDispatch, useSelector } from "react-redux";
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import axios from "axios";
 import Cookies from "js-cookie";
 import Operation from "antd/lib/transfer/operation";

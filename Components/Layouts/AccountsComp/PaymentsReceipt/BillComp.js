@@ -1,18 +1,18 @@
-import { getNetInvoicesAmount } from '/functions/amountCalculations';
+import { getNetInvoicesAmount } from 'functions/amountCalculations';
 import { getAccounts, totalRecieveCalc, getInvoices, getTotal } from './states';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import TransactionInfo from './TransactionInfo';
 import { Empty, InputNumber, Checkbox, Radio, Input, DatePicker, Select, Modal } from 'antd';
 import { Spinner, Table, Col, Row } from 'react-bootstrap';
 import React, { useEffect, useReducer, useState } from 'react';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import Gl from './Gl';
 import moment from 'moment';
-import { setField } from '/redux/paymentReciept/paymentRecieptSlice';
+import { setField } from 'redux/paymentReciept/paymentRecieptSlice';
 import Cookies from 'js-cookie';
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")

@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import CSVReader from 'react-csv-reader';
 import moment from 'moment';
-import { delay } from "/functions/delay"
+import { delay } from "functions/delay"
 import InvoicedUploader from "./InvoicedUploader";
 import AgentInvoice from "./AgentInvoice";
 import PartiesUploader from "./PartiesUploader";

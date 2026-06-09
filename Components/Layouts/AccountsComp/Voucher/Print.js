@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Row, Table } from "react-bootstrap";
-import numToWords from '/functions/numToWords';
+import numToWords from 'functions/numToWords';
 import Cookies from 'js-cookie';
 import moment from 'moment';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 //import { useRouter } from 'next/router';
 import axios from "axios";
-import Jobs from '/Components/Layouts/JobsLayout/Jobs';
+import Jobs from 'Components/Layouts/JobsLayout/Jobs';
 
 const seJob = ({id, type}) => {
   return (

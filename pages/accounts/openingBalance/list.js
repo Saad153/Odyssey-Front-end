@@ -1,5 +1,5 @@
 import React from 'react';
-import OpeningBalance from '/Components/Layouts/AccountsComp/OpeningBalance/List';
+import OpeningBalance from 'Components/Layouts/AccountsComp/OpeningBalance/List';
 import axios from 'axios';
 import Cookies from 'cookies';
 

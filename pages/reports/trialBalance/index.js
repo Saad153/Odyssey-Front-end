@@ -1,5 +1,5 @@
 import React from 'react';
-import TrialBalance from '/Components/Layouts/Reports/TrialBalance';
+import TrialBalance from 'Components/Layouts/Reports/TrialBalance';
 
 const tiralBalance = () => {
   return (

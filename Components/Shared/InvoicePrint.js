@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
 import moment from "moment";
-import ports from "/jsonData/ports";
-import airports from "/jsonData/airports";
-import inWords from '/functions/numToWords';
+import ports from "jsonData/ports";
+import airports from "jsonData/airports";
+import inWords from 'functions/numToWords';
 import Cookies from 'js-cookie';
 
 const commas = (a) => parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

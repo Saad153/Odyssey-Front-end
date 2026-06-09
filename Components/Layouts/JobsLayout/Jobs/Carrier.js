@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import SelectSearchComp from '/Components/Shared/Form/SelectSearchComp';
-import DateComp from '/Components/Shared/Form/DateComp';
-import TimeComp from '/Components/Shared/Form/TimeComp';
-import InputComp from '/Components/Shared/Form/InputComp';
+import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
+import DateComp from 'Components/Shared/Form/DateComp';
+import TimeComp from 'Components/Shared/Form/TimeComp';
+import InputComp from 'Components/Shared/Form/InputComp';
 import Dates from './Dates';
 import { Popover } from "antd";
 import { Row, Col } from "react-bootstrap";

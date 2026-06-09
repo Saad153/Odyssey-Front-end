@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Row, Col } from 'react-bootstrap';
-import DateComp from "/Components/Shared/Form/DateComp";
-import InputComp from "/Components/Shared/Form/InputComp";
+import DateComp from "Components/Shared/Form/DateComp";
+import InputComp from "Components/Shared/Form/InputComp";
 import { Input } from 'antd';
 
 

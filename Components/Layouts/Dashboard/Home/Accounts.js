@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import SecondaryLoader from '/Components/Shared/SecondaryLoader';
+import SecondaryLoader from 'Components/Shared/SecondaryLoader';
 import { Table, Row, Col } from 'react-bootstrap';
 import moment from "moment";
-import { getNetInvoicesAmount } from '/functions/amountCalculations';
+import { getNetInvoicesAmount } from 'functions/amountCalculations';
 
 const Accounts = () => {
 

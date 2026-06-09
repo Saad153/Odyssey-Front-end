@@ -9,7 +9,7 @@ import BlDetail from "./BlDetail";
 import Stamps from "./Stamps";
 import Router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { incrementTab } from "/redux/tabs/tabSlice";
+import { incrementTab } from "redux/tabs/tabSlice";
 import { stamps as stamp } from "./groupData";
 import { validationSchema } from "./validion";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,7 +17,7 @@ import { setAndFetchBlData, recordsReducer, initialState, baseValues, calculateC
 import axios from 'axios';
 import ItemDetail from "./ItemDetail";
 import ChargesDetail from "./ChargesDetail";
-import { getJobValues, getJobById } from '/apis/jobs';
+import { getJobValues, getJobById } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 

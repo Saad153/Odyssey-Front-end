@@ -1,5 +1,5 @@
 import React from 'react'
-import CreateOrEdit from '/Components/Layouts/Manifest/CreateOrEdit'
+import CreateOrEdit from 'Components/Layouts/Manifest/CreateOrEdit'
 import axios from 'axios'
 const index = ({manifest, awb}) => {
   return (

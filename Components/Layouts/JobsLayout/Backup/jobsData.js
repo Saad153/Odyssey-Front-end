@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { Input, Tabs } from 'antd';
 import BookingInfoBackup from './BookingInfo';
-import Loader from '/Components/Shared/Loader';
+import Loader from 'Components/Shared/Loader';
 import RoutingBackup from './Routing';
 
 const JobsData = ({ data, setIsSwitch, type }) => {

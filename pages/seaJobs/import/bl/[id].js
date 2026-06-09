@@ -1,5 +1,5 @@
 import React from 'react';
-import BlComp from '/Components/Layouts/JobsLayout/BlComp';
+import BlComp from 'Components/Layouts/JobsLayout/BlComp';
 import axios from "axios";
 
 const siBl = ({id, blData, partiesData}) => {

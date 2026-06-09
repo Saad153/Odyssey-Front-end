@@ -2,7 +2,7 @@ import { Row, Col, Table } from 'react-bootstrap';
 import React, { useEffect, useReducer, useState } from 'react';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import axios from 'axios';
 import {Input, Select} from 'antd'
 

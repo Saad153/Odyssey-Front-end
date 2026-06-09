@@ -4,7 +4,7 @@ import { Select, InputNumber, Input } from 'antd';
 import Router from "next/router";
 import axios from 'axios';
 import { CloseCircleOutlined } from "@ant-design/icons";
-import openNotification from "/Components/Shared/Notification";
+import openNotification from "Components/Shared/Notification";
 import Cookies from "js-cookie";
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")

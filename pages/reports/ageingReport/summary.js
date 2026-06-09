@@ -1,5 +1,5 @@
 import React from 'react';
-import AgeingSummary from '/Components/Layouts/Reports/AgeingReport/AgeingSummary';
+import AgeingSummary from 'Components/Layouts/Reports/AgeingReport/AgeingSummary';
 import axios from 'axios';
 
 const summary = ({query, result}) => {

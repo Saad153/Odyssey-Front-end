@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Col, Row, Table } from 'react-bootstrap';
-import InputNumComp from '/Components/Shared/Form/InputNumComp';
+import InputNumComp from 'Components/Shared/Form/InputNumComp';
 
 const ChargesDetail = ({register, control, useWatch, reset}) => {
 

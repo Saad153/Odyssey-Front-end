@@ -1,5 +1,5 @@
 import React from 'react';
-import Home from '/Components/Layouts/Dashboard/Home/';
+import Home from 'Components/Layouts/Dashboard/Home/';
 import axios from 'axios';
 import Cookies from 'cookies';
 

@@ -1,17 +1,17 @@
 import { Spinner, Table } from "react-bootstrap";
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import PrintTopHeader from '/Components/Shared/PrintTopHeader';
+import PrintTopHeader from 'Components/Shared/PrintTopHeader';
 import { AiFillPrinter } from "react-icons/ai";
 import ReactToPrint from 'react-to-print';
 import Cookies from "js-cookie";
 import moment from 'moment';
 import { AgGridReact } from 'ag-grid-react';
 import { CSVLink } from "react-csv";
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { useDispatch } from 'react-redux';
 import Router from 'next/router';
-import Pagination from "/Components/Shared/Pagination";
-import exportExcelFile from "/functions/exportExcelFile";
+import Pagination from "Components/Shared/Pagination";
+import exportExcelFile from "functions/exportExcelFile";
 import ExcelJS from "exceljs";
 
 const JobBalancingReport = ({ result, query }) => {

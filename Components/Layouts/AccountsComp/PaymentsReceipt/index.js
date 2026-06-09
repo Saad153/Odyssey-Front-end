@@ -4,7 +4,7 @@ import { MdDeleteForever, MdHistory } from "react-icons/md";
 import { Input, List, Radio, Modal, Select, Alert } from 'antd';
 import { recordsReducer, initialState, getNewInvoices } from './states';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { Row, Col, Table } from 'react-bootstrap';
 import Router, { useRouter } from 'next/router';
 import BillComp from './BillComp';
@@ -18,7 +18,7 @@ import Pagination from '../../../Shared/Pagination';
 import openNotification from "../../../Shared/Notification";
 import {checkEditAccess} from "../../../../functions/checkEditAccess";
 import {checkEmployeeAccess} from "../../../../functions/checkEmployeeAccess";
-import { setField, resetState } from '/redux/paymentReciept/paymentRecieptSlice';
+import { setField, resetState } from 'redux/paymentReciept/paymentRecieptSlice';
 import Cookies from "js-cookie";
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -421,12 +421,12 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         </Col>
       </Row>
       <hr></hr>
-      <div style={{overflowY: 'auto', maxHeight: '350px'}}>
-      {(state.selectedAccount==""||state.selectedAccount==undefined)&&<table>
+      <div style={{overflowY: 'auto', maxHeight: '350px', width: '100%'}}>
+      {(state.selectedAccount==""||state.selectedAccount==undefined)&&<table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead className='sticky-header' style={{backgroundColor: '#f3f3f3', color: 'black'}}>
           <tr>
-            <th style={{ width: '7%', padding: 10 }}>Voucher No</th>
-            <th style={{ width: '20%', padding: 10 }}>Name</th>
+            <th style={{ width: '10%', padding: 10 }}>Voucher No</th>
+            <th style={{ width: '30%', padding: 10 }}>Name</th>
             <th style={{ width: '10%', padding: 10 }}>Party</th>
             <th style={{ width: '10%', padding: 10 }}>Type</th>
             <th style={{ width: '10%', padding: 10 }}>Date</th>

@@ -1,6 +1,6 @@
-import { addValues } from '/redux/persistValues/persistValuesSlice';
+import { addValues } from 'redux/persistValues/persistValuesSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
 import Router from 'next/router';
@@ -9,7 +9,7 @@ import Pagination from '../../Shared/Pagination';
 import { Input } from 'antd';
 import moment from 'moment';
 // import JobsBackupData from './Backup/BackupModal';
-import { delay } from "/functions/delay"
+import { delay } from "functions/delay"
 import axios from 'axios';
 import Cookies from 'js-cookie';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import Report from '/Components/Layouts/Reports/TrialBalance/Report';
+import Report from 'Components/Layouts/Reports/TrialBalance/Report';
 import axios from 'axios';
 
 const report = ({query, result}) => {
@@ -14,7 +14,6 @@ export default report
 
 export async function getServerSideProps(context) {
   const { query } = context;
-  console.log(query)
   const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_TRIAL_BALANCE,{
     headers:{
       "company":query.company,

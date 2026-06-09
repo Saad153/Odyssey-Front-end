@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
 import { Row, Col, Table } from 'react-bootstrap';
-import inWords from '/functions/numToWords';
+import inWords from 'functions/numToWords';
 
 const CLPrint = ({ records, invoice }) => {
     // console.log("invoice",invoice)

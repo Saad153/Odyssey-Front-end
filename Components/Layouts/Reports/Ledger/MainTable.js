@@ -1,13 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Table as AntTable } from "antd";
 import { useDispatch } from "react-redux";
-import { incrementTab } from "/redux/tabs/tabSlice";
+import { incrementTab } from "redux/tabs/tabSlice";
 import Router from "next/router";
 import { AiFillPrinter } from "react-icons/ai";
 import ReactToPrint from "react-to-print";
 import moment from "moment";
 import Cookies from "js-cookie";
-import PrintTopHeader from "/Components/Shared/PrintTopHeader";
+import PrintTopHeader from "Components/Shared/PrintTopHeader";
 import * as XLSX from "xlsx";
 
 /* -----------------------------

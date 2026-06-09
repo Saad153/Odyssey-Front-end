@@ -1,5 +1,5 @@
 import React from 'react';
-import InvoiceBalancingReport from '/Components/Layouts/Reports/InvoiceBalancing/InvoiceBalancingReport';
+import InvoiceBalancingReport from 'Components/Layouts/Reports/InvoiceBalancing/InvoiceBalancingReport';
 import axios from 'axios';
 
 const report = ({result, query}) => {

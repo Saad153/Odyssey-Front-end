@@ -1,5 +1,5 @@
 import React from 'react';
-import Report from '/Components/Layouts/Reports/BalanceSheet/Report';
+import Report from 'Components/Layouts/Reports/BalanceSheet/Report';
 
 const report = () => {
   return (

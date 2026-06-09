@@ -1,4 +1,4 @@
-import { delay } from "/functions/delay";
+import { delay } from "functions/delay";
 import moment from "moment";
 import axios from "axios";
 

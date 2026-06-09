@@ -1,9 +1,9 @@
-import SelectSearchComp from '/Components/Shared/Form/SelectSearchComp';
-import InputComp from '/Components/Shared/Form/InputComp';
-import DateComp from '/Components/Shared/Form/DateComp';
+import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
+import InputComp from 'Components/Shared/Form/InputComp';
+import DateComp from 'Components/Shared/Form/DateComp';
 import { Row, Col } from 'react-bootstrap';
-import ports from "/jsonData/ports";
-import airports from "/jsonData/airports";
+import ports from "jsonData/ports";
+import airports from "jsonData/airports";
 import React from 'react';
 
 const Routing = ({register, control, errors, state, useWatch, type}) => {

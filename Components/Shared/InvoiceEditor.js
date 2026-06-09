@@ -3,8 +3,8 @@ import { Modal } from 'antd';
 import { Row, Col, Table, Spinner } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import openNotification from '/Components/Shared/Notification';
-import { delay } from "/functions/delay"
+import openNotification from 'Components/Shared/Notification';
+import { delay } from "functions/delay"
 import { PlusOutlined } from '@ant-design/icons';
 
 const InvoiceEditor = ({data, reload}) => {

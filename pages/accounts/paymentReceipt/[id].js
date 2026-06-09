@@ -1,5 +1,5 @@
 // import React from 'react';
-// import PaymentsReceipt from '/Components/Layouts/AccountsComp/PaymentsReceipt';
+// import PaymentsReceipt from 'Components/Layouts/AccountsComp/PaymentsReceipt';
 // import axios from 'axios';
 
 // const paymentReceipt = ({id, voucherData}) => {
@@ -29,7 +29,7 @@
 // }
 
 import React from 'react';
-import PaymentsReceipt from '/Components/Layouts/AccountsComp/PaymentsReceipt';
+import PaymentsReceipt from 'Components/Layouts/AccountsComp/PaymentsReceipt';
 import axios from 'axios';
 
 // Simple in-memory cache (this will be reset on every server restart)

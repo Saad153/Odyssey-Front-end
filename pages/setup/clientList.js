@@ -1,5 +1,5 @@
 import React from 'react';
-import Client from '/Components/Layouts/Setup/Client';
+import Client from 'Components/Layouts/Setup/Client';
 import axios from 'axios';
 import Cookies from 'cookies';
 

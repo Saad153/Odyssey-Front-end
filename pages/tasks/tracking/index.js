@@ -1,5 +1,5 @@
 import React from 'react';
-import Tracking from '/Components/Layouts/Tasks/Tracking';
+import Tracking from 'Components/Layouts/Tasks/Tracking';
 
 const index = () => {
   return (

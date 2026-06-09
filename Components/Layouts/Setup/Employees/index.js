@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, Row, Col, Spinner } from 'react-bootstrap';
-import MediumModal from '/Components/Shared/Modals/MediumModal';
+import MediumModal from 'Components/Shared/Modals/MediumModal';
 import CreateOrEdit from './CreateOrEdit';
 import { useSelector } from 'react-redux';
 import { Input } from 'antd';

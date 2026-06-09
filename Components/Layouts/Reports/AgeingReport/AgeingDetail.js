@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import moment from "moment";
-import PrintTopHeader from "/Components/Shared/PrintTopHeader";
+import PrintTopHeader from "Components/Shared/PrintTopHeader";
 import { Table, Row, Col } from "react-bootstrap";
-import Pagination from "/Components/Shared/Pagination";
+import Pagination from "Components/Shared/Pagination";
 import ExcelJS from "exceljs";
 import Cookies from "js-cookie";
 

@@ -5,7 +5,7 @@ import DateComp from '../../../Shared/Form/DateComp';
 import TimeComp from '../../../Shared/Form/TimeComp';
 import RadioComp from '../../../Shared/Form/RadioComp';
 import { Col, Row, Spinner } from 'react-bootstrap';
-import ports from "/jsonData/ports";
+import ports from "jsonData/ports";
 
 
 const CreateOrEdit = ({state, dispatch, baseValues, register, control, useWatch}) => {

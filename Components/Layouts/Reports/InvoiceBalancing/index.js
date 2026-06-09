@@ -2,13 +2,13 @@ import { Row, Col, Form } from "react-bootstrap";
 import { Select, Input, Checkbox, Radio, DatePicker } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getJobValues } from '/apis/jobs';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { getJobValues } from 'apis/jobs';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from "next/router";
 import { useDispatch, useSelector } from 'react-redux';
 // import {useRouter} from "next/router";
 import moment from 'moment';
-import { setFilterValues } from "/redux/filters/filterSlice";
+import { setFilterValues } from "redux/filters/filterSlice";
 
 const InvoiceBalaincing = () => {
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal } from 'antd';
 import { Table } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from 'next/router';
 import moment from 'moment';
 
@@ -51,3 +51,4 @@ const Vouchers = ({vouchers, setVouchers, voucherList}) => {
 }
 
 export default Vouchers
+

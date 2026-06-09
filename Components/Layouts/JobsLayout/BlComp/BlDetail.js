@@ -3,10 +3,10 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Paragraph from '@tiptap/extension-paragraph'
 import { Row, Col, Table } from 'react-bootstrap';
-import InputComp from '/Components/Shared/Form/InputComp';
-import InputNumComp from '/Components/Shared/Form/InputNumComp';
-import DateComp from '/Components/Shared/Form/DateComp';
-import TextAreaComp from '/Components/Shared/Form/TextAreaComp';
+import InputComp from 'Components/Shared/Form/InputComp';
+import InputNumComp from 'Components/Shared/Form/InputNumComp';
+import DateComp from 'Components/Shared/Form/DateComp';
+import TextAreaComp from 'Components/Shared/Form/TextAreaComp';
 import { cleanNullParagraphs } from './states';
 
 const BlDetail = ({control, register, state, useWatch, dispatch, reset, type}) => {

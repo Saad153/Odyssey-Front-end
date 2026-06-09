@@ -1,5 +1,5 @@
 import React from 'react';
-import JobBalancingReport from '/Components/Layouts/Reports/JobBalancing/JobBalancingReport';
+import JobBalancingReport from 'Components/Layouts/Reports/JobBalancing/JobBalancingReport';
 import axios from 'axios';
 
 const report = ({result, query}) => {

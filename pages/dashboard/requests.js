@@ -1,5 +1,5 @@
 import React from 'react';
-import Requests from '/Components/Layouts/Dashboard/Requests';
+import Requests from 'Components/Layouts/Dashboard/Requests';
 import axios from 'axios';
 import Cookies from 'cookies';
 

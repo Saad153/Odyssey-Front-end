@@ -1,5 +1,5 @@
 import React from 'react';
-import BlList from '/Components/Layouts/JobsLayout/BlList/';
+import BlList from 'Components/Layouts/JobsLayout/BlList/';
 import axios from 'axios';
 
 const seBlList = ({partiesData, BlsData}) => {

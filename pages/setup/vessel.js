@@ -1,5 +1,5 @@
 import React from 'react';
-import Vessel from '/Components/Layouts/Setup/Vessel';
+import Vessel from 'Components/Layouts/Setup/Vessel';
 import axios from 'axios';
 import Cookies from 'cookies';
 

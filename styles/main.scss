@@ -1,12 +1,12 @@
-@import 'MainLayout.scss';
-@import 'DashboardLayout.scss';
-@import 'Employee.scss';
-@import 'clientLayout.scss';
-@import 'accountLayout.scss';
-@import 'invoiceLayout.scss';
-@import 'dashboard-home-styles.scss';
-@import 'sideMenuStyles.scss';
-@import 'Home-styles.scss';
+@use './MainLayout.scss' as *;
+@use './DashboardLayout.scss' as *;
+@use './Employee.scss' as *;
+@use './clientLayout.scss' as *;
+@use './accountLayout.scss' as *;
+@use './invoiceLayout.scss' as *;
+@use './dashboard-home-styles.scss' as *;
+@use './sideMenuStyles.scss' as *;
+@use './Home-styles.scss' as *;
 
 .wh-txt{ color: white!important; }
 .grey-txt{ color: grey!important; }

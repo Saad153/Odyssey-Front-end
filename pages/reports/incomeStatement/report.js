@@ -1,5 +1,5 @@
 import React from 'react';
-import Report from '/Components/Layouts/Reports/IncomeStatement/Report';
+import Report from 'Components/Layouts/Reports/IncomeStatement/Report';
 import axios from 'axios';
 
 const report = ({query, result}) => {

@@ -10,7 +10,7 @@ import { Checkbox, Popover, Input, Radio, Select, Modal } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import CLPrint from './CLPrint';
 import { useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from 'next/router';
 import InvoiceEditor from './InvoiceEditor';
 import PartySearch from '../Layouts/JobsLayout/Jobs/ChargesComp/PartySearch';

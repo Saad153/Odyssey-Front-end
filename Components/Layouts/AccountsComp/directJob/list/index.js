@@ -1,7 +1,7 @@
 import { DeleteOutlined, DollarOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Col, Input, Row, Pagination } from "antd";
-import { incrementTab } from '/redux/tabs/tabSlice';
-import PopConfirm from '/Components/Shared/PopConfirm';
+import { incrementTab } from 'redux/tabs/tabSlice';
+import PopConfirm from 'Components/Shared/PopConfirm';
 import Router from 'next/router';
 import moment from "moment";
 import { useEffect, useState } from "react";

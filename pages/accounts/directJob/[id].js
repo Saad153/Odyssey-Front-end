@@ -1,5 +1,5 @@
 import React from 'react';
-import DirectJob from '/Components/Layouts/AccountsComp/directJob/';
+import DirectJob from 'Components/Layouts/AccountsComp/directJob/';
 import axios from 'axios';
 
 const directJob = ({id}) => {

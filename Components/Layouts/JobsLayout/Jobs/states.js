@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import axios from "axios";
 import moment from "moment";
-import { delay } from "/functions/delay";
+import { delay } from "functions/delay";
 import openNotification from "../../../Shared/Notification";
 import Cookies from "js-cookie";
 

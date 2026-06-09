@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Cookies from 'cookies';
-import Vendor from '/Components/Layouts/Setup/Vendor/';
+import Vendor from 'Components/Layouts/Setup/Vendor/';
 
 const vendorList = ({sessionData, vendorData}) => {
   return (

@@ -7,15 +7,15 @@
 // import { Row, Col } from 'react-bootstrap';
 // import { Modal} from 'antd';
 // //seanet data
-// import SNS_SEJ from "/jsonData/oldJobs/SNS_SEJ.json" //export 
-// import SNS_SIJ from "/jsonData/oldJobs/SNS_SIJ.json" //import
-// import SNS_AE from "/jsonData/oldJobs/SNS_AE.json" //air export
-// import SNS_AI from "/jsonData/oldJobs/SNS_AI.json" //air import
+// import SNS_SEJ from "jsonData/oldJobs/SNS_SEJ.json" //export 
+// import SNS_SIJ from "jsonData/oldJobs/SNS_SIJ.json" //import
+// import SNS_AE from "jsonData/oldJobs/SNS_AE.json" //air export
+// import SNS_AI from "jsonData/oldJobs/SNS_AI.json" //air import
 // //aircargo data
-// // import ACS_AE from "/jsonData/oldJobs/aircargo/ACS_AE.json" //export
-// // import ACS_AI from "/jsonData/oldJobs/aircargo/ACS_AI.json" //import
-// // import ACS_SEJ from "/jsonData/oldJobs/aircargo/ACS_SEJ.json" //sea export
-// // import ACS_SIJ from "/jsonData/oldJobs/aircargo/ACS_SIJ.json" //sea import
+// // import ACS_AE from "jsonData/oldJobs/aircargo/ACS_AE.json" //export
+// // import ACS_AI from "jsonData/oldJobs/aircargo/ACS_AI.json" //import
+// // import ACS_SEJ from "jsonData/oldJobs/aircargo/ACS_SEJ.json" //sea export
+// // import ACS_SIJ from "jsonData/oldJobs/aircargo/ACS_SIJ.json" //sea import
 // import JobsData from './jobsData';
 
 // const JobsBackupData = ({ isOpen, onClose,type }) => {

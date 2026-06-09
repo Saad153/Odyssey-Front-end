@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios";
-import CreateOrEditComp from '/Components/Layouts/Setup/Non_Gl_Parties/CreateOrEditComp';
+import CreateOrEditComp from 'Components/Layouts/Setup/Non_Gl_Parties/CreateOrEditComp';
 
 const client = ({id, clientData}) => {
   return (

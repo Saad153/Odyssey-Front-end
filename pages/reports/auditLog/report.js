@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import AuditReport from '/Components/Layouts/Reports/AuditLog/report';
+import AuditReport from 'Components/Layouts/Reports/AuditLog/report';
 
 const report = ({query, result}) => {
   return (

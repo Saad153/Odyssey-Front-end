@@ -1,5 +1,5 @@
 import React from 'react';
-import Summary from '/Components/Layouts/Reports/JobPL/Summary';
+import Summary from 'Components/Layouts/Reports/JobPL/Summary';
 import axios from 'axios';
 
 const summary = ({query, result}) => {

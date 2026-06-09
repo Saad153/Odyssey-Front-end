@@ -2,13 +2,13 @@ import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Row, Col } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import { Radio } from 'antd';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import { setField, resetState } from '../../../../redux/openingInvoices/openingInvoicesSlice'
 import { delay } from '../../../../functions/delay';
 

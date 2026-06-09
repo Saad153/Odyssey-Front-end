@@ -1,6 +1,6 @@
 import React from 'react';
 import Cookies from 'cookies';
-import JobsList from '/Components/Layouts/JobsLayout/JobsList';
+import JobsList from 'Components/Layouts/JobsLayout/JobsList';
 
 
 const SEJobListPage = ({ sessionData }) => {

@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import moment from "moment";
 import Router from 'next/router';
 import { useDispatch } from "react-redux";
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import Notifications from "./Notifications";
 import Notes from "./Notes";
 import Tasks from "./Tasks";

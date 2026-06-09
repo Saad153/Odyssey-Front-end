@@ -6,10 +6,10 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import cookies from 'js-cookie';
-import openNotification from '/Components/Shared/Notification';
+import openNotification from 'Components/Shared/Notification';
 import PrintVoucher from './PrintVoucher';
-import FullScreenLoader from '/Components/Shared/FullScreenLoader';
-import { delay } from "/functions/delay"
+import FullScreenLoader from 'Components/Shared/FullScreenLoader';
+import { delay } from "functions/delay"
 import Cookies from 'js-cookie';
 
 function recordsReducer(state, action){

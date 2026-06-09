@@ -5,7 +5,7 @@ import { FileExcelOutlined } from '@ant-design/icons';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { incrementTab } from '/redux/tabs/tabSlice';
+import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import { setLgField } from '../../../../redux/lgVat/lgSlice';
 import axios from 'axios';

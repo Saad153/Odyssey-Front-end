@@ -1,4 +1,4 @@
-import OpeningInvoice from '/Components/Layouts/AccountsComp/OpeningInvoices/OpeningInvoice';
+import OpeningInvoice from 'Components/Layouts/AccountsComp/OpeningInvoices/OpeningInvoice';
 import React from 'react';
 import axios from 'axios';
 

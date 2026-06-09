@@ -1,5 +1,5 @@
 import React from 'react';
-import Commodity from '/Components/Layouts/Setup/Commodity';
+import Commodity from 'Components/Layouts/Setup/Commodity';
 import axios from 'axios';
 import Cookies from 'cookies';
 

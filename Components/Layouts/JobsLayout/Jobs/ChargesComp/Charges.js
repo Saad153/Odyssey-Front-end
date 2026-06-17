@@ -278,10 +278,9 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
       </thead>
       {chargeList && <tbody>
       {fields.map((x, index) => {
-      return(
-        <>
-          {x.type==type && 
-          <tr key={x.key_id} className='f table-row-center-singleLine'>
+      if (x.type !== type) return null;
+      return (
+          <tr key={x.key_id || index} className='f table-row-center-singleLine'>
           <td className='text-center'>{/* Remove Charge */}
             <CloseCircleOutlined className='cross-icon' style={{ position: 'relative', bottom: 3 }}
                 onClick={() => {
@@ -629,8 +628,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
           <td></td>
           <td></td>
           </tr>
-          }
-        </>
       )})}
       </tbody>}
     </Table>

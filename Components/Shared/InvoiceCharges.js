@@ -61,9 +61,9 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
     A/c Title: AIR CARGO SERVICES \n
     A/c #: 20001766466 \n
     Swift Code: SONEPKKAKAR \n
-    IBAN: PK02SONE0003120001766466`,
+    IBAN: PK02 SONE 0003 1200 0176 6466`,
     two:`
-    IBAN: PK91SONE0003120001534198 \n
+    IBAN: PK91 SONE 0003 1200 0153 4198 \n
     TITLE: SEA NET SHIPPING & LOGISTICS \n
     BANK: SONERI BANK LIMITED  \n
     A/c #: 20001534198 \n

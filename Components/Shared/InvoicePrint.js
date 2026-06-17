@@ -6,10 +6,10 @@ import airports from "jsonData/airports";
 import inWords from 'functions/numToWords';
 import Cookies from 'js-cookie';
 
-const commas = (a) => parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const commas = (a) => parseFloat(a).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note, reference, calculateTotal}) => {
-
+    console.log("Invoice Print:", invoice)
     const [type, setType] = useState("PP")
 
     useEffect(()=>{
@@ -45,7 +45,7 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
         }
         return value
     }
-    const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}
+    const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
 
     useEffect(() => {
         // console.log(invoice)
@@ -58,7 +58,8 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
     const border = "1px solid black";
     
   return (
-    <div className='pb-5 px-5 pt-4'>
+    <div className='invoice-print-root pb-5 px-5 pt-4' style={{ page: 'invoicePortrait' }}>
+      <style>{`@media print { @page invoicePortrait { size: A4 portrait; margin: 10mm; } .invoice-print-root { page: invoicePortrait; } }`}</style>
     <Row>
         {!logo && 
         <Col md={4} className='text-center'>
@@ -219,13 +220,15 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
         <Col md={6} style={{borderRight:border, borderLeft:border, borderBottom:border}} className='p-1'>
             <Row>
                 <Col md={7}>
-                    <div style={heading}>Port of Loading</div>
+                    {(invoice.operation == 'SE' || invoice.operation == 'SI') && <div style={heading}>Port of Loading</div>}
+                    {(invoice.operation == 'AE' || invoice.operation == 'AI') && <div style={heading}>Airport of Loading</div>}
                     <div style={paraStyles}>
                         {(invoice.operation=="SE"||invoice.operation=="SI")? getPort(invoice.SE_Job?.pol):getAirPort(invoice.SE_Job?.pol)}
                     </div>
                 </Col>
                 <Col md={5}>
-                    <div style={heading}>Port of Discharge</div>
+                    {(invoice.operation == 'SE' || invoice.operation == 'SI') && <div style={heading}>Port of Discharge</div>}
+                    {(invoice.operation == 'AE' || invoice.operation == 'AI') && <div style={heading}>Airport of Discharge</div>}
                     <div style={paraStyles}>
                         {(invoice.operation=="SE"||invoice.operation=="SI")? getPort(invoice.SE_Job?.pod)||invoice.SE_Job?.pod:getAirPort(invoice.SE_Job?.pod)||invoice.SE_Job?.pod}
                     </div>
@@ -312,7 +315,7 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
                 </Col>
                 <Col md={5}>
                     <div style={heading}>Exchange Rate</div>
-                    <div style={paraStyles}>{records.length>0?commas(records[0].ex_rate):''}</div>
+                    <div style={paraStyles}>{records.length>0?invoice.ex_rate:''}</div>
                 </Col>
             </Row>
         </Col>
@@ -359,13 +362,13 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
         <td className='text-center p-0'>{index + 1}</td>
         <td className='text-center p-0'>{x.particular}</td>
         <td className='text-center p-0'>{commas(x.qty)}</td>
-        <td className='text-center p-0'>{commas(x.rate_charge)}</td>
+        <td className='text p-0' style={{textAlign:'right'}}>{commas(x.rate_charge)}</td>
         <td className='text-center p-0'>{x.currency}</td>
         {x.pp_cc=="CC"?<td className='text-center p-0'>{x.type=="Recievable"?"DN":"CN"}</td>:null}
-        <td className='text-center p-0'>{commas(x.amount)}</td>
-        <td className='text-center p-0'>{commas(x.discount)}</td>
-        <td className='text-center p-0'>{commas(x.tax_amount)}</td>
-        <td className='text-center p-0'>
+        <td className='text p-0' style={{textAlign:'right'}}>{commas(x.amount)}</td>
+        <td className='text p-0' style={{textAlign:'right'}}>{commas(x.discount)}</td>
+        <td className='text p-0' style={{textAlign:'right'}}>{commas(x.tax_amount)}</td>
+        <td className='text p-0' style={{textAlign:'right'}}>
             {
             (invoice.type=="Agent Invoice"||invoice.type=="Agent Bill")?
                 (parseFloat(x.local_amount)/parseFloat(x.ex_rate)).toFixed(2):

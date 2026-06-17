@@ -22,12 +22,12 @@ const Upload_CoA = () => {
         {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
         {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
         {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
-        await importCommodities();
-        await importVoyages();
-        await importCOA();
-        await importCharges();
-        await importParties();
-        // await importJobs();
+        // await importCommodities();
+        // await importVoyages();
+        // await importCOA();
+        // await importCharges();
+        // await importParties();
+        await importJobs();
         // await importLGJobs();
         // await importVouchers();
         // await FixAirJobs();
@@ -1098,7 +1098,9 @@ const importJobs = async () => {
                 console.error("Batch error:", err.message);
             }
         }
+
         console.log("Connected AI Jobs", SIJobs)
+
         for (let i = 0; i < SIJobs.length; i += 10) {
             const chunk = SIJobs.slice(i, i + 10);
             console.log(`Sending records ${i} - ${i + chunk.length}`);
@@ -1112,6 +1114,7 @@ const importJobs = async () => {
                 console.error("Batch error:", err.message);
             }
         }
+
     }catch(e){
         console.error(e)
     }
@@ -1503,7 +1506,7 @@ const importJobs = async () => {
 
         lookupMaps.SImp_BL = createMap(tempSEBl, "SIJobId");
 
-        const tempSEChargesPayb = data.SeaExportJob_ChargesPayb.map(x => ({
+        const tempSIChargesPayb = data.SeaExportJob_ChargesPayb.map(x => ({
             ...x,
             Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
             Vendor: lookupMaps.Gen_Parties.get(x.VendorId),
@@ -1513,9 +1516,9 @@ const importJobs = async () => {
             GL_JobBill_Charges: lookupMaps.SEPGL_JobBill_Charges.get(x.Id),
         }));
 
-        lookupMaps.SImp_SeaExportJob_ChargesPayb = createGroupedMap(tempSEChargesPayb, "SIJobId");
+        lookupMaps.SExp_SeaExportJob_ChargesPayb = createGroupedMap(tempSIChargesPayb, "SIJobId");
 
-        const tempSEChargesRecv = data.SeaExportJob_ChargesRecv.map(x => ({
+        const tempSIChargesRecv = data.SeaExportJob_ChargesRecv.map(x => ({
             ...x,
             Currency: lookupMaps.GL_Currencies.get(x.CurrencyId),
             Customer: lookupMaps.Gen_Parties.get(x.CustomerId),
@@ -1525,18 +1528,18 @@ const importJobs = async () => {
             GL_JobInvoice_Charges: lookupMaps.SERGL_JobInvoice_Charges.get(x.Id),
         }));
 
-        lookupMaps.SImp_SeaExportJob_ChargesRecv = createGroupedMap(tempSEChargesRecv, "SIJobId");
+        lookupMaps.SExp_SeaExportJob_ChargesRecv = createGroupedMap(tempSIChargesRecv, "SIJobId");
 
-        let SIJobs = data.SeaImportJob.map(job => ({
+        let SIJobs = data.SeaExportJob.map(job => ({
             ...job,
             Packages: lookupMaps.UNPacking.get(job.PackagesCode),
             CostCenter: lookupMaps.GL_PropertiesLOV.get(job.CostCenterId),
             Terminal: lookupMaps.Gen_Parties_Locations.get(job.TerminalId),
             IncoTerms: lookupMaps.Gen_IncoTerms.get(job.IncoTermsId),
-            SeaExportJob_ChargesPayb: lookupMaps.SImp_SeaExportJob_ChargesPayb.get(job.Id),
-            SeaExportJob_ChargesRecv: lookupMaps.SImp_SeaExportJob_ChargesRecv.get(job.Id),
-            SImp_BL: lookupMaps.SImp_BL.get(job.Id),
-            SImp_SeaImportJob_Equipment: lookupMaps.SImp_SeaImportJob_Equipment.get(job.Id),
+            SeaExportJob_ChargesPayb: lookupMaps.SExp_SeaExportJob_ChargesPayb.get(job.Id),
+            SeaExportJob_ChargesRecv: lookupMaps.SExp_SeaExportJob_ChargesRecv.get(job.Id),
+            SExp_BL: lookupMaps.SExp_BL.get(job.Id),
+            SExp_SeaExportJob_Equipment: lookupMaps.SExp_SeaExportJob_Equipment.get(job.Id),
             
         }))
 

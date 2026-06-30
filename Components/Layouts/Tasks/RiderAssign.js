@@ -36,7 +36,7 @@ const RiderID = ({riderData, tasks, id}) => {
   const { register, control, handleSubmit, reset } = useForm({});
 
   const getApprovedInvoices = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_APPROVED_INVOICE_RIDERS).then((x)=>{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_APPROVED_INVOICE_RIDERS).then((x)=>{
       if(x.data.status=='success'){
         dispatch({type : "SET_DATA" , payload:  {approvedInvoices: x.data.result}});
       }
@@ -48,7 +48,7 @@ const RiderID = ({riderData, tasks, id}) => {
   const onSubmit = async(data) => {
     const assignedById = await cookies.get("loginId")
 
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_TASK, {...data, assignedById:assignedById, EmployeeId:id}).then((x) => {
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_TASK, {...data, assignedById:assignedById, EmployeeId:id}).then((x) => {
       dispatch({type:"SET_DATA", payload:{load:true}})
       if(x.data.status=='success'){
         openNotification('Success', `Task Assigned Successfully!`, 'green')

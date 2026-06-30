@@ -116,7 +116,7 @@ const getCompanyName = (id) => {
 }
 
 const getAccounts = async(trans, companyId) => {
-  const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION,{
+  const result = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION,{
     headers:{type:trans, companyid:companyId}
   }).then((x)=> x.data.result )
   return result;
@@ -137,7 +137,7 @@ const totalRecieveCalc = (vals) => {
 }
 
 const getNewInvoices = async(id, state, companyId, dispatch) => {
-  await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getAllInvoices`,{
+  await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getAllInvoices`,{
     headers: {
       id: state.partyAccountRecord.id,
       paytype: state.invoices[0].payType,
@@ -199,7 +199,7 @@ const getNewInvoices = async(id, state, companyId, dispatch) => {
 
 const getInvoices = async(state, companyId, dispatch) => {
   dispatch({type:"setAll", payload:{ load:true }});
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_PARTY_ID, 
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_PARTY_ID, 
     { headers:{
       edit:state.edit,
       invoices:state.oldInvoices,

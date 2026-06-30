@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import React, { useState, useEffect } from 'react';
 import CSVReader from 'react-csv-reader';
 
@@ -203,7 +203,7 @@ const ParitesUploader = () => {
     // // console.log(parties.clientList.length);
     // console.log('with accounts',clientWithAc);
     // console.log('no accounts',tempClients);
-    // axios.post('http://localhost:8082/accounts/createClientInBulk', clientWithAc)
+    // axiosClient.post('http://localhost:8082/accounts/createClientInBulk', clientWithAc)
     // .then((x)=>{
     //     console.log(x.data)
     // })
@@ -228,7 +228,7 @@ const ParitesUploader = () => {
     // });
     // console.log('with accounts', vendorWithAc)
     // console.log('No accounts', tempVendors)
-    // axios.post('http://localhost:8082/accounts/createVendorInBulk', vendorWithAc)
+    // axiosClient.post('http://localhost:8082/accounts/createVendorInBulk', vendorWithAc)
     // .then((x)=>{
     //   console.log(x.data)
     // })
@@ -239,7 +239,7 @@ const ParitesUploader = () => {
     //     x.nongl = '1'
     // });
     // console.log(tempNonGl)
-    // axios.post('http://localhost:8082/accounts/nonGlInBulk', tempNonGl)
+    // axiosClient.post('http://localhost:8082/accounts/nonGlInBulk', tempNonGl)
     // .then((x)=>{
     //   console.log(x.data)
     // })

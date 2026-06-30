@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import InvoiceCharges from 'Components/Shared/InvoiceCharges';
 import { Spinner } from 'react-bootstrap';
 
@@ -19,7 +19,7 @@ const Invoice = ({state, dispatch, companyId}) => {
   const getData = async() => {
     setLoad(true);
     console.log("Fetching invoice data for invoice no:", state.selectedInvoice);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_NO, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_NO, {
       headers:{"invoiceno": `${state.selectedInvoice}`}
     }).then((x)=>{
       setLoad(false);

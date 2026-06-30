@@ -2,12 +2,12 @@ import React from 'react';
 import { MdDeleteForever } from "react-icons/md";
 import { Modal } from 'antd';
 import Router from 'next/router';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 
 const DeleteVoucher = ({companyId, setAll, state, id, setShowTable}) => {
 
   const deleteVoucher = () => {
-    axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_PAY_REC,{
+    axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_PAY_REC,{
       id:id, 
       employeeId:Cookies.get("loginId")
     }).then((x) => {

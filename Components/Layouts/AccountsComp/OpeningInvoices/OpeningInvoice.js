@@ -19,13 +19,13 @@ const OpeningInvoice = (id) => {
 
   const fetchAccounts = async () => {
     console.log(state.accountType)
-    const accounts = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/misc/parties/getPartiesbyType`,
+    const accounts = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/misc/parties/getPartiesbyType`,
       { headers:{companyId: Cookies.get('companyId'), type: state.accountType} }
     ).then((x) => {
       console.log(">>", x.data.result)
       dispatch(setField({ field: 'accounts', value: x.data.result }));
     })
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
       headers: {
         type: "Adjust",
         companyid: Cookies.get('companyId'), 
@@ -39,7 +39,7 @@ const OpeningInvoice = (id) => {
   const deleteInvoice = async (id) => {
     try{
       console.log(id)
-      axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/deleteOpeningInvoices`,
+      axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/deleteOpeningInvoices`,
         {
           headers: {id: id}
         }
@@ -52,7 +52,7 @@ const OpeningInvoice = (id) => {
   const fetchOpeningInvoice = async () => {
     try{
       console.log("Fetching Invoice")
-      const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getOpeningInvoice`, {
+      const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getOpeningInvoice`, {
         headers: {
           id: id.id.id
         }
@@ -115,7 +115,7 @@ const OpeningInvoice = (id) => {
     if(state.currency!="PKR" && state.ex_rate<=100){
       openNotification("Error", `Invalid Exchange Rate`, "red")
     }else{
-      const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/openingInvoice`, {
+      const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/openingInvoice`, {
         party_Id: state.account,
         party_Name: partyName,
         type: state.type,

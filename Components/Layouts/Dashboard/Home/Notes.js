@@ -7,7 +7,7 @@ const [notes, setNotes] = useState([])
 
     useEffect(() => {
       const req = async() => {
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_SEAJOB_NOTES).then((x) => {
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_SEAJOB_NOTES).then((x) => {
         if(x.data.status === 'success') {
           setNotes(x.data.result)
         }})

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import { Radio } from 'antd';
 import Cookies from 'js-cookie';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import openNotification from 'Components/Shared/Notification';
@@ -20,7 +20,7 @@ const List = () => {
   const state = useSelector((state) => state.openingInvoice);
   const getInvoices = async () => {
     try{
-        const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getOpeningInvoices`, {
+        const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getOpeningInvoices`, {
         headers: {
           companyId: Cookies.get('companyId'),
           type: type,
@@ -35,7 +35,7 @@ const List = () => {
   const deleteInvoice = async (id) => {
     try{
       console.log(id)
-      axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/deleteOpeningInvoices`,
+      axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/deleteOpeningInvoices`,
         {
           headers: {id: id}
         }

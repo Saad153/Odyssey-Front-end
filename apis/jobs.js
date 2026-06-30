@@ -1,8 +1,8 @@
-import axios from "axios";
+import axiosClient from "./axiosClient";
 import { calculateChargeHeadsTotal } from '../Components/Layouts/JobsLayout/Jobs/states';
 
 export function getJobValues() {
-    return axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getValues`)
+    return axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getValues`)
     .then((x)=>x.data)
 }
 export async function getJobById({id, type}) {
@@ -10,7 +10,7 @@ export async function getJobById({id, type}) {
     if(id=="new"){
         return {status:"success", result:{}}
     } else {
-        return await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getSEJobById`,{
+        return await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getSEJobById`,{
             headers: {"id":`${id}`, operation:`${type}`}
         })
         .then((x)=>x.data)
@@ -68,7 +68,7 @@ export async function getJobById({id, type}) {
 export async function getChargeHeads ({id}) {
   // console.log("getChargeHeads from apis is running")
   let charges = [];
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
     headers:{id: id}
   }).then((x)=>{
     if(x.data.status=="success"){

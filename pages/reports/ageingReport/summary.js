@@ -1,8 +1,10 @@
 import React from 'react';
-import AgeingSummary from 'Components/Layouts/Reports/AgeingReport/AgeingSummary';
-import axios from 'axios';
+import AgeingSummary from '../../../Components/Layouts/Reports/AgeingReport/AgeingSummary';
+import axiosClient from '../../../apis/axiosClient';
+import Cookies from 'cookies';
+import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
 
-const summary = ({query, result}) => {
+const summary = ({ query, result }) => {
   return (
     <div className='base-page-layout'>
       {/* <AgeingSummary query={query} result={result} /> */}
@@ -12,20 +14,31 @@ const summary = ({query, result}) => {
 
 export default summary
 
-export async function getServerSideProps(context) {
-  const { query } = context;
-  const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_INCOME_STATEMENT,{
-    headers:{
-      "company":query.company,
-      "from":query.from,
-      "to":query.to,
-      "currency":query.currency
-  }}).then((x)=>x.data);
+export async function getServerSideProps({ query, req, res }) {
+  const cookies = new Cookies(req, res);
+  const token = cookies.get('token');
 
-  return{ 
-    props: {
-      result,
-      query
+  try {
+    const result = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_INCOME_STATEMENT, {
+      headers: {
+        company: query.company,
+        from: query.from,
+        to: query.to,
+        currency: query.currency,
+        Authorization: token,
+      }
+    }).then((x) => x.data);
+
+    return {
+      props: {
+        result,
+        query
+      }
     }
+  } catch (error) {
+    if (error.response?.status === 401) {
+      return handleSSRAuthError(error, res, cookies);
+    }
+    throw error;
   }
 }

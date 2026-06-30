@@ -1,6 +1,8 @@
 import React from 'react';
 import InvoiceAndBills from '../../Components/Layouts/AccountsComp/InvoiceAndBills';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
+import Cookies from 'cookies';
+import { handleSSRAuthError } from '../../functions/withAuthRedirect';
 
 const invoiceAndBills = ({invoiceData}) => {
   return (
@@ -10,12 +12,16 @@ const invoiceAndBills = ({invoiceData}) => {
 export default invoiceAndBills
 
 export async function getServerSideProps({req,res}){
+  const cookies = new Cookies(req, res)
+  try{
+    const invoiceData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_FILTERED_INVOICES,{
+      headers:{ "type": "Job Invoice" }
+    }).then((x)=>x.data);
   
-  const invoiceData = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_FILTERED_INVOICES,{
-    headers:{ "type": "Job Invoice" }
-  }).then((x)=>x.data);
-
-  return{
-      props: { invoiceData:invoiceData }
+    return{
+        props: { invoiceData:invoiceData }
+    }
+  }catch(error){
+    return handleSSRAuthError(error, res, cookies);
   }
 }

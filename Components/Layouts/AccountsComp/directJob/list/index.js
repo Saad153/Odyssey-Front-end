@@ -39,7 +39,7 @@ const DirectJobList = ({ voucherData }) => {
                 console.log(id); // use the id parameter
 
                 // Call backend
-                await axios.post(
+                await axiosClient.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/deleteDirectJob`,
                 {}, // body
                 { headers: { id: id } } // send the id in headers
@@ -63,10 +63,10 @@ useEffect(() => {
   const fetchData = async () => {
     console.log("Fetching Data")
     try {
-      const res = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS);
+      const res = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS);
       setAccounts(res?.data?.result || []);
 
-      const jobs = await axios.get(
+      const jobs = await axiosClient.get(
         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/getDirectJobList`,
         {
           params: {

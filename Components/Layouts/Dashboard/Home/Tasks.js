@@ -22,7 +22,7 @@ const statuses = [
   useEffect(() => {
     const req = async() => {
     let userId = await Cookies.get('loginId')
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ASSIGNED_TASKS,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ASSIGNED_TASKS,{
       headers:{id:`${userId}`}
     }).then((x) => {
       if(x.data.status === 'success') {
@@ -57,7 +57,7 @@ const statuses = [
     setTasks(taskList)
     setSelected(task)
     
-    axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_TOGGLE_SUBTASK,{
+    axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_TOGGLE_SUBTASK,{
       status:status,
       id:subTask.id
     }).then((x)=>{
@@ -80,7 +80,7 @@ const statuses = [
     });
     setTasks(taskList)
 
-    axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CHANGE_TASK_STATUS,{
+    axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CHANGE_TASK_STATUS,{
       status:status,
       id:selected.id
     })

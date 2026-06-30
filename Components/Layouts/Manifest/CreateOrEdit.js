@@ -62,7 +62,7 @@ const Index=({awbNo, manifest})=>{
     let pcs = await all_values.Manifest_Jobs?.reduce((x, c)=>{ return Number(c.no_of_pc)  + x }, 0)
     data = {...data, totalPcs:pcs, totalWt:wtt}
     setLoad(true);
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_MANIFEST, data)
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_MANIFEST, data)
     .then((x)=> {
       if (x.status = "success"){
         openNotification("Success", "Transaction Recorded!", "green")
@@ -77,7 +77,7 @@ const Index=({awbNo, manifest})=>{
     let wtt = await all_values.Manifest_Jobs?.reduce((x, c)=>{ return Number(c.goross_wt) + x }, 0)
     let pcs = await all_values.Manifest_Jobs?.reduce((x, c)=>{ return Number(c.no_of_pc)  + x }, 0)
     data = {...data, totalPcs:pcs, totalWt:wtt, id:router.query.id}
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_MANIFEST, data)
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_MANIFEST, data)
     .then((x)=> {
       if (x.status = "success"){
       openNotification("Success", "Transaction Recorded!", "green")

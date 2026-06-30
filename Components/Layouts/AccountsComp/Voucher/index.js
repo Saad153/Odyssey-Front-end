@@ -27,7 +27,7 @@ const Voucher = ({ id }) => {
   const box = { border: '1px solid silver', paddingLeft: 10, paddingTop: 5, paddingBottom: 3, minHeight: 31 }
   const [ voucher, setVoucher ]  = useState({})
   const fetchVoucherData = async () => {
-    return axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCHER_BY_ID, { 
+    return axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCHER_BY_ID, { 
         headers:{ "id": `${id}` }
     }).then((x)=>{
       console.log("Id ka Result:", x.data.result)
@@ -67,7 +67,7 @@ const Voucher = ({ id }) => {
 
   const fetchAccounts = async () => {
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS, {
+      const response = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS, {
         headers: {
           CompanyId: CompanyId,
         },
@@ -155,7 +155,7 @@ const Voucher = ({ id }) => {
   }
     dispatch(setField({ field: 'load', value: true }))
     try{
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION_VOUCHER, {
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION_VOUCHER, {
         headers: {
           type: y,
           companyid: CompanyId,
@@ -186,7 +186,7 @@ const Voucher = ({ id }) => {
   },[state])
 
   const handleDelete = (id) => {
-    axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
+    axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
       id: id,
       employeeID: Cookies.get("loginId")
     }).then((x) => {
@@ -346,7 +346,7 @@ const Voucher = ({ id }) => {
         //   id: state.id,
         //   ...voucher
         // }
-        result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/updateVoucher`, {
+        result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/updateVoucher`, {
           id: state.id, employeeId: Cookies.get('loginId'),
           ...voucher
         }).then((x) => {
@@ -356,7 +356,7 @@ const Voucher = ({ id }) => {
           // Router.push(`/accounts/vouchers/${x.data.result[0].id}`);
         });
       }else{
-        result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createVoucher`, { ...voucher, employeeId: Cookies.get("loginId")}).then((x) => {
+        result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createVoucher`, { ...voucher, employeeId: Cookies.get("loginId")}).then((x) => {
           openNotification('Success', `Voucher Saved Successfully`, 'green')
           dispatch(setField({ field: 'edit', value: true }))
           Router.push(`/accounts/vouchers/${x.data.result.id}`);
@@ -393,7 +393,7 @@ const Voucher = ({ id }) => {
     if(state.settlementAccount!=undefined){
       // console.log(state.settlementAccounts.find((x)=>x.id==state.settlementAccount).title)
       console.log("Settlement Account for Closing Balance:", state.settlementAccount)
-      axios.get(
+      axiosClient.get(
         process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCEHR_LEDGER_FOR_CLOSING,
         {
           headers: {

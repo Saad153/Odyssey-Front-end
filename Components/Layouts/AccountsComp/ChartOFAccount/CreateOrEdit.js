@@ -1,7 +1,7 @@
 import { Row, Col } from 'react-bootstrap';
 import React from "react";
 import { Form, Input, Switch, Select, notification } from 'antd';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import { useSelector } from 'react-redux';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Cookies from 'js-cookie';
@@ -38,9 +38,9 @@ const CreateOrEdit = ({ state, dispatch, getAccounts, disableModal }) => {
 
       console.log("Payload for account creation:", payload);
 
-      const { data } = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_CHILD_ACCOUNT, payload);
+      const { data } = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_CHILD_ACCOUNT, payload);
       if (data.status === "success") {
-        const accountRequest = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS,{
+        const accountRequest = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS,{
             headers:{
                 "id": `${Cookies.get('companyId')}`
             }
@@ -77,9 +77,9 @@ const CreateOrEdit = ({ state, dispatch, getAccounts, disableModal }) => {
         payload.subCategory = state.selectedRecord.subCategory || "General";
       }
 
-      const { data } = await axios.post(endpoint, payload);
+      const { data } = await axiosClient.post(endpoint, payload);
       if (data.status === "success") {
-        const accountRequest = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS,{
+        const accountRequest = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_ACCOUNTS,{
             headers:{
                 "id": `${Cookies.get('companyId')}`
             }

@@ -1,5 +1,5 @@
 import CSVReader from "react-csv-reader";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
@@ -48,9 +48,9 @@ const Upload_CoA = () => {
 
     const fixSalesRep = async () => {
         try{
-            const result = await axios.get("http://localhost:8081/jobs/getSalesRep");
+            const result = await axiosClient.get("http://localhost:8081/jobs/getSalesRep");
             console.log("Sales Rep Data:", result.data.result);
-            const response = await axios.post("http://localhost:8084/seaJob/fixSalesRep", result.data.result);
+            const response = await axiosClient.post("http://localhost:8084/seaJob/fixSalesRep", result.data.result);
             console.log("Sales Rep Fixed:", response);
 
         }catch(e){
@@ -60,11 +60,11 @@ const Upload_CoA = () => {
 
     const importLGJobs = async () => {
         try{
-            const c = await axios.get("http://localhost:8084/clientRoutes/getClientsForBackup");
+            const c = await axiosClient.get("http://localhost:8084/clientRoutes/getClientsForBackup");
             console.log("Clients", c)
-            const com = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CREATE_COMMODITY);
+            const com = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CREATE_COMMODITY);
             console.log("Commodities", com)
-            const result = await axios.get("http://localhost:8081/jobs/getLOGJOB");
+            const result = await axiosClient.get("http://localhost:8081/jobs/getLOGJOB");
             console.log("Log Jobs", result.data.result)
             const Clients = c.data.result
             const ClientsMap = new Map(
@@ -174,7 +174,7 @@ const Upload_CoA = () => {
                 })
             })
             console.log(jobs)
-            const res = await axios.post("http://localhost:8084/seaJob/uploadLogJobs", jobs)
+            const res = await axiosClient.post("http://localhost:8084/seaJob/uploadLogJobs", jobs)
         }catch(e){
             console.error(e)
         }
@@ -183,11 +183,11 @@ const Upload_CoA = () => {
     const FixAirJobs = async () => {
         try{
             console.log("Getting Air Jobs Data for Fix")
-            const result = await axios.get("http://localhost:8081/jobs/fixJobs");
+            const result = await axiosClient.get("http://localhost:8081/jobs/fixJobs");
             console.log("Fix Jobs Result:", result.data.result)
             const { BL, ...rest } = result.data.result
-            await axios.post("http://localhost:8084/seaJob/fixAirJobs", rest)
-            // await axios.post("http://localhost:8084/seaJob/fixAEBL", BL)
+            await axiosClient.post("http://localhost:8084/seaJob/fixAirJobs", rest)
+            // await axiosClient.post("http://localhost:8084/seaJob/fixAEBL", BL)
         }catch(e){
             console.error(e)
         }
@@ -196,11 +196,11 @@ const Upload_CoA = () => {
     const FixSeaJobs = async () => {
         try{
             console.log("Getting Sea Jobs Data for Fix")
-            const result = await axios.get("http://localhost:8081/jobs/fixSeaJobs");
+            const result = await axiosClient.get("http://localhost:8081/jobs/fixSeaJobs");
             console.log("Fix Jobs Result:", result.data.result)
             // const { BL, ...rest } = result.data.result
-            await axios.post("http://localhost:8084/seaJob/fixSeaJobs", result.data.result)
-            // await axios.post("http://localhost:8084/seaJob/fixAEBL", BL)
+            await axiosClient.post("http://localhost:8084/seaJob/fixSeaJobs", result.data.result)
+            // await axiosClient.post("http://localhost:8084/seaJob/fixAEBL", BL)
         }catch(e){
             console.error(e)
         }
@@ -208,9 +208,9 @@ const Upload_CoA = () => {
 
     const checkInvoices = async () => {
         console.log("Getting Invoices")
-        const { data } = await axios.post("http://localhost:8081/voucher/getAllInvoices");
+        const { data } = await axiosClient.post("http://localhost:8081/voucher/getAllInvoices");
         console.log(data.Invoices)
-        const result = await axios.get("http://localhost:8084/invoice/invoiceMatching");
+        const result = await axiosClient.get("http://localhost:8084/invoice/invoiceMatching");
         console.log(result.data.result)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -332,7 +332,7 @@ const Upload_CoA = () => {
     const importCharges = async () => {
         try{
             setStatus("Fetching Charges")
-            const charges = await axios.post("http://localhost:8081/charges/getAll")
+            const charges = await axiosClient.post("http://localhost:8081/charges/getAll")
             console.log(charges)
             let tempCharges = []
             charges.data.forEach((x) => {
@@ -353,7 +353,7 @@ const Upload_CoA = () => {
                 tempCharges.push(temp)
             })
             console.log(tempCharges)
-            const result = await axios.post("http://localhost:8084/charges/bulkCreate", tempCharges)
+            const result = await axiosClient.post("http://localhost:8084/charges/bulkCreate", tempCharges)
             setStatus("Charges Imported")
             console.log(result)
         }catch(err){
@@ -366,7 +366,7 @@ const Upload_CoA = () => {
             setStatus("Fetching COA")
             console.log("Importing Accounts")
             const companyId = Cookies.get("companyId")
-            const coa = await axios.post("http://localhost:8081/accounts/getAll")
+            const coa = await axiosClient.post("http://localhost:8081/accounts/getAll")
             console.log("COA Data:", coa.data)
             // const Data = coa.data
 
@@ -374,7 +374,7 @@ const Upload_CoA = () => {
 
             // })
             
-            const result = await axios.post("http://localhost:8084/accounts/importAccount", coa.data.temp)
+            const result = await axiosClient.post("http://localhost:8084/accounts/importAccount", coa.data.temp)
             setStatus("COA Imported")
             console.log(result.status)
         }catch(err){
@@ -383,9 +383,9 @@ const Upload_CoA = () => {
     }
     const getCOATree = async () => {
         try{
-            // const coa = await axios.post("http://localhost:8081/accounts/getAll")
+            // const coa = await axiosClient.post("http://localhost:8081/accounts/getAll")
             // console.log(coa.data)
-            const result = await axios.get("http://localhost:8084/coa/getCOATree")
+            const result = await axiosClient.get("http://localhost:8084/coa/getCOATree")
             console.log(result.data)
         }catch(err){
             console.error(err)
@@ -396,7 +396,7 @@ const importParties = async () => {
     try{
         setStatus("Fetching Parties")
         console.log("Importing Parties")
-        const { data } = await axios.get("http://localhost:8081/parties/get")
+        const { data } = await axiosClient.get("http://localhost:8081/parties/get")
         console.log("Parties Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -425,7 +425,7 @@ const importParties = async () => {
 
         console.log("Sorted Data", parties)
 
-        const result = await axios.post("http://localhost:8084/clientRoutes/bulkCreate", parties)
+        const result = await axiosClient.post("http://localhost:8084/clientRoutes/bulkCreate", parties)
         setStatus("Parties Imported")
         console.log(result.data.status)
     }catch(err){
@@ -452,7 +452,7 @@ const importVouchers = async () => {
         console.log("Starting Vouchers Data Fetch...")
 
         //Fetch data from Climax DB API
-        const { data } = await axios.post("http://localhost:8081/voucher/getAll");
+        const { data } = await axiosClient.post("http://localhost:8081/voucher/getAll");
         console.log("Data Fetched Successfully", data)
 
         //Function to create lookup Maps
@@ -586,7 +586,7 @@ const importVouchers = async () => {
                     try {
                         console.log(`🚀 Sending batch ${i + 1}/${batches.length} (${batches[i].length} items)`);
                         // console.log(batches[i])
-                        const response = await axios.post(url, { records: batches[i] });
+                        const response = await axiosClient.post(url, { records: batches[i] });
                         // console.log(`✅ Batch ${i + 1} OK:`, response.data);
                         success = true;
                     } catch (error) {
@@ -611,7 +611,7 @@ const importVouchers = async () => {
             ...vh,
             GL_Voucher: lookupMaps.Vouchers.get(vh.VoucherId),
         }));
-        const res = await axios.post("http://localhost:8084/voucher/deleteVoucherHeads", {})
+        const res = await axiosClient.post("http://localhost:8084/voucher/deleteVoucherHeads", {})
         // console.log("Deleted Existing Voucher Heads:", res.data);
         await sendBatches(tempVoucher_Heads, "http://localhost:8084/voucher/importVoucherHeads", 50);
         // await sendBatches(data.Voucher_Detail, "http://localhost:8084/voucher/checkVoucherHeads", 1000);
@@ -626,7 +626,7 @@ const BATCH_SIZE = 100;
 
 const importAirPorts = async () => {
     try {
-        const { data } = await axios.get("http://localhost:8081/jobs/getAirports");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getAirports");
         console.log("AirPort Data:", data);
 
         const airports = data.Airports || [];
@@ -643,14 +643,14 @@ const importAirPorts = async () => {
 
         // Upload each batch sequentially (or you can do Promise.all for parallel)
         for (const batch of airportBatches) {
-            await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAirPorts`, {
+            await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAirPorts`, {
                 Airports: batch,
                 UNLocation: [],
             });
         }
 
         for (const batch of unLocationBatches) {
-            await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAirPorts`, {
+            await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAirPorts`, {
                 Airports: [],
                 UNLocation: batch,
             });
@@ -664,10 +664,10 @@ const importAirPorts = async () => {
 
 const importEmployees = async () => {
     try {
-        const { data } = await axios.get("http://localhost:8081/jobs/getEmployees");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getEmployees");
         console.log("Employee Data:", data);
 
-        await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/employeeRoutes/uploadEmployees`, data);
+        await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/employeeRoutes/uploadEmployees`, data);
 
         console.log("Employees uploaded successfully");
     }catch(e){
@@ -678,10 +678,10 @@ const importEmployees = async () => {
 const importCommodities = async () => {
     try {
         setStatus("Fetching Commodities")
-        const { data } = await axios.get("http://localhost:8081/jobs/getCommodities");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getCommodities");
         console.log("Commodity Data:", data);
 
-        await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/commodity/uploadCommodities`, data);
+        await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/commodity/uploadCommodities`, data);
         setStatus("Commodities Imported")
         console.log("Comodities uploaded successfully");
     }catch(e){
@@ -692,7 +692,7 @@ const importCommodities = async () => {
 const importVoyages = async () => {
     try {
         setStatus("Fetching Vessels & Voyages")
-        const { data } = await axios.get("http://localhost:8081/jobs/getVoyages");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getVoyages");
         console.log("Voyage Data:", data);
         let Vessels = []
         data.Vessel.forEach((Ve) => {
@@ -714,7 +714,7 @@ const importVoyages = async () => {
 
         console.log("Updated Vessels", Vessels)
 
-        const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/vessel/uploadVoyages`, Vessels);
+        const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/vessel/uploadVoyages`, Vessels);
         setStatus("Vessels & Voyages Imported")
         console.log("Vessels uploaded successfully", result);
     }catch(e){
@@ -724,10 +724,10 @@ const importVoyages = async () => {
 
 const importBls = async () => {
     try {
-        const { data } = await axios.get("http://localhost:8081/jobs/getBLs");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getBLs");
         console.log("BL Data:", data);
 
-        await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/uploadBLs`, data);
+        await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/uploadBLs`, data);
 
         console.log("BLs uploaded successfully");
     }catch(e){
@@ -737,10 +737,10 @@ const importBls = async () => {
 
 const importAECharges = async () => {
     try {
-        const { data } = await axios.get("http://localhost:8081/jobs/getAECharges");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getAECharges");
         console.log("AE Charges Data:", data);
         
-        const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/uploadChargeHeads`, data);
+        const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/uploadChargeHeads`, data);
         console.log("Charges uploaded successfully", result);
 
     }catch(e){
@@ -765,8 +765,8 @@ const filterData = (map, filter) => {
 const importJobs = async () => {
     try{
         console.log("Fetching Air Jobs data")
-        const result0 = await axios.get("http://localhost:8081/jobs/getAll");
-        const result1 = await axios.get("http://localhost:8081/jobs/getAll1");
+        const result0 = await axiosClient.get("http://localhost:8081/jobs/getAll");
+        const result1 = await axiosClient.get("http://localhost:8081/jobs/getAll1");
         console.log(result0)
         console.log(result1)
         const data = {
@@ -1082,14 +1082,14 @@ const importJobs = async () => {
 
         console.log("Connected AE Jobs", SEJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,SEJobs.slice(1000, 1050));
+        // const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,SEJobs.slice(1000, 1050));
 
         for (let i = 0; i < SEJobs.length; i += 10) {
             const chunk = SEJobs.slice(i, i + 10);
             console.log(`Sending records ${i} - ${i + chunk.length}`);
             
             try {
-                const result = await axios.post(
+                const result = await axiosClient.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAEJobs`,
                 chunk
                 );
@@ -1105,7 +1105,7 @@ const importJobs = async () => {
             const chunk = SIJobs.slice(i, i + 10);
             console.log(`Sending records ${i} - ${i + chunk.length}`);
             try {
-                const result = await axios.post(
+                const result = await axiosClient.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadAIJobs`,
                 chunk
                 );
@@ -1121,7 +1121,7 @@ const importJobs = async () => {
 
     try{
         console.log("Fetching SE Job data")
-        const { data } = await axios.get("http://localhost:8081/jobs/getAllSE");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getAllSE");
         console.log("SE Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -1319,14 +1319,14 @@ const importJobs = async () => {
 
         console.log("Connected SE Jobs", SEJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,SEJobs.slice(1000, 1010));
+        // const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,SEJobs.slice(1000, 1010));
 
         for (let i = 0; i < SEJobs.length; i += 10) {
             const chunk = SEJobs.slice(i, i + 10);
             console.log(`Sending records ${i} - ${i + chunk.length}`);
             
             try {
-                const result = await axios.post(
+                const result = await axiosClient.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSEJobs`,
                 chunk
                 );
@@ -1339,14 +1339,14 @@ const importJobs = async () => {
         
         // console.log("Connected SI Jobs", SIJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 200));
+        // const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 200));
         
         // for (let i = 0; i < SIJobs.length; i += 10) {
         //     const chunk = SIJobs.slice(i, i + 10);
         //     console.log(`Sending records ${i} - ${i + chunk.length}`);
             
         //     try {
-        //         const result = await axios.post(
+        //         const result = await axiosClient.post(
         //         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,
         //         chunk
         //         );
@@ -1362,7 +1362,7 @@ const importJobs = async () => {
 
     try{
         console.log("Fetching SI Job data")
-        const { data } = await axios.get("http://localhost:8081/jobs/getAllSI");
+        const { data } = await axiosClient.get("http://localhost:8081/jobs/getAllSI");
         console.log("SI Job Data:", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -1545,14 +1545,14 @@ const importJobs = async () => {
 
         console.log("Connected SI Jobs", SIJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 110));
+        // const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 110));
 
         for (let i = 0; i < SIJobs.length; i += 10) {
             const chunk = SIJobs.slice(i, i + 10);
             console.log(`Sending records ${i} - ${i + chunk.length}`);
             
             try {
-                const result = await axios.post(
+                const result = await axiosClient.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,
                 chunk
                 );
@@ -1565,14 +1565,14 @@ const importJobs = async () => {
         
         // console.log("Connected SI Jobs", SIJobs)
 
-        // const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 200));
+        // const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,SIJobs.slice(100, 200));
         
         // for (let i = 0; i < SIJobs.length; i += 10) {
         //     const chunk = SIJobs.slice(i, i + 10);
         //     console.log(`Sending records ${i} - ${i + chunk.length}`);
             
         //     try {
-        //         const result = await axios.post(
+        //         const result = await axiosClient.post(
         //         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/UploadSIJobs`,
         //         chunk
         //         );
@@ -1590,7 +1590,7 @@ const importJobs = async () => {
         console.log("Starting Invoices Data Fetch...")
 
         //Fetch data from Climax DB API
-        const { data } = await axios.post("http://localhost:8081/voucher/getAll");
+        const { data } = await axiosClient.post("http://localhost:8081/voucher/getAll");
         console.log("Data Fetched Successfully", data)
 
         const createMap = (arr, key) => new Map(arr.map(item => [item[key], item]));
@@ -1698,7 +1698,7 @@ const importJobs = async () => {
                     try {
                         console.log(`🚀 Sending batch ${i + 1}/${batches.length} (${batches[i].length} items)`);
                         // console.log(batches[i])
-                        const response = await axios.post(url, { records: batches[i] });
+                        const response = await axiosClient.post(url, { records: batches[i] });
                         // console.log(`✅ Batch ${i + 1} OK:`, response.data);
                         success = true;
                     } catch (error) {

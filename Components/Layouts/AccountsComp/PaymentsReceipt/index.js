@@ -10,7 +10,7 @@ import Router, { useRouter } from 'next/router';
 import BillComp from './BillComp';
 import PrintTransaction from './PrintTransaction';
 import moment from 'moment';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import { AgGridReact } from 'ag-grid-react';
 import ReactToPrint from 'react-to-print';
 import DeleteVoucher from './DeleteVoucher';
@@ -46,7 +46,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS, {
+      const response = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OLD_PAY_REC_VOUCHERS, {
         params: {
           companyid: Cookies.get("companyId"),
           page: pageNum,
@@ -117,7 +117,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
 
   const fetchAccounts = async () => {
     console.log("Fetching Accounts for type:", state.type)
-    const accounts = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/misc/parties/getPartiesbyType`,
+    const accounts = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/misc/parties/getPartiesbyType`,
       { headers:{companyid: Cookies.get('companyId'), type: state.type} }
     ).then((x) => {
       console.log(">>>>>>>>>>>.", x.data.result)
@@ -148,7 +148,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
 
   const refresh = async () =>{
     try{
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_PARTY_ID, {
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_PARTY_ID, {
         headers: {
           id: state.selectedAccount,
           companyid: Cookies.get('companyId'),
@@ -194,7 +194,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
   }
 
   const deleteVoucher = () => {
-    axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_PAY_REC,{
+    axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_PAY_REC,{
       id: state.voucherId,
       employeeId: Cookies.get("loginId")
     }).then((x) => {

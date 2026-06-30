@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import { setAuditField } from '../../../../redux/audit/auditSlice';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import AuditReport from 'Components/Layouts/Reports/AuditLog/report';
 
 const AuditLog = () => {
@@ -19,7 +19,7 @@ const AuditLog = () => {
     const ExportExcel = async () => {
         setExporting(true);
         try {
-          const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getHistory`,{headers:{ audit_sdate: state.audit_sdate, audit_edate: state.audit_edate, audit_form: state.audit_form, audit_user: state.audit_user, audit_action: state.audit_action }}).then((x)=>x.data);
+          const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getHistory`,{headers:{ audit_sdate: state.audit_sdate, audit_edate: state.audit_edate, audit_form: state.audit_form, audit_user: state.audit_user, audit_action: state.audit_action }}).then((x)=>x.data);
           console.log("Export to Excel Result:", result)
         } catch (error) {
           console.error("Error exporting to Excel:", error);
@@ -27,7 +27,7 @@ const AuditLog = () => {
       };
 
     const getFormNames = async () => {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getFormTypes`);
+        const res = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getFormTypes`);
         let temp = [
             {value:"All",label:"All"}
         ];
@@ -38,7 +38,7 @@ const AuditLog = () => {
     }
 
     const getTypes = async () => {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getTypes`);
+        const res = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getTypes`);
         let temp = [
             {value:"All",label:"All"}
         ];
@@ -49,7 +49,7 @@ const AuditLog = () => {
     }
 
     const getUsers = async () => {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/employeeRoutes/getEmployeesIdAndName`);
+        const res = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/employeeRoutes/getEmployeesIdAndName`);
         let temp = [
             {value:"All",label:"All"}
         ];

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import { setLgField } from '../../../../redux/lgVat/lgSlice';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 const LgVat = ({query, result}) => {
     const state = useSelector((state) => state.lgVat);
@@ -24,14 +24,14 @@ const LgVat = ({query, result}) => {
     const getAccounts = async () => {
        
             try{  
-                const gotConsignee = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/getClientsbyType`,
+                const gotConsignee = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/getClientsbyType`,
                     {
                         headers: {
                             type: 'Consignee'
                         }
                     }
                 );
-                const gotShipper = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/getClientsbyType`,
+                const gotShipper = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/getClientsbyType`,
                     {
                         headers: {
                             type: 'Shipper'

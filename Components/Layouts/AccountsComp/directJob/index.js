@@ -21,7 +21,7 @@ const DirectJob = ({ id }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get(
+                const res = await axiosClient.get(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/getDirectJob`,
                 {
                     headers: {
@@ -99,7 +99,7 @@ const DirectJob = ({ id }) => {
                 console.log(id); // use the id parameter
 
                 // Call backend
-                await axios.post(
+                await axiosClient.post(
                 `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/deleteDirectJob`,
                 {}, // body
                 { headers: { id: parseInt(id), employeeId: Cookies.get("loginId") } } // send the id in headers
@@ -183,7 +183,7 @@ const DirectJob = ({ id }) => {
     //         }
     //         console.log("Direct Job to be saved", { direct_Job, direct_Job_Association })
     //         if(!edit){
-    //             const result = axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createDirectJob`,
+    //             const result = axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createDirectJob`,
     //                 { direct_Job, direct_Job_Association }
     //             ).then((x) => {
     //                 dispatch(setDJField({ field: 'directJob_EntryNumber', value: x.data.result.Entry_Number }));
@@ -198,7 +198,7 @@ const DirectJob = ({ id }) => {
     //             });
     //             // Router.push(`/accounts/directJob/${result.data.result.Voucher_Number}`);
     //         }else{
-    //             const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/updateDirectJob`, { direct_Job, direct_Job_Association });
+    //             const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/updateDirectJob`, { direct_Job, direct_Job_Association });
 
     //         }
     //     }catch(e){
@@ -269,7 +269,7 @@ const DirectJob = ({ id }) => {
 
     console.log("API Payload", { direct_Job, direct_Job_Association });
 
-    const result = await axios.post(
+    const result = await axiosClient.post(
       `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/saveDirectJob`,
       {
         direct_Job,
@@ -339,18 +339,18 @@ const DirectJob = ({ id }) => {
     const getData = async () => {
         try {
             console.log("Fetching Required Data")
-        const res = await axios.get( process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS );
+        const res = await axiosClient.get( process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS );
             const accounts = res?.data?.result || []; // only update if data exists
             if (accounts.length > 0) {
             dispatch(setDJField({ field: 'directJob_CAccounts', value: accounts }));
         }
-        const result = await axios.get( process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHARGES );
+        const result = await axiosClient.get( process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHARGES );
         const charges = result?.data?.result || []; // only update if data exists
         if (charges.length > 0) {
             dispatch(setDJField({ field: 'directJob_Charges', value: charges }));
         }
         console.log("Fetched Required Data")
-        const jobsRes = await axios.get(
+        const jobsRes = await axiosClient.get(
             `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getJobNumbers`,
             {
             params: {
@@ -382,7 +382,7 @@ const DirectJob = ({ id }) => {
     useEffect(() => {
     const fetchreceivingAccount = async () => {
         try{
-        await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
+        await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
             headers: {
             type: state.directJob_TransMode,
             }

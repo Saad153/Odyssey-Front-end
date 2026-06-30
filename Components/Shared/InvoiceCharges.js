@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
 import ReactToPrint from 'react-to-print';
 import moment from "moment";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import openNotification from '../Shared/Notification';
 import FullScreenLoader from './FullScreenLoader';
 import InvoicePrint from './InvoicePrint';
@@ -104,7 +104,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
   const showSettlement = async (showing) => {
     console.log(showing)
     if(showing){
-      const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getAllInvoiceData`,{
+      const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getAllInvoiceData`,{
         headers: {id:invoice.id, party_Id: invoice.party_Id, party_Type: invoice.partyType}
     })
     console.log(result.data.result)
@@ -168,7 +168,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
         }else{
             tempInv.roundOff = "0"
         }
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_ROUNDOFF_INVOICE, {
+        await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_ROUNDOFF_INVOICE, {
             id:tempInv.id,
             total:tempInv.total,
             roundOff:tempInv.roundOff,
@@ -198,7 +198,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
       } else {
         tempInv.roundOff = "0"
       }
-      axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_ROUNDOFF_INVOICE, {
+      axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_ROUNDOFF_INVOICE, {
         id:tempInv.id,
         total:tempInv.total,
         roundOff:tempInv.roundOff,
@@ -213,7 +213,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
     setLoad(true);
     console.log(data.resultOne)
     if(invoice.approved=="0"){
-      await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
+      await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
         id:data.resultOne.id
       })
       setInvoice({
@@ -221,7 +221,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
         approved: "1"
       })
     }else{
-      await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/unApprove`,{
+      await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/unApprove`,{
         id:data.resultOne.id,
         employeeId: Cookies.get('loginId')
       })
@@ -267,7 +267,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
     </div>
   );
   const updateNote = async() => {
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_INVOICE_NOTE_UPDATE,{
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_INVOICE_NOTE_UPDATE,{
       id:invoice.id, note:invoice.note, currency:invoice.currency, total: invoice.total
     }).then((x)=>{
       if(x.data.status=="success"){
@@ -277,7 +277,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
   };
 
   const deleteInvoice = async () => {
-    axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/deleteInvoice`,
+    axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/deleteInvoice`,
       {
         headers: {id: invoice.id}
       }

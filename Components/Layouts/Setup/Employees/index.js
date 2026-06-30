@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { Table, Row, Col, Spinner } from 'react-bootstrap';
 import MediumModal from 'Components/Shared/Modals/MediumModal';
 import CreateOrEdit from './CreateOrEdit';
@@ -33,7 +33,7 @@ const Employees = () => {
   }, [])
 
   const getEmployees = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES, { headers: { employeeId: Cookies.get("loginId") } }).then((x)=>{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES, { headers: { employeeId: Cookies.get("loginId") } }).then((x)=>{
       if(x.data.status=='success'){
         setEmployeeList(x.data.result);
         setOriginalEmployeeList(x.data.result)

@@ -198,7 +198,7 @@ const initialState = {
 };
 
 const fetchJobsData = async(set, dispatch, id) => {
-  const jobsData = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SEA_JOBS_WITHOUT_BL,{
+  const jobsData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SEA_JOBS_WITHOUT_BL,{
     headers:{id:id}
   })
   .then((x)=>{
@@ -316,7 +316,7 @@ const setAndFetchBlData = async(reset, state, allValues, set, dispatch, blData) 
   let result = {...blData};
   set("load", true);
   result.equip = [{}];
-  const fetchedResult = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_JOB_BY_NO,{ no:result.SE_Job.jobNo }).then((x)=>x.data.result)
+  const fetchedResult = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_JOB_BY_NO,{ no:result.SE_Job.jobNo }).then((x)=>x.data.result)
   console.log("fetchedResult", fetchedResult);
   allValues.SEJobId =         fetchedResult[0].id;
   allValues.jobNo =           fetchedResult[0].jobNo;

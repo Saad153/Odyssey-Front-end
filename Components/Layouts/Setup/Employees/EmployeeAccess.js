@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 const EmployeeAccess = () => {
 
@@ -13,7 +13,7 @@ const EmployeeAccess = () => {
   }, [])
 
   const fetchData = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES)
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES)
     // .then((x)=>console.log(x.data));
   }
 

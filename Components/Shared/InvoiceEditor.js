@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import { Row, Col, Table, Spinner } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import openNotification from 'Components/Shared/Notification';
 import { delay } from "functions/delay"
 import { PlusOutlined } from '@ant-design/icons';
@@ -39,7 +39,7 @@ const InvoiceEditor = ({data, reload}) => {
   const save = () => {
     if(!load){
       setLoad(true)
-      axios.post(process.env.NEXT_PUBLIC_CLIMAX_SAVE_SE_HEADS_NEW, {
+      axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_SAVE_SE_HEADS_NEW, {
         charges:charges, employeeId: Cookies.get("loginId")
       }).then(async() => {
         await delay(2000)

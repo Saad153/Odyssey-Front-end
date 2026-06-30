@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Row, Col, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import * as yup from "yup";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from "js-cookie";
@@ -44,7 +44,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     const onSubmit = async(data) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {             
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_COMMODITY,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_COMMODITY,{
                 data,
                 employeeId: Cookies.get("loginId")
             }).then(async(x)=>{
@@ -66,7 +66,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     const onEdit = async(data) => {
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {             
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_COMMODITY,{data, employeeId: Cookies.get("loginId")})
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_COMMODITY,{data, employeeId: Cookies.get("loginId")})
             .then(async(x)=>{
                 if(x.data.status=='exists'){
                     openNotification('Error', `Same Code Already Exists!`, 'red')

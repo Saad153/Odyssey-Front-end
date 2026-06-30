@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import React, { useEffect, useState } from 'react'
 import { updateNotification } from 'functions/notifications';
 import { Spinner } from 'react-bootstrap';
@@ -10,7 +10,7 @@ const Notifications = ({dispatch, incrementTab, Router,  moment}) => {
 
   useEffect(() => {
     setTimeout(async() => {
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_NOTIFICATION)
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_NOTIFICATION)
       .then((x) => {
         setLoad(false)
         setNotifications(x.data.result)

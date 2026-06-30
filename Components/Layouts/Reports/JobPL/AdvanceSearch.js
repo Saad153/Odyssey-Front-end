@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Select } from 'antd';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 const fetch = async(value, callback, type) => {
-  value.length>2?await axios.post(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_PARTIES_BY_SEARCH,{
+  value.length>2?await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_PARTIES_BY_SEARCH,{
       search:value,
       type:type
   }).then((x) => {

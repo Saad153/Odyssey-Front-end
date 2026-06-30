@@ -1,8 +1,10 @@
 import React from 'react';
 import OpeningBalance from '../../../Components/Layouts/AccountsComp/OpeningBalance';
-import axios from 'axios';
+import axiosClient from '../../../apis/axiosClient';
+import Cookies from 'cookies';
+import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
 
-const openingBalance = ({id, voucherData}) => {
+const openingBalance = ({ id, voucherData }) => {
   return (
     <OpeningBalance id={id} voucherData={voucherData} />
   )
@@ -11,23 +13,35 @@ const openingBalance = ({id, voucherData}) => {
 export default openingBalance;
 
 export async function getServerSideProps(context) {
-  const { params } = context;
+  const { params, req, res } = context;
+  const cookies = new Cookies(req, res);
+  const token = cookies.get('token');
+
   let voucherData = {};
-  
-  if(params.id!="new"){
-      voucherData = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCHER_BY_ID,{
-      headers:{ "id": `${params.id}` }
-      }).then((x)=>x.data.result);
+
+  try {
+    if (params.id != "new") {
+      voucherData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCHER_BY_ID, {
+        headers: {
+          id: `${params.id}`,
+          Authorization: token,
+        }
+      }).then((x) => x.data.result);
+
       if (!voucherData.id) {
-      return {
+        return {
           notFound: true
         }
       }
-  }
-  return{ 
+    }
+
+    return {
       props: {
-          voucherData,
-          id:params.id
+        voucherData,
+        id: params.id
       }
+    }
+  } catch (error) {
+    return handleSSRAuthError(error, res, cookies);
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react';
 import CreateOrEdit from './CreateOrEdit';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 function recordsReducer(state, action){
   switch (action.type) {
@@ -131,7 +131,7 @@ const CreateOrEditComp = ({id, representativeData, clientData}) => {
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
 
   useEffect(() => {
-    axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNTS_FOR_PARTY_SETUP,{
+    axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNTS_FOR_PARTY_SETUP,{
       headers:{"id": `1`}
     }).then((x)=>{
       let tempParentAccount = ''

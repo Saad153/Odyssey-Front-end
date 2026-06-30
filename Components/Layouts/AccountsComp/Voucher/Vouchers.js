@@ -165,7 +165,7 @@ async function getValues() {
 
   // Fetch child accounts
   try {
-    const response = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS, {
+    const response = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS, {
       headers: {
         CompanyId: CompanyId,
       },
@@ -185,7 +185,7 @@ useEffect(() => {
   async function handleDelete() {
     PopConfirm("Confirmation", "Are You Sure To Remove This Charge?",
       () => {
-        axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
+        axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
           id, employeeId: Cookies.get("loginId")
         }).then((x) => {
           Router.push("/accounts/voucherList")
@@ -221,7 +221,7 @@ useEffect(() => {
         break;
     }
     if (y != "") {
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION_VOUCHER, {
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION_VOUCHER, {
         headers: { companyid: CompanyId, type: y }
       }).then((x) => {
         setSettlement(x.data.result);
@@ -249,7 +249,7 @@ useEffect(() => {
   // calculationg closing balance
   useEffect(() => {
     if(allValues.ChildAccountId){
-      axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCEHR_LEDGER_FOR_CLOSING,{
+      axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCEHR_LEDGER_FOR_CLOSING,{
         headers:{
           currency:allValues.currency,
           id:allValues.ChildAccountId,

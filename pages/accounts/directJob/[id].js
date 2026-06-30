@@ -1,6 +1,6 @@
 import React from 'react';
 import DirectJob from 'Components/Layouts/AccountsComp/directJob/';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 const directJob = ({id}) => {
   return (

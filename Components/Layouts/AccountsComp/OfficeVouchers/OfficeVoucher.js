@@ -4,7 +4,7 @@ import Router from 'next/router';
 import { InputNumber, Input, Select, Checkbox, Modal } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import cookies from 'js-cookie';
 import openNotification from 'Components/Shared/Notification';
 import PrintVoucher from './PrintVoucher';
@@ -68,7 +68,7 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
     if(tempData.descriptive){
       tempData.onAcOf = JSON.stringify(tempData.list);
     }
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_UPSERT_OFFICE_VOUCHER, {
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_UPSERT_OFFICE_VOUCHER, {
       ...tempData,
       EmployeeId:tempData.EmployeeId, amount:state.descriptive?calculateTotal():tempData.amount, preparedBy:preparedBy, CompanyId:companyId, employeeId:Cookies.get("loginId")
     }).then((x)=>{
@@ -91,10 +91,10 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
   }
 
   const getAccounts = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION,{
       headers:{'type':'Cash', 'companyid':companyId}
     }).then(async(x)=>{
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION,{
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION,{
         headers:{'type':'officevouchers', 'companyid':companyId}
       }).then((y)=>{
         set({
@@ -139,11 +139,11 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
             }
           ]
         }
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, {...voucher, employeeId:Cookies.get("loginId")})
+        await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, {...voucher, employeeId:Cookies.get("loginId")})
         .then(async(x)=>{
           if(x.data.status=="success"){
             let obj = {approved:state.approved==false?true:false, id:state.id, VoucherId:x.data.result.id};
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,{...obj, employeeId: Cookies.get("loginId")})
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,{...obj, employeeId: Cookies.get("loginId")})
             .then((y)=>{
               if(y.data.status=="success"){
                 openNotification("Success", `Voucher ${id=="new"?"Approved":"Updated"} Successfully!`, "green")
@@ -199,7 +199,7 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
       e.preventDefault();
       set({load:true})
       const { recievingAmount } = formData.current;
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_RECORD_REVERSE,{
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_RECORD_REVERSE,{
         reverseAmount:parseFloat(state.reverseAmount) + parseFloat(recievingAmount.value),
         VoucherId:state.VoucherId,
         id:id,
@@ -220,7 +220,7 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
 
           delete tempVoucher.Voucher_Heads[0].id
           delete tempVoucher.Voucher_Heads[1].id
-          await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, {...tempVoucher, employeeId:Cookies.get("loginId")})
+          await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, {...tempVoucher, employeeId:Cookies.get("loginId")})
           .then((z)=>{
             // console.log(z.data)
             if(z.data.status=="success"){
@@ -258,12 +258,12 @@ const OfficeVoucher = ({voucherData, id, employeeData}) => {
         <button className='btn-custom mx-3' type='button'
           onClick={async()=>{
             set({load:true})
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_VOUCHER,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_VOUCHER,{
               id:state.VoucherId, type:"VoucherId Exists", employeeId:Cookies.get("loginId")
             }).then(async(x)=>{
               if(x.data.status=="success"){
                 let obj = {approved:state.approved==false?true:false, id:state.id};
-                await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,{...obj, employeeId: Cookies.get("loginId")})
+                await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_APPROVE_OFFICE_VOUCHER,{...obj, employeeId: Cookies.get("loginId")})
                 .then((y)=>{
                   if(y.data.status=="success"){
                     openNotification("Success", `Voucher Status changed Successfully!`, "green")

@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import axios from "axios";
+import axiosClient from "/apis/axiosClient";
 import moment from "moment";
 import { delay } from "functions/delay";
 import openNotification from "../../../Shared/Notification";
@@ -227,7 +227,7 @@ const memoize = (fn) => {
 }
 
 const getClients = memoize(async(id) => {
-  const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CLIENTS_FOR_CHARGES, {
+  const result = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CLIENTS_FOR_CHARGES, {
     headers:{id:id} 
   })
   .then((x)=>x.data.result);
@@ -235,7 +235,7 @@ const getClients = memoize(async(id) => {
 })
 
 const getVendors = memoize(async(id) => {
-  const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VENDORS_FOR_CHARGES, {
+  const result = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VENDORS_FOR_CHARGES, {
     headers:{id:id}, employeeId: Cookies.get("loginId")
   })
   .then((x) => x.data.result)
@@ -247,7 +247,7 @@ const getHeadsNew = async(id, dispatch, reset) => {
   dispatch({type:'toggle', fieldName:'chargeLoad', payload:true})
   let paybleCharges = [];
   let reciveableCharges = [];
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
     headers:{id: id, employeeId: Cookies.get("loginId")}
   }).then(async(x)=>{
     if(x.data.status=="success"){
@@ -265,7 +265,7 @@ const getHeadsNew = async(id, dispatch, reset) => {
 
 const saveHeads = async(charges, state, dispatch, reset) => {
 
-  const result = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_SAVE_SE_HEADS_NEW, 
+  const result = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_SAVE_SE_HEADS_NEW, 
     { charges, deleteList:state.deleteList, id:state.selectedRecord.id, exRate:state.exRate, employeeId: Cookies.get("loginId") }
   ).then(async(x)=>{
     if(x.data.status=="success"){
@@ -279,7 +279,7 @@ const saveHeads = async(charges, state, dispatch, reset) => {
 const approve = async(data) => {
   try{
     console.log(data.newInv)
-    await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
+    await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
       id:data.newInv.id, employeeId: Cookies.get("loginId")
     }).then(async(x)=>{
       if(x.data.status=="success"){
@@ -296,7 +296,7 @@ const approveHeads = async(charges, state, dispatch, reset) => {
   console.log(charges)
   for(let x of charges){
     console.log(x)
-    await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approveHeads`,{
+    await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approveHeads`,{
       id:x.id, employeeId: Cookies.get("loginId")
     }).then(async(x)=>{
       if(x.data.status=="success"){
@@ -311,7 +311,7 @@ const approveHeads = async(charges, state, dispatch, reset) => {
 
 async function getChargeHeads (id) {
   let charges = [];
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
     headers:{id: id, employeeId: Cookies.get("loginId")}
   }).then((x)=>{
     if(x.data.status=="success"){
@@ -472,7 +472,7 @@ const makeInvoice = async (
 
   try {
     if (!tempList.length) return;
-    const res = await axios.post(
+    const res = await axiosClient.post(
       process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_NEW,
       {
         chargeList: tempList,
@@ -499,7 +499,7 @@ const makeInvoice = async (
 
 const getInvoices = async(id, dispatch) => {
   let result = [];
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_IVOICES_TYPES, 
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_IVOICES_TYPES, 
     {headers:{id:id}, employeeId: Cookies.get("loginId")
   }).then((x)=>{
     result = x.data.status=="success"? x.data.result : [];

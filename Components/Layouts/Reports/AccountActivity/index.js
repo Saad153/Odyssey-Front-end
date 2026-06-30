@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import moment from "moment";
 import { Select, Radio, Modal, DatePicker } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -58,7 +58,7 @@ const AccountActivity = () => {
   }, [filters]);
 
   const getRecords = async () => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS, {
       headers: { companyid: company }
     }).then((x) => {
       let temprecords = [];
@@ -71,7 +71,7 @@ const AccountActivity = () => {
 
   const handleSubmit = async () => {
     setLoad(true);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_ACTIVITY, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_ACTIVITY, {
       headers: {
         debitAccount,
         creditAccount,

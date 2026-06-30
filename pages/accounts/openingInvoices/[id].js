@@ -1,6 +1,6 @@
 import OpeningInvoice from 'Components/Layouts/AccountsComp/OpeningInvoices/OpeningInvoice';
 import React from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 const openingInvoices = (id) => {
   return <OpeningInvoice id={id}/>

@@ -1,30 +1,44 @@
 import React from 'react';
-import axios from "axios";
-import CreateOrEditComp from 'Components/Layouts/Setup/Non_Gl_Parties/CreateOrEditComp';
+import axiosClient from '../../../apis/axiosClient';
+import Cookies from 'cookies';
+import CreateOrEditComp from '../../../Components/Layouts/Setup/Non_Gl_Parties/CreateOrEditComp';
+import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
 
-const client = ({id, clientData}) => {
+const client = ({ id, clientData }) => {
   return (
-    <CreateOrEditComp id={id}  clientData={clientData} />
+    <CreateOrEditComp id={id} clientData={clientData} />
   )
 }
 export default client
 
-export async function getServerSideProps(context) {
-  const { params } = context;
-  const { companyId } = context.req.cookies;
+export async function getServerSideProps({ params, req, res }) {
+  const cookies = new Cookies(req, res);
+  const token = cookies.get('token');
 
-  const clientData = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_NON_GL_PARTIES_BY_ID,{
-    headers:{ "id": `${params.id}` }
-  }).then((x)=>x.data.result);
-  if (!clientData) {
+  try {
+    const clientData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_NON_GL_PARTIES_BY_ID, {
+      headers: {
+        id: `${params.id}`,
+        Authorization: token,
+      }
+    }).then((x) => x.data.result);
+
+    if (!clientData) {
+      return {
+        notFound: true
+      }
+    }
+
     return {
-      notFound: true
+      props: {
+        id: params.id,
+        clientData: clientData
+      }
     }
-  }
-  return {
-    props: { 
-      id:params.id, 
-      clientData:clientData
+  } catch (error) {
+    if (error.response?.status === 401) {
+      return handleSSRAuthError(error, res, cookies);
     }
+    throw error;
   }
 }

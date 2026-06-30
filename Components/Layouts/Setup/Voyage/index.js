@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Row, Col, Table, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { Modal } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
 import { useForm, useWatch } from "react-hook-form";
@@ -96,7 +96,7 @@ const Voyage = ({vesselsData}) => {
   const{ register, control, handleSubmit, reset, formState:{errors} } = useForm({defaultValues:state.values});
 
   const getRecords = async(id) => {
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES, {id:id, employeeId: Cookies.get("loginId")})
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES, {id:id, employeeId: Cookies.get("loginId")})
     .then((x)=>{
       set('voyagerecords', x.data.result);
   }); 
@@ -105,7 +105,7 @@ const Voyage = ({vesselsData}) => {
   const findVoyages = async(data) => {
     set('load', true);
     set('selectedRecord', data);
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES,{id:data.id, employeeId: Cookies.get("loginId")})
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_FIND_ALL_VOYAGES,{id:data.id, employeeId: Cookies.get("loginId")})
     .then((x)=>{
         set('voyagerecords', x.data.result);
     }); 
@@ -136,7 +136,7 @@ const Voyage = ({vesselsData}) => {
   const onSubmit = async(data) => {
     if(data.exportSailDate!="" && data.exportSailDate!=undefined){
       set('submitLoad', true);
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VOYAGE,{...data, VesselId:state.selectedRecord.id})
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VOYAGE,{...data, VesselId:state.selectedRecord.id})
       .then((x)=>{
         if(x.data.status=="success"){
           openNotification("Success", "Voyage Created", "green");
@@ -158,7 +158,7 @@ const Voyage = ({vesselsData}) => {
   const onEdit = async(data) => {
     if(data.exportSailDate!="" && data.exportSailDate!=undefined){
       set('submitLoad', true);
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VOYAGE,{...data, VesselId:state.selectedRecord.id})
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VOYAGE,{...data, VesselId:state.selectedRecord.id})
       .then((x)=>{
         if(x.data.status=="success"){
           openNotification("Success", "Voyage Updated", "green");

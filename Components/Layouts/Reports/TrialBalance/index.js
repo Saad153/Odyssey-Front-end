@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import moment from "moment";
 import { Select, Radio, DatePicker, Checkbox } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -55,7 +55,7 @@ const TrialBalance = () => {
   }, [filters]);
 
   const getAccounts = async () => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_PARENT_ACCOUNTS, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_PARENT_ACCOUNTS, {
       headers: { companyid: company }
     }).then((x) => {
       let temprecords = [];

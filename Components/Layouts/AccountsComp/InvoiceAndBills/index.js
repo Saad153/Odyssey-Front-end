@@ -29,7 +29,7 @@ const InvoiceAndBills = ({invoiceData}) => {
   const onChange = async(e) => {
     setType(e.target.value);
     setLoad(true);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_FILTERED_INVOICES,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_FILTERED_INVOICES,{
       headers:{ "type": `${e.target.value}` }
     }).then(async(x)=>{
       await setRecords(x.data.result);
@@ -43,7 +43,7 @@ const InvoiceAndBills = ({invoiceData}) => {
 
   const searchInvoice = async(data) => {
     setLoad(true);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_NO, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_NO, {
         headers:{"invoiceno": `${data}`}
     }).then((x)=>{
       // console.log(x.data)

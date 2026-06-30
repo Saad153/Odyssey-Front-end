@@ -4,7 +4,7 @@ import Router from 'next/router';
 import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { Input, Select, Pagination } from 'antd'
 import openNotification from 'Components/Shared/Notification';
 
@@ -78,7 +78,7 @@ const Client = ({sessionData, clientData}) => {
   const getHistory = async(recordid,type) => {
     dispatch({type:'toggle', fieldName:'load', payload:true});
     dispatch({ type: 'history'})
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_HISTORY,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_HISTORY,{
       headers:{ recordid:recordid, type:type }
     }).then((x)=>{
       setTimeout(async() => {
@@ -94,7 +94,7 @@ const Client = ({sessionData, clientData}) => {
   }
 
   const deleteClient = async (id, active) => {
-    const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/deleteClient`, {id: id})
+    const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/deleteClient`, {id: id})
     console.log(result)
     if(result.data.status == 'success'){
       openNotification('Success', `Client Deleted!`, 'green');

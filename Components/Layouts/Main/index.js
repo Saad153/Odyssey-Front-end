@@ -7,12 +7,12 @@ import Cookies from 'js-cookie';
 import OllamaChat from './ollama';
 import jwt_decode from 'jwt-decode';
 
-const Main = ({ sessionData, chartData }) => {
+const Main = ({ sessionData }) => {
   const router = useRouter(); // get the router
   const username = Cookies.get('username');
 
   useEffect(() => {
-    if (!sessionData?.isLoggedIn) {
+    if (sessionData?.isLoggedIn == false) {
       router.push("/login"); // navigate using new router
     }
   }, [sessionData, router]);
@@ -44,7 +44,7 @@ const Main = ({ sessionData, chartData }) => {
       {/* {username == 'Saad' && <VannaChat /> } */}
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
-      <UploadBackUp />
+      {/* <UploadBackUp /> */}
       {/* {audit && <AuditLog /> } */}
     </div>
   );

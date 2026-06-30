@@ -18,8 +18,8 @@ export async function getServerSideProps(context) {
   let tasks = []
 
   if(params.id!="new"){
-    // riderData = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_EMPLOYEE_ID_AND_NAME,{})
-    tasks = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_EMPLOYEE_TASK,{
+    // riderData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_EMPLOYEE_ID_AND_NAME,{})
+    tasks = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_EMPLOYEE_TASK,{
       headers:{ "id": `${params.id}` }
     }).then((x)=>x.data.result);
   }

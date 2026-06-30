@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useCallback } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import CreateOrEdit from './CreateOrEdit';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'js-cookie';
 import ExcelJS from "exceljs";
 
@@ -128,7 +128,7 @@ const ChartOFAccount = ({ accountsData }) => {
         p++;
         let codeP = Cookies.get('companyId').toString() + p.toString();
         try {
-          await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CODE_PARENT_ACCOUNT, {
+          await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CODE_PARENT_ACCOUNT, {
             id: y.id,
             title: y.title,
             AccountId: y.AccountId,
@@ -144,7 +144,7 @@ const ChartOFAccount = ({ accountsData }) => {
           c++;
           let codeC = Cookies.get('companyId').toString() + c.toString();
           try {
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CODE_CHILD_ACCOUNT, {
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CODE_CHILD_ACCOUNT, {
               id: z.id,
               title: z.title,
               ParentAccountId: y.id,

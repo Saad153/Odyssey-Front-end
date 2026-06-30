@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Form } from "react-bootstrap";
 import moment from "moment";
 import { DatePicker, Radio, Select } from "antd";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from 'next/router';
@@ -31,7 +31,7 @@ const Ledger = () => {
   const getAccounts = async () => {
    
     try{  
-      const gotAccounts = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS);
+      const gotAccounts = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS);
         const {data}= gotAccounts;
         const {result} = data
         let temprecords=[];

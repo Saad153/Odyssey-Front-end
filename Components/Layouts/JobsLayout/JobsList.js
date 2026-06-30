@@ -10,7 +10,8 @@ import { Input } from 'antd';
 import moment from 'moment';
 // import JobsBackupData from './Backup/BackupModal';
 import { delay } from "functions/delay"
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
+import axiosInstance from '/apis/axiosClient';
 import Cookies from 'js-cookie';
 
 const SEJobList = ({ jobsData, sessionData, type }) => {
@@ -44,7 +45,7 @@ const fetchJobs = async (pageNo = 1) => {
   if (loading) return;
   setLoading(true);
   try {
-    const res = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_SEAJOB, {
+    const res = await axiosInstance.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_SEAJOB, {
       params:{ companyid: `${Cookies.get('companyId')}`, operation: type, page: pageNo, limit: 20, search }
     })
     // console.log("Jobs fetched: ", res.data);

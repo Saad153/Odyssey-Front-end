@@ -1,5 +1,6 @@
 import React from 'react';
 import Login from '../Components/Layouts/Login';
+// import axiosClient from '/apis/axiosClient';
 import axios from 'axios';
 import Cookies from 'cookies';
 
@@ -15,7 +16,7 @@ export default login
 
 export async function getServerSideProps({ req }) {
   try {
-    const token = req.cookies?.token || '';
+    const token = Cookies.get("token") || '';
 
     const sessionRequest = await axios.get(
       process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,

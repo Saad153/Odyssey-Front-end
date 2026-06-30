@@ -138,7 +138,7 @@ import axios from "axios";
     const fetchData = async () => {
       try {
         // async logic here
-        const response = await axios.get(
+        const response = await axiosClient.get(
           `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/getJobData`,
           {
             headers: {

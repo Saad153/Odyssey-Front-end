@@ -6,7 +6,7 @@ import { incrementTab } from 'redux/tabs/tabSlice';
 import { Input, Select } from 'antd';
 import openNotification from 'Components/Shared/Notification';
 import { DeleteOutlined } from '@ant-design/icons';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 function recordsReducer(state, action){
   switch (action.type) {
@@ -91,7 +91,7 @@ const Vendor = ({sessionData, vendorData}) => {
   };
 
   const deleteVendor = async (id, active) => {
-      const result = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/vendor/deleteVendor`, {id: id})
+      const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/vendor/deleteVendor`, {id: id})
       console.log(result)
       if(result.data.status == 'success'){
         openNotification('Success', `Vendor Deleted!`, 'green');

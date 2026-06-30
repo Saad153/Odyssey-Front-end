@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import { Select, Radio, Modal } from 'antd';
 import * as XLSX from "xlsx";
@@ -21,7 +21,7 @@ const Report = () => {
   const commas = (a) =>  { return parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}
   async function handleSubmit(){
     setLoad(true);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL+"/accounts/balanceSheetOld",{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL+"/accounts/balanceSheetOld",{
       headers:{
         companyid:company
       }

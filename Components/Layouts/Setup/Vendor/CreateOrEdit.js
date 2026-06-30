@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import * as yup from "yup";
 import { Tabs } from "antd";
 import moment from 'moment';
@@ -83,7 +83,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, vendorData, id}) => {
       }
     });
     setTimeout(async() => {
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VENDOR, {
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VENDOR, {
         ...data, pAccountName
       }).then((x)=>{
         if(x.data.status=='success'){
@@ -112,7 +112,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, vendorData, id}) => {
       }
     });
     setTimeout(async() => {
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VENDOR, {
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VENDOR, {
         data, history, EmployeeId, updateDate, pAccountName
       }).then((x)=>{
         if(x.data.status=='success'){

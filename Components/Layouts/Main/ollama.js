@@ -44,7 +44,7 @@ const toLLMMessages = (msgs) =>
     abortRef.current = new AbortController();
 
     try {
-      const res = await axios.post(
+      const res = await axiosClient.post(
         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/ollama/chatDB`,
         {
           messages: [
@@ -59,7 +59,7 @@ const toLLMMessages = (msgs) =>
 
       setMessages(prev => [...prev.slice(0, -1), aiMessage]);
     } catch (err) {
-      if (axios.isCancel(err)) return;
+      if (axiosClient.isCancel(err)) return;
 
       console.error("Ollama error:", err);
 

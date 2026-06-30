@@ -9,7 +9,7 @@ import DateComp from 'Components/Shared/Form/DateComp';
 import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import moment from 'moment';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import Cookies from 'js-cookie';
 import openNotification from 'Components/Shared/Notification';
 import { useSelector } from 'react-redux';
@@ -62,7 +62,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         data.createdBy = Username
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_NON_PARTIES,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_NON_PARTIES,{
                 ...data, employeeId: Cookies.get("loginId")
             }).then((x)=>{
                 if(x.data.status=='success'){
@@ -82,7 +82,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
      
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_NON_PARTIES,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_NON_PARTIES,{
                 ...data,  EmployeeId, updateDate, employeeId: Cookies.get("loginId")
             }).then((x)=>{
                 if(x.data.status=='success'){

@@ -4,7 +4,7 @@ import { Modal, Input, notification } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
 import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import Cookies from 'js-cookie';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 function recordsReducer(state, action){
   switch (action.type) {
@@ -80,7 +80,7 @@ const Charges = ({chargeData}) => {
   const deleteCharge = async (x) => {
     try{
       console.log("Deleting Charge with ID:", x.id);
-      const deleteResponse = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/delete`, { id: x.id, employeeId: Cookies.get("username") })
+      const deleteResponse = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/delete`, { id: x.id, employeeId: Cookies.get("username") })
       if(deleteResponse.data.status == 'success'){
         openNotification("Success", `${x.name} Deleted Successfully`)
       }else if(deleteResponse.data.status == 'exists'){
@@ -96,7 +96,7 @@ const Charges = ({chargeData}) => {
   const statusChange = async (x) => {
     try{
       console.log("Changing Status of Charge with ID:", x.id);
-      const statusResponse = await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/status`, { id: x.id, employeeId: Cookies.get("username") })
+      const statusResponse = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/charges/status`, { id: x.id, employeeId: Cookies.get("username") })
       if(statusResponse.data.status == 'success'){
         openNotification("Success", `${x.name} Status Changed Successfully`)
       }else{

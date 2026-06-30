@@ -9,7 +9,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import Gl from './Gl';
 import moment from 'moment';
 import { setField } from 'redux/paymentReciept/paymentRecieptSlice';
@@ -76,7 +76,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
     try{
       console.log("Fetching Invoices")
       console.log(state.selectedAccount, state.currency, state.payType, state.type, companyId)
-      await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_PARTY_ID, {
+      await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_INVOICE_BY_PARTY_ID, {
         headers: {
           id: state.selectedAccount,
           companyid: companyId,
@@ -123,7 +123,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
     const fetchreceivingAccount = async () => {
       dispatch(setField({ field: 'load', value: true }))
       try{
-        await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
+        await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
           headers: {
             type: state.transactionMode,
             companyid: companyId,
@@ -144,7 +144,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
     const fetchreceivingAccount = async () => {
       dispatch(setField({ field: 'load', value: true }))
       try{
-        await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
+        await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
           headers: {
             type: "Adjust",
             companyid: companyId,
@@ -218,7 +218,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
   const submitTransaction = async () => {
     try{
         console.log("Make Transaction:", state)
-        await axios.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/makeTransaction`, {
+        await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/makeTransaction`, {
           transactions: state.transactions,
           invoices: state.invoices,
           gainLoss: state.gainLossAmount,

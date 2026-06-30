@@ -1,8 +1,10 @@
 import React from 'react';
-import axios from 'axios';
+import axiosClient from '../../../apis/axiosClient';
 import Comparitive from '../../../Components/Layouts/Reports/IncomeStatement/Comparitive';
+import Cookies from 'cookies';
+import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
 
-const comparitive = ({query, result}) => {
+const comparitive = ({ query, result }) => {
   return (
     <div className='base-page-layout'>
       <Comparitive query={query} result={result} />
@@ -12,23 +14,36 @@ const comparitive = ({query, result}) => {
 
 export default comparitive
 
-export async function getServerSideProps(context) {
-  const { query } = context;
-  const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_INCOME_STATEMENT_COMP,{
-    params:{
-      "company":query.company,
-      "from":query.from,
-      "to":query.to,
-      "from1":query.from1,
-      "to1":query.to1,
-      "accountLevel":query.accountLevel,
-      "currency":query.currency
-  }}).then((x)=>x.data);
+export async function getServerSideProps({ query, req, res }) {
+  const cookies = new Cookies(req, res);
+  const token = cookies.get('token');
 
-  return{ 
-    props: {
-      result,
-      query
+  try {
+    const result = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_INCOME_STATEMENT_COMP, {
+      params: {
+        company: query.company,
+        from: query.from,
+        to: query.to,
+        from1: query.from1,
+        to1: query.to1,
+        accountLevel: query.accountLevel,
+        currency: query.currency,
+      },
+      headers: {
+        Authorization: token,
+      }
+    }).then((x) => x.data);
+
+    return {
+      props: {
+        result,
+        query
+      }
     }
+  } catch (error) {
+    if (error.response?.status === 401) {
+      return handleSSRAuthError(error, res, cookies);
+    }
+    throw error;
   }
 }

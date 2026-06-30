@@ -7,7 +7,7 @@ import PopConfirm from 'Components/Shared/PopConfirm';
 import Pagination from 'Components/Shared/Pagination';
 import Router from 'next/router';
 import moment from 'moment';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import { Input } from 'antd';
 import Cookies from 'js-cookie';
 import openNotification from 'Components/Shared/Notification';
@@ -28,7 +28,7 @@ const ListData = ({ voucherData }) => {
     PopConfirm("Confirmation", "Are You Sure To Remove This Voucher?",
     async () => {
       try {
-        const response = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
+        const response = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
           id: id,
           employeeID: Cookies.get("loginId")
         });

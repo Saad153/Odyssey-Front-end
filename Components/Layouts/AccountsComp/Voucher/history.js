@@ -12,7 +12,7 @@ const VoucherHistory = ({ id, isOpen, onClose }) => {
     const handleFetch = async () => {
         setIsLoading(true)
         try {
-            const result = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_VIEW_VOUCHER_HISTORY, {
+            const result = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_VIEW_VOUCHER_HISTORY, {
                 headers: {
                     id: id,
                 }

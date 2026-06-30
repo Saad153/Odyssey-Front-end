@@ -13,7 +13,7 @@ import Router from "next/router";
 import { setFilterValues } from 'redux/filters/filterSlice';
 import { setFrom, setTo, setFrom2, setTo2, setCompany, setClient,setJobType,setOverSeasagent,setReportType,setSalesRepresentative,setSubType, setMetrics } from '../../../../redux/profitLoss/profitLossSlice';
 import Search from 'antd/lib/input/Search';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import MetricSelector from './MetricSelector';
 
 // Utility function to add/remove items from comma-separated string
@@ -47,7 +47,7 @@ const JobPL = () => {
 
   const getClients = async(type) => {
     console.log("Getting:", type)
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/getClientsbyType`, { headers: { type: type } });
+    const res = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/clientRoutes/getClientsbyType`, { headers: { type: type } });
     console.log("Res:", res)
     const { data } = res;
     const { result } = data;
@@ -56,7 +56,7 @@ const JobPL = () => {
 
   const getSR = async(type) => {
     console.log("Getting Sales Representative")
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/employeeRoutes/getRepresentativeEmployees`);
+    const res = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/employeeRoutes/getRepresentativeEmployees`);
     const { data } = res;
     const { result } = data;
     return result.Sr

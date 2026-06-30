@@ -1,25 +1,25 @@
 import React from 'react';
-import axios from 'axios';
+import axiosClient from '../apis/axiosClient';
 import Cookies from 'cookies';
-import Main from 'Components/Layouts/Main/';
+import Main from '../Components/Layouts/Main/';
 
-const index = ({sessionData, chartData}) => {
+const index = ({ sessionData }) => {
   return (
-    <Main sessionData={sessionData} chartData={chartData} />
+    <Main sessionData={sessionData} />
   )
 }
 
 export default index
 
 export async function getServerSideProps({ req, res }) {
-  const cookies = new (require("cookies"))(req, res);
+  const cookies = new Cookies(req, res);
   const token = cookies.get("token");
 
-  let sessionData = null;
+  let sessionData = { isLoggedIn: false };
 
   if (token) {
     try {
-      const sessionRes = await axios.get(
+      const sessionRes = await axiosClient.get(
         process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,
         {
           headers: { "x-access-token": token },
@@ -31,14 +31,9 @@ export async function getServerSideProps({ req, res }) {
     }
   }
 
-  const chartData = await axios
-    .get(process.env.NEXT_PUBLIC_CLIMAX_GET_DASHBOARD_DATA)
-    .then((x) => x.data);
-
   return {
     props: {
-      sessionData,
-      chartData,
+      sessionData
     },
   };
 }

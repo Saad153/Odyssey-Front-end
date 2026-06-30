@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import React, { useState, useEffect } from 'react';
 import CSVReader from 'react-csv-reader';
 import moment from 'moment';
@@ -91,7 +91,7 @@ const Uploader = () => {
         let index = 0;
         console.log(recTwo.length)
         recTwo.forEach(async(x, i)=>{
-            axios.post("http://localhost:8082/invoice/uploadbulkInvoicesTest",x)
+            axiosClient.post("http://localhost:8082/invoice/uploadbulkInvoicesTest",x)
             .then((y)=>{
                 setInvoiceIndex(i)
                 if(y.data.status=="success"){
@@ -175,7 +175,7 @@ const Uploader = () => {
         let index = 0;
         console.log(paybleFour.length);
         paybleFour.forEach(async(x, i)=>{
-            axios.post("http://localhost:8082/invoice/uploadbulkInvoicesTest",x)
+            axiosClient.post("http://localhost:8082/invoice/uploadbulkInvoicesTest",x)
             .then((y)=>{
                 setInvoiceIndexPay(i);
                 if(y.data.status=="success"){

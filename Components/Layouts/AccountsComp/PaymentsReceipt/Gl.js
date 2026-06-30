@@ -2,7 +2,7 @@ import { Row, Col, Table, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import moment from 'moment';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import { delay } from '../../../../functions/delay';
 import { getNetInvoicesAmount } from '../../../../functions/amountCalculations';
 import openNotification from '../../../Shared/Notification';
@@ -128,7 +128,7 @@ const Gl = ({state, dispatch, companyId}) => {
       state.edit?voucher.id = state.id : null;
       voucher.createdAt = state.createdAt;
       // console.log(tempInvoices)
-      await axios.post(
+      await axiosClient.post(
        state.edit?
          process.env.NEXT_PUBLIC_CLIMAX_UPDATE_VOUCEHR:
          process.env.NEXT_PUBLIC_CLIMAX_CREATE_VOUCHER, 
@@ -137,7 +137,7 @@ const Gl = ({state, dispatch, companyId}) => {
         let newInvoices = state.invoiceLosses.map((y)=>{
           return {...y, VoucherId:state.edit?state.id:x.data.result.id, employeeId: Cookies.get('employeeId')}
         })
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_TRANSACTION,{
+        await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_INVOICE_TRANSACTION,{
           invoices:tempInvoices,
           invoiceLosses:newInvoices,
         }).then(()=>{

@@ -7,7 +7,7 @@ import InputNumComp from 'Components/Shared/Form/InputNumComp';
 import SelectComp from 'Components/Shared/Form/SelectComp';
 import RadioComp from 'Components/Shared/Form/RadioComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import openNotification from 'Components/Shared/Notification';
 import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
@@ -48,7 +48,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     dispatch({type:'toggle', fieldName:'load', payload:true});
     setTimeout(async() => {
         // console.log(data)
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_CHARGE,{
+        await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_CHARGE,{
             data,
             employeeId: Cookies.get("loginId")
         }).then((x)=>{
@@ -75,7 +75,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     dispatch({type:'toggle', fieldName:'load', payload:true});
     // console.log(data)
     setTimeout(async() => {
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_CHARGE,{
+        await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_CHARGE,{
             data,
             employeeId: Cookies.get("loginId")
         }).then((x)=>{

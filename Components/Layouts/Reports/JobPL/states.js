@@ -64,7 +64,7 @@ const initialState = {
   const fetchData = async(set, state) => {
     set({load:true});
     // console.log("Fetching Data with state:", state)
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_JOB_PROFIT_LOSS,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_MISC_GET_JOB_PROFIT_LOSS,{
       headers:{ ...state }
     }).then(async(x) => {
       let result = x.data.result, totalRevenue=0.00, totalCost=0.00, totalPnl=0.00, totalActual=0.0, totalgainLoss=0.0, totalAfter=0.0;

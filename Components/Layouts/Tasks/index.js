@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { Table, Row, Col, Spinner } from 'react-bootstrap';
 // import MediumModal from 'Components/Shared/Modals/MediumModal';
 // import CreateOrEdit from 'Components/Layouts/Setup/Employees/CreateOrEdit';
@@ -39,7 +39,7 @@ const Employees = () => {
   const dispatchNew = useDispatch();
 
   const getEmployees = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_RIDERS).then((x)=>{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_RIDERS).then((x)=>{
       if(x.data.status=='success'){
         // console.log(x.data)
         dispatch({type : "SET_DATA" , payload:  {riders: x.data.result}});

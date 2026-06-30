@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover, Input } from "antd";
 import { Row, Col, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import Cookies from 'js-cookie';
 import openNotification from '../../../Shared/Notification';
 import moment from 'moment'
@@ -14,7 +14,7 @@ const Notes = ({state, dispatch}) => {
     if(state.title!=""&&state.note!=""){
       dispatch({type:'toggle', fieldName:'load', payload:true});
       setTimeout(async() => {
-        await axios.post(process.env.NEXT_PUBLIC_CLIMAX_ADD_SEAJOB_NOTE,{
+        await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_ADD_SEAJOB_NOTE,{
             title:state.title, note:state.note, recordId:state.selectedRecord.id, opened: "0", 
             recordId: state.selectedRecord.id, employeeId: Cookies.get("loginId"),
             type: params.pathname.includes("airJobs/export") ? "AE" : params.pathname.includes("airJobs/import") ? "AI" :
@@ -38,7 +38,7 @@ const Notes = ({state, dispatch}) => {
   const getNotes = async() => {
     dispatch({type:'toggle', fieldName:'load', payload:true});
     setTimeout(async() => {
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_GET_SEAJOB_NOTES,{
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_GET_SEAJOB_NOTES,{
         id: state.selectedRecord.id, type :state.selectedRecord.operation, employeeId: Cookies.get("loginId"),
       }).then((x)=>{
         if(x.data.status=='success'){
@@ -52,7 +52,7 @@ const Notes = ({state, dispatch}) => {
   }
 
   const updateNote = async(data) => {
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_SEAJOB_NOTES, {data, employeeId: Cookies.get("loginId"),})
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_SEAJOB_NOTES, {data, employeeId: Cookies.get("loginId"),})
   }
 
   return (

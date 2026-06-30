@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import SecondaryLoader from 'Components/Shared/SecondaryLoader';
 import { Table, Row, Col } from 'react-bootstrap';
 import moment from "moment";
@@ -14,7 +14,7 @@ const Accounts = () => {
   const [seelctedRec, setSelectedRec] = useState({Invoices:[]});
 
   const getData = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_HOME_ACCOUNTS)
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_HOME_ACCOUNTS)
     .then((x)=>{
       setRecords(x.data.result);
       setLoad(false);

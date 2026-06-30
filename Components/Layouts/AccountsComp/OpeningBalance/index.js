@@ -2,7 +2,7 @@ import { Row, Col, Table, Spinner } from "react-bootstrap";
 import React, { useEffect, useState } from 'react';
 import { Select, InputNumber, Input } from 'antd';
 import Router from "next/router";
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import { CloseCircleOutlined } from "@ant-design/icons";
 import openNotification from "Components/Shared/Notification";
 import Cookies from "js-cookie";
@@ -41,7 +41,7 @@ const OpeningBalance = ({id, voucherData}) => {
   useEffect(() => {
     if(companyId!="") {
       setLoad(true);
-      axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS,{
+      axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS,{
         headers:{ companyid: companyId }
       }).then((x) => {
         setAccounts(x.data.result);
@@ -87,7 +87,7 @@ const OpeningBalance = ({id, voucherData}) => {
   const submitData = async() => {
     setLoad(true)
     if(id=="new"){
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_OPENING_BALANCE, {
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_OPENING_BALANCE, {
         exRate, currency, companyId, vType:"OP", costCenter:"KHI", 
         type:"Opening Balance", Voucher_Heads:voucherAccounts
       }).then((x) => {
@@ -99,7 +99,7 @@ const OpeningBalance = ({id, voucherData}) => {
         }
       })
     }else{
-      axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_VOUCEHR, {        
+      axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_UPDATE_VOUCEHR, {        
         id:voucherData,id, exRate, currency,
         companyId, vType:"OP", costCenter:"KHI", 
         type:"Opening Balance", Voucher_Heads:voucherAccounts,

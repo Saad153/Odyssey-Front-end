@@ -30,7 +30,7 @@ const AuditLog = () => {
     inFlightRef.current = true;
 
     try {
-      const res = await axios.get(
+      const res = await axiosClient.get(
         `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/history/getHistory`,
         {
           headers: {
@@ -48,7 +48,7 @@ const AuditLog = () => {
       setLogs(res.data.result || []);
       setLastUpdated(new Date());
     } catch (err) {
-      if (!axios.isCancel(err)) {
+      if (!axiosClient.isCancel(err)) {
         console.error("Audit fetch failed:", err);
       }
     } finally {

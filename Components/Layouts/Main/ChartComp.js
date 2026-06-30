@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 import moment from "moment";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 const ChartComp = ({chartData, type}) => {
 
@@ -94,7 +94,7 @@ const ChartComp = ({chartData, type}) => {
   }, [])
 
   async function getcashflow(){
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CASH_FLOW_TWO, {}).then((res)=>{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CASH_FLOW_TWO, {}).then((res)=>{
       let dates = [];
       let valuesOne = [];
       let valuesTwo = [];

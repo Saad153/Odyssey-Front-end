@@ -35,7 +35,7 @@ const DeliveryOrder = ({ state, jobData, clearingAgents, companyId }) => {
     data.companyId = companyId
     data.id == "" ? delete data.id : data.id;
     data.type = data.type?.toString()
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_UPSERT_DELIVER_ORDER, {
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_UPSERT_DELIVER_ORDER, {
       ...data,
       SEJobId,
       employeeId: Cookies.get("loginId"),
@@ -59,7 +59,7 @@ const DeliveryOrder = ({ state, jobData, clearingAgents, companyId }) => {
   }, []);
 
   async function getValues() {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_DELIVER_ORDER, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_DELIVER_ORDER, {
       headers: { id: jobData.id, employeeId: Cookies.get("loginId") },
     }).then((res) => {
       if (res.data.result !== null) {

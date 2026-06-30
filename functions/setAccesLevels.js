@@ -18,18 +18,20 @@ export const setTempToken = (token, call) => {
 
 function setAccesLevels(dispatch, collapsed){
   let items = [];
-  if(firstCall && Cookies.get('token') != null){
-    tempToken = Cookies.get('token');
+  let temp = Cookies.get("token")
+  if(firstCall && temp != null && temp != "" && temp != "undefined"){
+    tempToken = temp;
     firstCall = false;
   }
 
   
   //getting the token from cookies and decoding it to get the access level array.
   let token = null;
-  if(Cookies.get("token") != null && Cookies.get("token") != "" && Cookies.get("token") != "undefined"){
-    if(tempToken == Cookies.get('token')){
-      token = jwt_decode(Cookies.get("token")); 
+  if(temp != null && temp != "" && temp != "undefined"){
+    if(tempToken == temp){
+      token = jwt_decode(temp); 
     }else{
+      alert('Your session has expired or you have logged in from another device. You will be redirected to the login page.');
       logout();
     }
   }else if(!firstCall){

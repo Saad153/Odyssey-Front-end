@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import dynamic from 'next/dynamic'
 import moment from 'moment';
 import { Tabs } from "antd";
@@ -162,7 +162,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
     data.createdById = loginId;
     dispatch({type:'toggle', fieldName:'load', payload:true});
     setTimeout(async() => {
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_SEAJOB,{
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_SEAJOB,{
         data,
         employeeId: Cookies.get("loginId")
       }).then((x)=>{
@@ -228,7 +228,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
       notification: approved[0] == '1' ?  `Job No ${data.jobNo} Approved`: `Job No ${data.jobNo} Dispproved`
     }
     setTimeout(async() => {
-      await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_SEAJOB,{data, employeeId: Cookies.get("loginId"),}).then((x)=>{
+      await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_SEAJOB,{data, employeeId: Cookies.get("loginId"),}).then((x)=>{
         if(x.data.status=='success'){
           openNotification('Success', `Job Updated!`, 'green')
           createNotification(notification)
@@ -306,7 +306,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
           onClick={()=>{
             PopConfirm("Confirmation", "Are You Sure You Want To Cancel This Job?",
               () => {
-                axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_JOBS,{
+                axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_JOBS,{
                   id:allValues.id, employeeId: Cookies.get("loginId")
                 }).then(async(x)=>{
                   let oldTabs = await type=="SE"?tabs.filter((x)=> {return x.key!="4-3" }):

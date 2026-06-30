@@ -4,7 +4,7 @@ import Router from 'next/router';
 import { Modal } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
 import { EditOutlined, FireOutlined } from '@ant-design/icons';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 
 function recordsReducer(state, action){
     switch (action.type) {

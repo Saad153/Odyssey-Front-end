@@ -12,7 +12,7 @@ const AddPort = ({ isOpen, onClose }) => {
     const onSubmit =async () => {
         try {
             // console.log(data)
-            const res = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_PORT,data).then((x)=>{
+            const res = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_PORT,data).then((x)=>{
                 openNotification("Success","Port Created","green")
             })
             onClose()

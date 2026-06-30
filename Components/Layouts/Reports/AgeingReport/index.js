@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import moment from "moment";
 import { Select, Radio, DatePicker, Checkbox } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ const AgeingReport = () => {
   const ExportExcel = async () => {
     setExporting(true);
     try {
-      const result = await axios.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingSummary`,{headers:{ ageing_reportType: state.ageing_reportType, ageing_company: state.ageing_company, from: state.ageing_sdate, to: state.ageing_edate, ageing_RP: state.ageing_RP, ageing_account: state.ageing_account, ageing_partyType: state.ageing_partyType }}).then((x)=>x.data);
+      const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingSummary`,{headers:{ ageing_reportType: state.ageing_reportType, ageing_company: state.ageing_company, from: state.ageing_sdate, to: state.ageing_edate, ageing_RP: state.ageing_RP, ageing_account: state.ageing_account, ageing_partyType: state.ageing_partyType }}).then((x)=>x.data);
       console.log("Export to Excel Result:", result)
     } catch (error) {
       console.error("Error exporting to Excel:", error);
@@ -57,7 +57,7 @@ const AgeingReport = () => {
     const getAccounts = async () => {
    
         try{  
-        const gotAccounts = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS);
+        const gotAccounts = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CHILD_ACCOUNTS);
             const {data}= gotAccounts;
             const {result} = data
             let temprecords=[];

@@ -55,7 +55,7 @@ const statuses = [
 
 const fetchEmployees = async() => {
   let data = [];
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES).then((x)=>{
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_EMPLOYEES).then((x)=>{
     if(x.data.status=='success'){
       data = x.data.result;
     }
@@ -65,7 +65,7 @@ const fetchEmployees = async() => {
 
 const fetchTasks = async() => {
   let data = [];
-  await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_TASKS).then((x)=>{
+  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_TASKS).then((x)=>{
     if(x.data.status=='success'){
       data = x.data.result;
     }
@@ -76,11 +76,11 @@ const fetchTasks = async() => {
 const createTask = async(data) => {
   let user = await Cookies.get('username');
   data = {...data, requestedBy:user}
-  await axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_TASK, data)
+  await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_TASK, data)
 }
 
 const updateTask = async(state) => {
-  await axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_TASK, {
+  await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_TASK, {
     task:state.task,
     deleteList:state.deleteList
   })

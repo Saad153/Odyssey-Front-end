@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Spinner, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import { Row, Col, Spinner, Alert, Modal, Button } from 'react-bootstrap';
+import axiosClient from 'apis/axiosClient';
 import Router from 'next/router'
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode'
@@ -18,11 +18,47 @@ const Login = ({sessionData}) => {
     const [reveal, setReveal] = useState(false);
     const [load, setLoad] = useState(false);
     const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('Wrong username or password');
+    const [showForceLoginModal, setShowForceLoginModal] = useState(false);
+    const [forceLoginCreds, setForceLoginCreds] = useState({ username: '', password: '' });
+
+    const handleForceLogin = () => {
+        setLoad(true);
+        setError(false);
+        axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EMPLOYEE_LOGIN,{
+          username: forceLoginCreds.username,
+          password: forceLoginCreds.password,
+          contact: '',
+          force: true
+        }).then((x)=>{
+          if(x.data.message=='Success'){
+            let token = jwt_decode(x.data.token);
+            console.log(token)
+            Cookies.set('token', x.data.token, { expires: 1 });
+            Cookies.set('designation', token.designation, { expires: 1 });
+            Cookies.set('username', token.username, { expires: 1 });
+            Cookies.set('loginId', token.id, { expires: 1 });
+            setShowForceLoginModal(false);
+            Router.push('/');
+          }else{
+            setLoad(false);
+            setShowForceLoginModal(false);
+            setErrorMessage('Login failed. Please try again.');
+            setError(true);
+          }
+        }).catch((error)=>{
+          setLoad(false);
+          setShowForceLoginModal(false);
+          setErrorMessage(error.response?.data?.message || 'An error occurred. Please try again.');
+          setError(true);
+        })
+    }
 
     const handleSubmit = (e) =>{
         e.preventDefault(e);
         setLoad(true);
-        axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EMPLOYEE_LOGIN,{
+        setError(false);
+        axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EMPLOYEE_LOGIN,{
           username:username,
           password:password,
           contact:''
@@ -38,6 +74,23 @@ const Login = ({sessionData}) => {
             Router.push('/');
           }else if(x.data.message=='Invalid'){
             setLoad(false);
+            setErrorMessage('Wrong username or password');
+            setError(true);
+          }else{
+            setLoad(false);
+            setErrorMessage('Wrong username or password');
+            setError(true);
+          }
+        }).catch((error)=>{
+          setLoad(false);
+          if(error.response?.status === 409){
+            setForceLoginCreds({ username, password });
+            setShowForceLoginModal(true);
+          }else if(error.response?.status === 401 || error.response?.status === 400){
+            setErrorMessage('Wrong username or password');
+            setError(true);
+          }else{
+            setErrorMessage(error.response?.data?.message || 'An error occurred. Please try again.');
             setError(true);
           }
         })
@@ -55,7 +108,7 @@ const Login = ({sessionData}) => {
         <div style={{ textAlign:'center'}}>
           <div className='fs-65 fw-8' style={{marginBottom:'25px'}}>LOGIN</div>
           {error&&<Alert style={{marginLeft:'20%', marginRight:'20%'}} key={'danger'} variant={'danger'}>
-            Wrong username or password
+            {errorMessage}
           </Alert>}
           <div className='mb-4'>
             <input className='login-inp' required placeholder='Enter your username...' value={username} onChange={(e)=>setUsername(e.target.value)} />
@@ -72,6 +125,24 @@ const Login = ({sessionData}) => {
         </form>
         </Col>
       </Row>
+
+      <Modal show={showForceLoginModal} onHide={() => setShowForceLoginModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>User Already Logged In</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>This account is currently logged in from another session. Do you want to force login and disconnect the other session?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowForceLoginModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleForceLogin} disabled={load}>
+            {load ? <Spinner animation="border" size='sm' className='me-2' /> : ''}
+            Force Login
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }

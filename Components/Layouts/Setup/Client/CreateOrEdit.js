@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import * as yup from "yup";
 import { Tabs } from "antd";
 import moment from 'moment';
@@ -111,7 +111,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
             }
         });
         setTimeout(async() => {
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_CLIENT,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_CLIENT,{
                 ...data, pAccountName, employeeId: Cookies.get('loginId')
             }).then((x)=>{
                 if(x.data.status=='success'){
@@ -144,7 +144,7 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
             }
         });
         setTimeout(async() => {
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_CLIENT,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_CLIENT,{
                 data, history, updateDate, pAccountName, employeeId: Cookies.get('loginId')
             }).then((x)=>{
                 if(x.data.status=='success'){

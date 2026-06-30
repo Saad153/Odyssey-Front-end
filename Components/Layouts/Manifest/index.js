@@ -22,7 +22,7 @@ const Index = ({manifest}) => {
 
   const searchJob = async() => {
     setLoad(true);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_SEARCH_MANIFEST,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_SEARCH_MANIFEST,{
       headers:{ 
         'to':to,
         'from':from,

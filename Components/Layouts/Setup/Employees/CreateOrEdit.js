@@ -4,7 +4,7 @@ import { Row, Col, Spinner } from 'react-bootstrap';
 import { UnlockOutlined } from '@ant-design/icons';
 import { Formik, useFormikContext } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import Cookies from 'js-cookie'
 import Vouchers from "./Vouchers";
 import { getJobValues } from 'apis/jobs';
@@ -33,7 +33,7 @@ const MyField = () => {
   useEffect(() => { getManagers() 
   },[])
   const getManagers = async() => {
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_MANAGERS, {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_MANAGERS, {
       // employeeId: Cookies.get("loginId") 
     }).then((x)=>{
       if(x.data.status=='success'){ setManagers(x.data.result) }
@@ -120,7 +120,7 @@ const CreateOrEdit = ({appendClient, edit, setVisible, setEdit, selectedEmployee
 
   const loadVouchers = async() => {
     setLoad(true);
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCHERS_BY_EPMLOYEE,{
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_VOUCHERS_BY_EPMLOYEE,{
       headers:{'id':`${selectedEmployee.id}`}
     })
     .then((x) => {
@@ -176,7 +176,7 @@ return(
         tempValues.represent = tempValues.represent.toString();
         let Username = Cookies.get('username')
         if(edit){
-          axios.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_EMPLOYEE,{ values:tempValues, updatedBy:Username, employeeId: Cookies.get("loginId") }).then((x)=>{
+          axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_EDIT_EMPLOYEE,{ values:tempValues, updatedBy:Username, employeeId: Cookies.get("loginId") }).then((x)=>{
             // let arr  = [];
             // console.log("x.data.resultTwo",x.data.resultTwo)
             // x.data.resultTwo.forEach(y => {
@@ -214,7 +214,7 @@ return(
             refetch();
           })
         } else {
-          axios.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_EMPLOYEE,{
+          axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_EMPLOYEE,{
             values:values, createdBy:Username, employeeId: Cookies.get("loginId")
           }).then((x)=>{
             if(x.data.status=='exists'){

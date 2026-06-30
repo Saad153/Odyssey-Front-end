@@ -7,7 +7,7 @@ import { Row, Col, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import { Input } from 'antd';
 import * as yup from "yup";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import RadioComp from "Components/Shared/Form/RadioComp";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { getJobValues } from 'apis/jobs';
@@ -59,7 +59,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
         data.destinations = state.destinations.join(', ')
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {             
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VESSEL,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VESSEL,{
                 data, employeeId: Cookies.get("loginId")
             }).then((x)=>{
                 let tempRecord = [];
@@ -88,7 +88,7 @@ const CreateOrEdit = ({state, dispatch, baseValues}) => {
     }
         dispatch({type:'toggle', fieldName:'load', payload:true});
         setTimeout(async() => {             
-            await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VESSEL,{
+            await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_VESSEL,{
                 data, employeeId: Cookies.get("loginId")
             }).then((x)=>{
                 let tempRecords;

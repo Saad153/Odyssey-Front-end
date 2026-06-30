@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Layout, Menu, Select } from 'antd';
 import Router, { useRouter } from 'next/router';
 import Cookies, { set } from 'js-cookie';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { setAccesLevels } from 'functions/setAccesLevels';
 import logout from 'functions/logout';
 import { setTab } from 'redux/tabs/tabSlice';
@@ -101,7 +101,7 @@ const MainLayout = ({children}) => {
       setCompany(parseInt(companyValue));
     }
     setUsername(tempUser)
-    await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_COMPANIES)
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_COMPANIES)
     .then((x)=>{
       setLoad(false);
       dispatch(addCompanies(x.data.result))

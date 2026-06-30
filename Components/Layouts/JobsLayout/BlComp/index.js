@@ -14,7 +14,7 @@ import { stamps as stamp } from "./groupData";
 import { validationSchema } from "./validion";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { setAndFetchBlData, recordsReducer, initialState, baseValues, calculateContainerInfos, calculateItemInfos, calculateContainerInfosCopy } from "./states";
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import ItemDetail from "./ItemDetail";
 import ChargesDetail from "./ChargesDetail";
 import { getJobValues, getJobById } from 'apis/jobs';
@@ -57,7 +57,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
   }, [id]);
 
   const getStamps = async () => {
-    const req = await axios.get(
+    const req = await axiosClient.get(
       process.env.NEXT_PUBLIC_CLIMAX_GET_STAMPS_BY_ID,
       { headers: { id: id } }
     );
@@ -94,7 +94,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
       Dimensions:state.Dimensions,
       applyToCWT:data.applyToCWT[0]==1?'1':'0',
     };
-    await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_BL, {...tempData, employeeId: Cookies.get("loginId")}).then(async(x) => {
+    await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_BL, {...tempData, employeeId: Cookies.get("loginId")}).then(async(x) => {
       
       if (x.data.status == "success") {
         openNotification("Success", "BL Created Successfully", "green");
@@ -166,7 +166,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
     );
     console.log("TEMP DATA:", tempData)
     emp?openNotification("Error", "Fields Can't Be Empty", "red")
-      :await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_BL, {...tempData, employeeId: Cookies.get("loginId")})
+      :await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_BL, {...tempData, employeeId: Cookies.get("loginId")})
       .then(async(x) => {
         if (x.data.status == "error") {
           openNotification("Error", "Something went wrong", "red");

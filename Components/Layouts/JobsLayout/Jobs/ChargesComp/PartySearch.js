@@ -1,6 +1,6 @@
 import { Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosClient from '/apis/axiosClient';
 import { Tag, Input, Pagination } from 'antd';
 import { CheckCircleOutlined } from "@ant-design/icons";
 
@@ -12,7 +12,7 @@ const PartySearch = ({ state, dispatch, reset, useWatch, control }) => {
   const chargeList = useWatch({ control, name: 'chargeList' });
 
   const getClients = async () => {
-    const res = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CLIENTS);
+    const res = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CLIENTS);
     console.log("Clients:", res.data.result);
     dispatch({ type: 'toggle', fieldName: 'clientParties', payload: res.data.result });
   };

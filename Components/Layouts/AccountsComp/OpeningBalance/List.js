@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row, Table } from "react-bootstrap";
 import Router from 'next/router';
 import moment from 'moment';
-import axios from 'axios';
+import axiosClient from 'apis/axiosClient';
 import { DeleteOutlined } from '@ant-design/icons';
 import PopConfirm from 'Components/Shared/PopConfirm';
 import Cookies from 'js-cookie';
@@ -20,7 +20,7 @@ const OpeningBalance = ({sessionData, openingBalancesList}) => {
 
   const getData = async() => {
     console.log("Get Data Called")
-    let openingBalances = await axios.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OPENING_BALANCES,{
+    let openingBalances = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OPENING_BALANCES,{
       headers:{"id": `${Cookies.get('companyId')}`}
     }).then((x)=>x.data);
     console.log(openingBalances)
@@ -32,7 +32,7 @@ const OpeningBalance = ({sessionData, openingBalancesList}) => {
     PopConfirm("Confirmation", "Are You Sure To Remove This Charge?",
     async () => {
       console.log(id)
-      const result = await axios.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
+      const result = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_BASE_VOUCHER, {
         id: id,
         employeeId: Cookies.get("loginId")
       })

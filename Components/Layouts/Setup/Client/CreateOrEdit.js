@@ -1,4 +1,4 @@
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import * as yup from "yup";
 import { Tabs } from "antd";
 import moment from 'moment';

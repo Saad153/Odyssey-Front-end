@@ -3,7 +3,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import {Input, Select} from 'antd'
 
 function recordsReducer(state, action){

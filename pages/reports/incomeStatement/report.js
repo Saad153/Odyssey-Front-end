@@ -1,8 +1,8 @@
 import React from 'react';
-import Report from '../../../Components/Layouts/Reports/IncomeStatement/Report';
-import axiosClient from '../../../apis/axiosClient';
+import Report from 'Components/Layouts/Reports/IncomeStatement/Report';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const report = ({ query, result }) => {
   return (

@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react';
 import CreateOrEdit from './CreateOrEdit';
 import { useSelector } from 'react-redux';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 
 function recordsReducer(state, action){
   switch (action.type) {

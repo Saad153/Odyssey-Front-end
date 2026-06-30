@@ -10,7 +10,7 @@ import moment from 'moment';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import openNotification from 'Components/Shared/Notification';
 import { setField, resetState } from '../../../../redux/openingInvoices/openingInvoicesSlice'
-import { delay } from '../../../../functions/delay';
+import { delay } from 'functions/delay';
 
 const List = () => {
 

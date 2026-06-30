@@ -13,7 +13,7 @@ import Router from "next/router";
 import { setFilterValues } from 'redux/filters/filterSlice';
 import { setFrom, setTo, setFrom2, setTo2, setCompany, setClient,setJobType,setOverSeasagent,setReportType,setSalesRepresentative,setSubType, setMetrics } from '../../../../redux/profitLoss/profitLossSlice';
 import Search from 'antd/lib/input/Search';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import MetricSelector from './MetricSelector';
 
 // Utility function to add/remove items from comma-separated string

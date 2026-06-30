@@ -1,6 +1,6 @@
 import React from 'react';
 import Voucher from 'Components/Layouts/AccountsComp/Voucher/';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 
 const voucher = ({id}) => {
   return (

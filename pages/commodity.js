@@ -1,8 +1,8 @@
 import React from 'react';
-import Commodity from '../Components/Layouts/Setup/Commodity';
-import axiosClient from '../apis/axiosClient';
+import Commodity from 'Components/Layouts/Setup/Commodity';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const commodity = ({ CommodityData, sessionData }) => {
   return (

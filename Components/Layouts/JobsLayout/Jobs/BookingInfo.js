@@ -22,8 +22,8 @@ import { addBlCreationId } from 'redux/BlCreation/blCreationSlice';
 // import Carrier from './Carrier';
 // import AddPort from './AddPort';
 import { FaPlus } from "react-icons/fa6";
-import { getChargeHeads } from '../../../../apis/jobs';
-import { checkEditAccess } from '../../../../functions/checkEditAccess';
+import { getChargeHeads } from 'apis/jobs';
+import { checkEditAccess } from 'functions/checkEditAccess';
 import dynamic from 'next/dynamic';
 
 const Weights = dynamic(() => import('./WeightComp'));

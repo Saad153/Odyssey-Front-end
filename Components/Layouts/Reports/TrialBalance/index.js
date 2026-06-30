@@ -1,4 +1,4 @@
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import moment from "moment";
 import { Select, Radio, DatePicker, Checkbox } from 'antd';
 import React, { useEffect, useState } from 'react';

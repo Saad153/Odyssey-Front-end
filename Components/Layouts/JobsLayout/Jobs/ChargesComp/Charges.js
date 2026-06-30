@@ -12,7 +12,7 @@ import PartySearch from './PartySearch';
 import { saveHeads, calculateChargeHeadsTotal, makeInvoice, getHeadsNew, approveHeads, autoInvoice } from "../states";
 import { v4 as uuidv4 } from 'uuid';
 import openNotification from 'Components/Shared/Notification';
-import { checkEditAccess } from "../../../../../functions/checkEditAccess";
+import { checkEditAccess } from "functions/checkEditAccess";
 import InputNumberComp from "../../../../Shared/Form/InputNumberComp";
 import { delay } from "functions/delay";
 

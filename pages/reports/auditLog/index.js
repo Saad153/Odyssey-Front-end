@@ -1,5 +1,5 @@
 import React from 'react';
-import AuditLog from '../../../Components/Layouts/Reports/AuditLog';
+import AuditLog from 'Components/Layouts/Reports/AuditLog';
 
 const auditLog = ({query, result}) => {
   return (

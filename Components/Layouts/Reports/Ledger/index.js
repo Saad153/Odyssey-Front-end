@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Form } from "react-bootstrap";
 import moment from "moment";
 import { DatePicker, Radio, Select } from "antd";
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import Router from 'next/router';

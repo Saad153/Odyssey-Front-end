@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import InvoiceCharges from 'Components/Shared/InvoiceCharges';
 import { Spinner } from 'react-bootstrap';
 

@@ -4,7 +4,7 @@ import { Row, Col, Spinner } from 'react-bootstrap';
 import { UnlockOutlined } from '@ant-design/icons';
 import { Formik, useFormikContext } from 'formik';
 import * as Yup from 'yup';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'js-cookie'
 import Vouchers from "./Vouchers";
 import { getJobValues } from 'apis/jobs';

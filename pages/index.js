@@ -1,7 +1,7 @@
 import React from 'react';
-import axiosClient from '../apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import Main from '../Components/Layouts/Main/';
+import Main from 'Components/Layouts/Main/';
 
 const index = ({ sessionData }) => {
   return (

@@ -1,8 +1,8 @@
-import InvoiceCharges from '../../../Components/Shared/InvoiceCharges';
+import InvoiceCharges from 'Components/Shared/InvoiceCharges';
 import { useSelector } from 'react-redux';
-import axiosClient from '../../../apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const InvoiceDetails = ({ invoiceData }) => {
   const companyId = useSelector((state) => state.company.value);

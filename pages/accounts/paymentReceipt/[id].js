@@ -1,8 +1,8 @@
 import React from 'react';
-import PaymentsReceipt from '../../../Components/Layouts/AccountsComp/PaymentsReceipt';
-import axiosClient from '../../../apis/axiosClient';
+import PaymentsReceipt from 'Components/Layouts/AccountsComp/PaymentsReceipt';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 // Simple in-memory cache (this will be reset on every server restart)
 const cache = {};

@@ -1,8 +1,8 @@
 import React from 'react';
-import Charges from '../Components/Layouts/Setup/Charges';
-import axiosClient from '../apis/axiosClient';
+import Charges from 'Components/Layouts/Setup/Charges';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const charges = ({ chargeData }) => {
   return (

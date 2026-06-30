@@ -1,8 +1,8 @@
 import React from 'react'
-import Manifest from '../../Components/Layouts/Manifest'
-import axiosClient from '../../apis/axiosClient'
+import Manifest from 'Components/Layouts/Manifest'
+import axiosClient from 'apis/axiosClient'
 import Cookies from 'cookies'
-import { handleSSRAuthError } from '../../functions/withAuthRedirect'
+import { handleSSRAuthError } from 'functions/withAuthRedirect'
 
 const manifist = ({ manifest }) => {
   return (

@@ -1,4 +1,4 @@
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import React, { useState, useEffect } from 'react';
 import CSVReader from 'react-csv-reader';
 

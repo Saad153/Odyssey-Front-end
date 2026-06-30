@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Row, Col, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import * as yup from "yup";
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from "js-cookie";

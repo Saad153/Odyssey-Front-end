@@ -1,8 +1,8 @@
 import React from 'react';
-import Summary from '../../../Components/Layouts/Reports/JobPL/Summary';
-import axiosClient from '../../../apis/axiosClient';
+import Summary from 'Components/Layouts/Reports/JobPL/Summary';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const summary = ({ query, result }) => {
   return (

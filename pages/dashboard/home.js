@@ -1,8 +1,8 @@
 import React from 'react';
-import Home from '../../Components/Layouts/Dashboard/Home/';
-import axiosClient from '../../apis/axiosClient';
+import Home from 'Components/Layouts/Dashboard/Home/';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const home = ({ sessionData }) => {
   return (

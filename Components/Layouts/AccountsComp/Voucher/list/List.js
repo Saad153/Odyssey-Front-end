@@ -11,8 +11,8 @@ import axiosClient from 'apis/axiosClient';
 import { Input } from 'antd';
 import Cookies from 'js-cookie';
 import openNotification from 'Components/Shared/Notification';
-import { checkEmployeeAccess } from '../../../../../functions/checkEmployeeAccess';
-import { checkEditAccess } from '../../../../../functions/checkEditAccess';
+import { checkEmployeeAccess } from 'functions/checkEmployeeAccess';
+import { checkEditAccess } from 'functions/checkEditAccess';
 import { resetState } from 'redux/vouchers/voucherSlice';
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")
 

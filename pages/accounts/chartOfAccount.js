@@ -1,9 +1,9 @@
 import React from 'react';
-//import Accounts from '../../Components/Layouts/Accounts';
-import ChartOFAccount from '../../Components/Layouts/AccountsComp/ChartOFAccount';
-import axiosClient from '../../apis/axiosClient';
+//import Accounts from 'Components/Layouts/Accounts';
+import ChartOFAccount from 'Components/Layouts/AccountsComp/ChartOFAccount';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const accounts = ({accountsData}) => {
   return (

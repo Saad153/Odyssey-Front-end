@@ -1,8 +1,8 @@
 import React from 'react';
-import AgeingDetail from '../../../Components/Layouts/Reports/AgeingReport';
+import AgeingDetail from 'Components/Layouts/Reports/AgeingReport';
 import Summary from 'Components/Layouts/Reports/AgeingReport/AgeingSummary';
 import Weekly from 'Components/Layouts/Reports/AgeingReport/AgeingWeekly';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 
 
 const report = ({query, result}) => {

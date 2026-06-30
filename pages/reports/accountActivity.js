@@ -1,5 +1,5 @@
 import React from 'react';
-import AccountActivity from '../../Components/Layouts/Reports/AccountActivity';
+import AccountActivity from 'Components/Layouts/Reports/AccountActivity';
 
 const accountActivity = () => {
   return (

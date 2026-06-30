@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import { Row, Col, Table, Spinner } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import openNotification from 'Components/Shared/Notification';
 import { delay } from "functions/delay"
 import { PlusOutlined } from '@ant-design/icons';

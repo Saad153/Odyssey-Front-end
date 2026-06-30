@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import { setAuditField } from '../../../../redux/audit/auditSlice';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import AuditReport from 'Components/Layouts/Reports/AuditLog/report';
 
 const AuditLog = () => {

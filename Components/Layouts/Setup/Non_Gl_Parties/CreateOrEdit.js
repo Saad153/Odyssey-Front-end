@@ -9,7 +9,7 @@ import DateComp from 'Components/Shared/Form/DateComp';
 import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import moment from 'moment';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'js-cookie';
 import openNotification from 'Components/Shared/Notification';
 import { useSelector } from 'react-redux';

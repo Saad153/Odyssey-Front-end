@@ -1,8 +1,8 @@
 import React from 'react';
-import Vessel from '../../Components/Layouts/Setup/Vessel';
-import axiosClient from '../../apis/axiosClient';
+import Vessel from 'Components/Layouts/Setup/Vessel';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const vessel = ({ VesselData, sessionData }) => {
   return (

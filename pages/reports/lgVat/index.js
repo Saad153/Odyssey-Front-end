@@ -1,5 +1,5 @@
 import React from 'react';
-import LgVat from '../../../Components/Layouts/Reports/LgVat';
+import LgVat from 'Components/Layouts/Reports/LgVat';
 
 const lgVat = ({query, result}) => {
   return (

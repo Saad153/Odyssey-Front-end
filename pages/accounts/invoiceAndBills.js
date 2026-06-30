@@ -1,8 +1,8 @@
 import React from 'react';
-import InvoiceAndBills from '../../Components/Layouts/AccountsComp/InvoiceAndBills';
-import axiosClient from '/apis/axiosClient';
+import InvoiceAndBills from 'Components/Layouts/AccountsComp/InvoiceAndBills';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const invoiceAndBills = ({invoiceData}) => {
   return (

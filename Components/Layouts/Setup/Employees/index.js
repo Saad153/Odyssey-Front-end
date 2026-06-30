@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { Table, Row, Col, Spinner } from 'react-bootstrap';
 import MediumModal from 'Components/Shared/Modals/MediumModal';
 import CreateOrEdit from './CreateOrEdit';
@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { Input } from 'antd';
 import Cookies from 'js-cookie';
 import { check } from 'prettier';
-import { checkEmployeeAccess } from '../../../../functions/checkEmployeeAccess';
+import { checkEmployeeAccess } from 'functions/checkEmployeeAccess';
 
 const Employees = () => {
 

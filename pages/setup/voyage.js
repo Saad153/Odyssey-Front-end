@@ -1,7 +1,7 @@
-import Voyage from "../../Components/Layouts/Setup/Voyage";
-import axiosClient from "../../apis/axiosClient";
+import Voyage from "Components/Layouts/Setup/Voyage";
+import axiosClient from "apis/axiosClient";
 import Cookies from "cookies";
-import { handleSSRAuthError } from "../../functions/withAuthRedirect";
+import { handleSSRAuthError } from "functions/withAuthRedirect";
 
 const voyage = ({ sessionData, vesselsData }) => {
   return (

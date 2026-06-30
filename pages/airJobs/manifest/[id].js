@@ -1,8 +1,8 @@
 import React from 'react'
-import CreateOrEdit from '../../../Components/Layouts/Manifest/CreateOrEdit'
-import axiosClient from '../../../apis/axiosClient'
+import CreateOrEdit from 'Components/Layouts/Manifest/CreateOrEdit'
+import axiosClient from 'apis/axiosClient'
 import Cookies from 'cookies'
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect'
+import { handleSSRAuthError } from 'functions/withAuthRedirect'
 
 const index = ({ manifest, awb }) => {
   return (

@@ -1,8 +1,8 @@
 import React from 'react';
-import axiosClient from '../../../apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import CreateOrEditComp from '../../../Components/Layouts/Setup/Vendor/CreateOrEditComp';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import CreateOrEditComp from 'Components/Layouts/Setup/Vendor/CreateOrEditComp';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const vendor = ({ sessionData, representativeData, vendorData, id }) => {
   return (

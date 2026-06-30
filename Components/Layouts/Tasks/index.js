@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { Table, Row, Col, Spinner } from 'react-bootstrap';
 // import MediumModal from 'Components/Shared/Modals/MediumModal';
 // import CreateOrEdit from 'Components/Layouts/Setup/Employees/CreateOrEdit';

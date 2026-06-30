@@ -1,8 +1,8 @@
 import React from 'react';
-import BlComp from '../../../Components/Layouts/JobsLayout/BlComp';
-import axiosClient from '../../../apis/axiosClient';
+import BlComp from 'Components/Layouts/JobsLayout/BlComp';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const seBl = ({ id, blData, partiesData }) => {
   return (

@@ -1,5 +1,5 @@
 import React from 'react'
-import RiderAssign from '../../../../Components/Layouts/Tasks/RiderAssign'
+import RiderAssign from 'Components/Layouts/Tasks/RiderAssign'
 import axios from 'axios'
 const riderTasks = ({riderData, id, tasks}) => {
   return (

@@ -16,8 +16,8 @@ import ReactToPrint from 'react-to-print';
 import DeleteVoucher from './DeleteVoucher';
 import Pagination from '../../../Shared/Pagination';
 import openNotification from "../../../Shared/Notification";
-import {checkEditAccess} from "../../../../functions/checkEditAccess";
-import {checkEmployeeAccess} from "../../../../functions/checkEmployeeAccess";
+import {checkEditAccess} from "functions/checkEditAccess";
+import {checkEmployeeAccess} from "functions/checkEmployeeAccess";
 import { setField, resetState } from 'redux/paymentReciept/paymentRecieptSlice';
 import Cookies from "js-cookie";
 

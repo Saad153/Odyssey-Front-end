@@ -1,9 +1,9 @@
 import React from 'react';
-import axiosClient from '../../../apis/axiosClient';
-import LgVat from '../../../Components/Layouts/Reports/LgVat';
-import LGReport from '../../../Components/Layouts/Reports/LgVat/report';
+import axiosClient from 'apis/axiosClient';
+import LgVat from 'Components/Layouts/Reports/LgVat';
+import LGReport from 'Components/Layouts/Reports/LgVat/report';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const report = ({ query, result }) => {
   return (

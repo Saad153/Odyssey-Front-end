@@ -1,4 +1,4 @@
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import React, { useEffect, useState } from 'react'
 import { updateNotification } from 'functions/notifications';
 import { Spinner } from 'react-bootstrap';

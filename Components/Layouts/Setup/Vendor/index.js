@@ -6,7 +6,7 @@ import { incrementTab } from 'redux/tabs/tabSlice';
 import { Input, Select } from 'antd';
 import openNotification from 'Components/Shared/Notification';
 import { DeleteOutlined } from '@ant-design/icons';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 
 function recordsReducer(state, action){
   switch (action.type) {

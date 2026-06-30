@@ -1,6 +1,6 @@
 import React from 'react';
 import OfficeVoucher from 'Components/Layouts/AccountsComp/OfficeVouchers/OfficeVoucher';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
 
 const officeVoucher = ({voucherData, id, employeeData}) => {

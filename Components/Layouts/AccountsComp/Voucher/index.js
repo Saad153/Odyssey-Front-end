@@ -12,7 +12,7 @@ import { DatePicker, Input, InputNumber, Select } from "antd";
 import { FaPrint } from "react-icons/fa6";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { delay } from "../../../../functions/delay";
+import { delay } from "functions/delay";
 import ReactToPrint from "react-to-print";
 import { useRef } from "react";
 

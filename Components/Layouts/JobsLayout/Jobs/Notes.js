@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover, Input } from "antd";
 import { Row, Col, Spinner } from 'react-bootstrap';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'js-cookie';
 import openNotification from '../../../Shared/Notification';
 import moment from 'moment'

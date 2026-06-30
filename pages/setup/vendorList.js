@@ -1,8 +1,8 @@
 import React from 'react';
-import axiosClient from '../../apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import Vendor from '../../Components/Layouts/Setup/Vendor/';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import Vendor from 'Components/Layouts/Setup/Vendor/';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const vendorList = ({ sessionData, vendorData }) => {
   return (

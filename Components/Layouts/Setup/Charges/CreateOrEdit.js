@@ -7,7 +7,7 @@ import InputNumComp from 'Components/Shared/Form/InputNumComp';
 import SelectComp from 'Components/Shared/Form/SelectComp';
 import RadioComp from 'Components/Shared/Form/RadioComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import openNotification from 'Components/Shared/Notification';
 import { getJobValues } from 'apis/jobs';
 import { useQuery } from '@tanstack/react-query';

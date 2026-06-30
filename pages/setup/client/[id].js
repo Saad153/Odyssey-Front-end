@@ -1,8 +1,8 @@
 import React from 'react';
-import axiosClient from '../../../apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import CreateOrEditComp from '../../../Components/Layouts/Setup/Client/CreateOrEditComp';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import CreateOrEditComp from 'Components/Layouts/Setup/Client/CreateOrEditComp';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const client = ({ id, representativeData, clientData }) => {
   return (

@@ -1,8 +1,8 @@
 import React from 'react';
-import VoucherList from '../../../Components/Layouts/AccountsComp/Voucher/VoucherList';
+import VoucherList from 'Components/Layouts/AccountsComp/Voucher/VoucherList';
 import Cookies from 'cookies';
-import axiosClient from '../../../apis/axiosClient';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import axiosClient from 'apis/axiosClient';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const voucherList = ({ sessionData, voucherData }) => {
   return (

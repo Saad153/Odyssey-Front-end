@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Row, Col, Table, Spinner } from 'react-bootstrap';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { Modal } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
 import { useForm, useWatch } from "react-hook-form";

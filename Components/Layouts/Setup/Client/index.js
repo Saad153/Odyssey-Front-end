@@ -4,7 +4,7 @@ import Router from 'next/router';
 import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { Input, Select, Pagination } from 'antd'
 import openNotification from 'Components/Shared/Notification';
 

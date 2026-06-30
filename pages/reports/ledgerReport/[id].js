@@ -1,8 +1,8 @@
 import React from 'react';
-import axiosClient from '../../../apis/axiosClient';
-import LedgerReport from '../../../Components/Layouts/Reports/Ledger/LedgerReport';
+import axiosClient from 'apis/axiosClient';
+import LedgerReport from 'Components/Layouts/Reports/Ledger/LedgerReport';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const paymentReceipt = ({ voucherData, from, to, name, company, currency }) => {
   return <LedgerReport voucherData={voucherData} from={from} to={to} name={name} company={company} currency={currency} />

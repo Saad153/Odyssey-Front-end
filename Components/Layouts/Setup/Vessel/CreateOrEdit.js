@@ -7,7 +7,7 @@ import { Row, Col, Spinner } from 'react-bootstrap';
 import React, { useEffect } from 'react';
 import { Input } from 'antd';
 import * as yup from "yup";
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import RadioComp from "Components/Shared/Form/RadioComp";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { getJobValues } from 'apis/jobs';

@@ -1,8 +1,8 @@
 import React from 'react';
-import Requests from '../../Components/Layouts/Dashboard/Requests';
-import axiosClient from '../../apis/axiosClient';
+import Requests from 'Components/Layouts/Dashboard/Requests';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const requests = ({ sessionData }) => {
   return (

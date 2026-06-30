@@ -1,8 +1,8 @@
 import React from 'react';
-import JobBalancingReport from '../../../Components/Layouts/Reports/JobBalancing/JobBalancingReport';
-import axiosClient from '../../../apis/axiosClient';
+import JobBalancingReport from 'Components/Layouts/Reports/JobBalancing/JobBalancingReport';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const report = ({ result, query }) => {
   return (

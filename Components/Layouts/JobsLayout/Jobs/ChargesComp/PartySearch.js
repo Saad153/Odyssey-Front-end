@@ -1,6 +1,6 @@
 import { Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { Tag, Input, Pagination } from 'antd';
 import { CheckCircleOutlined } from "@ant-design/icons";
 

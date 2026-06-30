@@ -1,8 +1,8 @@
 import React from 'react';
-import Comparative from '../../../Components/Layouts/Reports/JobPL/Comparative';
-import axiosClient from '../../../apis/axiosClient';
+import Comparative from 'Components/Layouts/Reports/JobPL/Comparative';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const comparative = ({ query, result }) => {
   return (

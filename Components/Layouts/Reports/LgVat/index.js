@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import moment from "moment";
 import { setLgField } from '../../../../redux/lgVat/lgSlice';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 
 const LgVat = ({query, result}) => {
     const state = useSelector((state) => state.lgVat);

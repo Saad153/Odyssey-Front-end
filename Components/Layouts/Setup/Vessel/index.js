@@ -4,7 +4,7 @@ import Router from 'next/router';
 import { Modal } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
 import { EditOutlined, HistoryOutlined } from '@ant-design/icons';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { IoMdArrowDropleft } from "react-icons/io";
 import { RiShipLine } from "react-icons/ri";
 import { BiCurrentLocation } from "react-icons/bi";

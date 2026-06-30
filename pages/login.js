@@ -1,6 +1,6 @@
 import React from 'react';
-import Login from '../Components/Layouts/Login';
-// import axiosClient from '/apis/axiosClient';
+import Login from 'Components/Layouts/Login';
+// import axiosClient from 'apis/axiosClient';
 import axios from 'axios';
 import Cookies from 'cookies';
 

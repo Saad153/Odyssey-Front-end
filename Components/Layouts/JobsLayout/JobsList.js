@@ -10,8 +10,8 @@ import { Input } from 'antd';
 import moment from 'moment';
 // import JobsBackupData from './Backup/BackupModal';
 import { delay } from "functions/delay"
-import axiosClient from '/apis/axiosClient';
-import axiosInstance from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
+import axiosInstance from 'apis/axiosClient';
 import Cookies from 'js-cookie';
 
 const SEJobList = ({ jobsData, sessionData, type }) => {

@@ -1,8 +1,8 @@
 import React from 'react';
-import axiosClient from '../../../apis/axiosClient';
-import Comparitive from '../../../Components/Layouts/Reports/IncomeStatement/Comparitive';
+import axiosClient from 'apis/axiosClient';
+import Comparitive from 'Components/Layouts/Reports/IncomeStatement/Comparitive';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const comparitive = ({ query, result }) => {
   return (

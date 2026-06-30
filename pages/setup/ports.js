@@ -1,8 +1,8 @@
 import React from 'react'
-import axiosClient from '../../apis/axiosClient';
-import PortOfDischarge from '../../Components/Layouts/Setup/portOfDischarge';
+import axiosClient from 'apis/axiosClient';
+import PortOfDischarge from 'Components/Layouts/Setup/portOfDischarge';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const ports = ({ portsData }) => {
   return (

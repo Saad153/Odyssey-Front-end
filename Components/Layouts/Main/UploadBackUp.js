@@ -1,5 +1,5 @@
 import CSVReader from "react-csv-reader";
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";

@@ -1,8 +1,8 @@
 import React from 'react';
-import AgeingSummary from '../../../Components/Layouts/Reports/AgeingReport/AgeingSummary';
-import axiosClient from '../../../apis/axiosClient';
+import AgeingSummary from 'Components/Layouts/Reports/AgeingReport/AgeingSummary';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const summary = ({ query, result }) => {
   return (

@@ -14,7 +14,7 @@ import { stamps as stamp } from "./groupData";
 import { validationSchema } from "./validion";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { setAndFetchBlData, recordsReducer, initialState, baseValues, calculateContainerInfos, calculateItemInfos, calculateContainerInfosCopy } from "./states";
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import ItemDetail from "./ItemDetail";
 import ChargesDetail from "./ChargesDetail";
 import { getJobValues, getJobById } from 'apis/jobs';

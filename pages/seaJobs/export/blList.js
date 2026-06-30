@@ -1,8 +1,8 @@
 import React from 'react';
-import BlList from '../../../Components/Layouts/JobsLayout/BlList/';
-import axiosClient from '../../../apis/axiosClient';
+import BlList from 'Components/Layouts/JobsLayout/BlList/';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const seBlList = ({ partiesData, BlsData }) => {
   return <BlList partiesData={partiesData} BlsData={BlsData} type={"SE"} />

@@ -1,5 +1,5 @@
 import axiosClient from "./axiosClient";
-import { calculateChargeHeadsTotal } from '../Components/Layouts/JobsLayout/Jobs/states';
+import { calculateChargeHeadsTotal } from 'Components/Layouts/JobsLayout/Jobs/states';
 
 export function getJobValues() {
     return axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getValues`)

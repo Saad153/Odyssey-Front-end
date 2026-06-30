@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import axiosClient from "/apis/axiosClient";
+import axiosClient from "apis/axiosClient";
 import moment from "moment";
 import { delay } from "functions/delay";
 import openNotification from "../../../Shared/Notification";

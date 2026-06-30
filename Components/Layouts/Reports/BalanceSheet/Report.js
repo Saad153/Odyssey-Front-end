@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import { Select, Radio, Modal } from 'antd';
 import * as XLSX from "xlsx";

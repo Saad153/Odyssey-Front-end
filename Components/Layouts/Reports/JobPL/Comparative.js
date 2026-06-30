@@ -2,7 +2,7 @@ import React from 'react';
 import PrintTopHeader from '../../../Shared/PrintTopHeader';
 import moment from 'moment';
 import { Table, Button } from 'antd';
-import exportExcelFile from '../../../../functions/exportExcelFile';
+import exportExcelFile from 'functions/exportExcelFile';
 import { FileExcelOutlined } from '@ant-design/icons';
 
 const commas = (a) => a == 0 ? '0.00' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")

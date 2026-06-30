@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
 import ReactToPrint from 'react-to-print';
 import moment from "moment";
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import openNotification from '../Shared/Notification';
 import FullScreenLoader from './FullScreenLoader';
 import InvoicePrint from './InvoicePrint';
@@ -16,7 +16,7 @@ import InvoiceEditor from './InvoiceEditor';
 import PartySearch from '../Layouts/JobsLayout/Jobs/ChargesComp/PartySearch';
 import Cookies, { set } from 'js-cookie';
 import { DeleteOutlined, PrinterOutlined, RightOutlined } from '@ant-design/icons';
-import { checkEmployeeAccess } from '../../functions/checkEmployeeAccess';
+import { checkEmployeeAccess } from 'functions/checkEmployeeAccess';
 
 const { TextArea } = Input;
 

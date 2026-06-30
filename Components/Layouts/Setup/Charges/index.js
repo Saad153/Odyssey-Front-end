@@ -4,7 +4,7 @@ import { Modal, Input, notification } from 'antd';
 import CreateOrEdit from './CreateOrEdit';
 import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import Cookies from 'js-cookie';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 
 function recordsReducer(state, action){
   switch (action.type) {

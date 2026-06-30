@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Layout, Menu, Select } from 'antd';
 import Router, { useRouter } from 'next/router';
 import Cookies, { set } from 'js-cookie';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import { setAccesLevels } from 'functions/setAccesLevels';
 import logout from 'functions/logout';
 import { setTab } from 'redux/tabs/tabSlice';

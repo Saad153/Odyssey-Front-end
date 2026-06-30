@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosClient from '/apis/axiosClient';
+import axiosClient from 'apis/axiosClient';
 import dynamic from 'next/dynamic'
 import moment from 'moment';
 import { Tabs } from "antd";

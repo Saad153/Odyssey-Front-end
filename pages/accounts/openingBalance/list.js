@@ -1,8 +1,8 @@
 import React from 'react';
-import OpeningBalance from '../../../Components/Layouts/AccountsComp/OpeningBalance/List';
-import axiosClient from '../../../apis/axiosClient';
+import OpeningBalance from 'Components/Layouts/AccountsComp/OpeningBalance/List';
+import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
-import { handleSSRAuthError } from '../../../functions/withAuthRedirect';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const openingBalancesList = ({ sessionData, openingBalancesList }) => {
   return (

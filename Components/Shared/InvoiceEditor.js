@@ -6,6 +6,7 @@ import axiosClient from 'apis/axiosClient';
 import openNotification from 'Components/Shared/Notification';
 import { delay } from "functions/delay"
 import { PlusOutlined } from '@ant-design/icons';
+import Cookies from 'js-cookie';
 
 const InvoiceEditor = ({data, reload}) => {
 

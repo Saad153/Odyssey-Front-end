@@ -260,8 +260,37 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
   return(
   <div className='client-styles' style={{overflowY:'auto', overflowX:'hidden'}}>
     <form onSubmit={handleSubmit(state.edit?onEdit:onSubmit, onError)}>
-      <Tabs defaultActiveKey={state.tabState} activeKey={state.tabState}
-        onChange={(e)=> dispatch({type:'toggle', fieldName:'tabState', payload:e}) }>
+      {/* <Tabs defaultActiveKey={state.tabState} activeKey={state.tabState}
+        onChange={(e)=> dispatch({type:'toggle', fieldName:'tabState', payload:e}) }> */}
+        <Tabs defaultActiveKey={state.tabState} activeKey={state.tabState}
+        onChange={(e)=> dispatch({type:'toggle', fieldName:'tabState', payload:e}) }
+        tabBarExtraContent={
+          (state.tabState=="1"||state.tabState=="2"||state.tabState=="3") &&
+          <div className='flex' style={{gap:'0.5rem'}}>
+            <button type="submit" disabled={state.load?true:false} className='btn-custom'>
+              {state.load?<Spinner animation="border" size='sm' className='mx-3' />:'Save Job'}
+            </button>
+            <button type="button" disabled={!deleteAccess} 
+              className={!deleteAccess?"btn-red-disabled":"btn-red"}
+              onClick={()=>{
+                PopConfirm("Confirmation", "Are You Sure You Want To Cancel This Job?",
+                  () => {
+                    axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_JOBS,{
+                      id:allValues.id, employeeId: Cookies.get("loginId")
+                    }).then(async(x)=>{
+                      let oldTabs = await type=="SE"?tabs.filter((x)=> {return x.key!="4-3" }):
+                      await type=="SI"?tabs.filter((x)=> {return x.key!="4-6" }):
+                      await type=="AE"?tabs.filter((x)=> {return x.key!="7-2" }):
+                      await tabs.filter((x)=> {return x.key!="7-5" })
+                      dispatchNew(await removeTab(oldTabs)); // First deleting Job Tab
+                      Router.push(type=="SE"?"/seaJobs/seJobList":type=="SI"?"/seaJobs/siJobList":type=="AE"?"/airJobs/aeJobList":"/airJobs/aiJobList")
+                    })
+                })
+              }}
+            >Delete Job
+            </button>
+          </div>
+        }>
       <Tabs.TabPane tab="Booking Info" key="1"> 
         <BookingInfo handleSubmit={handleSubmit} setValue={setValue} onEdit={onEdit} companyId={companyId} control={control} register={register} 
           errors={errors} state={state} useWatch={useWatch} dispatch={dispatch} reset={reset} id={id} type={type}
@@ -296,7 +325,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
         </Tabs.TabPane>
       }
       </Tabs>
-      {(state.tabState=="1"||state.tabState=="2"||state.tabState=="3") &&
+      {/* {(state.tabState=="1"||state.tabState=="2"||state.tabState=="3") &&
       <div className='flex'>
         <button type="submit" disabled={state.load?true:false} className='btn-custom mt-3'>
           {state.load?<Spinner animation="border" size='sm' className='mx-3' />:'Save Job'}
@@ -321,7 +350,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
         >Delete Job
         </button>
       </div>
-      }
+      } */}
     </form>
     {state.load && <FullScreenLoader/>}
   </div>

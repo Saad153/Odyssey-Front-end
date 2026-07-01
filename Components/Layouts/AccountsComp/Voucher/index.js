@@ -1,7 +1,7 @@
 import openNotification from "Components/Shared/Notification";
 import { Col, Row, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosClient from "apis/axiosClient";
 import { useSelector, useDispatch } from 'react-redux';
 import Router from "next/router";
 import Cookies from 'js-cookie';
@@ -486,7 +486,7 @@ const Voucher = ({ id }) => {
               <div style={{...box, fontSize: 12}}>{CompanyId == "1"?"SEANET SHIPPING & LOGISTICS":"AIR CARGO SERVICES"}</div>
             </Col>
             <Col md={6}>
-              <span>Settlement Account</span>
+              <span>Settlement Account 1</span>
               <Select
                 disabled={state.vType=="JV"||state.vType=="TV"}
                 allowClear

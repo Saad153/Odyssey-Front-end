@@ -34,7 +34,7 @@ const Main = ({ sessionData }) => {
     let tempToken = Cookies.get('token');
     if(tempToken){
       let token = jwt_decode(tempToken);
-      console.log("Check Employee Access", token.access) 
+      // console.log("Check Employee Access", token.access) 
       token.access.includes("admin") && setAudit(true);
     }
   }, [username])
@@ -45,7 +45,7 @@ const Main = ({ sessionData }) => {
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
       {/* <UploadBackUp /> */}
-      {/* {audit && <AuditLog /> } */}
+      {audit && <AuditLog /> }
     </div>
   );
 };

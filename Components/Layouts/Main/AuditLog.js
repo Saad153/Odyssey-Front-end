@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import axiosClient from "apis/axiosClient";
 import Cookies from "js-cookie";
 import moment from "moment";
 
@@ -43,7 +43,7 @@ const AuditLog = () => {
         }
       );
 
-      console.log("Audit fetch response:", res.data);
+      // console.log("Audit fetch response:", res.data);
 
       setLogs(res.data.result || []);
       setLastUpdated(new Date());

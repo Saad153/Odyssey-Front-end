@@ -34,6 +34,13 @@ function pTagsToString(html) {
     .join("\n");
 }
 
+// Safely pulls the labels for a given stamp_group, regardless of whether
+// allValues.stamps is currently an array, undefined, or something else.
+const getStamp = (group) =>
+  (Array.isArray(allValues.stamps) ? allValues.stamps : [])
+    .filter(x => x?.stamp_group === group)
+    .map(x => stamps[Number(x.code) - 1]?.label);
+
 console.log(pTagsToString(state.notifyOneContent))
 
 
@@ -49,7 +56,16 @@ console.log(pTagsToString(state.notifyOneContent))
             margin: 10mm;
           }
 
+          @media screen {
+            #bl-print-content {
+              display: none;
+            }
+          }
+
           @media print {
+            #bl-print-content {
+              display: block;
+            }
             body {
               -webkit-print-color-adjust: exact;
             }
@@ -71,6 +87,7 @@ console.log(pTagsToString(state.notifyOneContent))
 
       {/* Printable Area */}
       <div
+        id="bl-print-content"
         ref={inputRef}
         style={{
           width: "216.3mm",
@@ -148,49 +165,27 @@ console.log(pTagsToString(state.notifyOneContent))
               </span>
             {/*Stamp No 1*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 155 : 152}mm`, left: '180mm', width: '20mm', height: '5mm', fontWeight: 'bold' }}>
-              {allValues.stamps?.length > 0 &&
-                allValues.stamps
-                .filter(x => x?.stamp_group == "1")
-                .map(x => stamps[Number(x.code) - 1]?.label)
-                .join(" ")}
+              {getStamp("1").join(" ")}
             </span>
             {/*Stamp No 2*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 155 : 152}mm`, left: '145mm', width: '20mm', height: '5mm', fontWeight: 'bold' }}>
-              {allValues.stamps?.length > 0 &&
-                allValues.stamps
-                  .filter(x => x?.stamp_group == "2")
-                  .map(x => stamps[Number(x.code) - 1]?.label)
-                  .join(" ")}
+              {getStamp("2").join(" ")}
               </span>
             {/*Stamp No 4*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 191 : 188}mm`, left: '145mm', width: '55mm', height: '10mm', fontWeight: 'bold' }}>
-              {!borders && allValues.stamps?.length > 0 &&
-                allValues.stamps
-                  .filter(x => x?.stamp_group == "4")
-                  .map(x => stamps[Number(x.code) - 1]?.label)
-                  .join(" ")}
+              {!borders && getStamp("4").join(" ")}
               </span>
             {/*Stamp No 4 & 5*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 132 : 129}mm`, left: '65mm', width: '70mm', height: '5mm', fontWeight: 'bold' }}>
-              {borders && allValues.stamps?.length > 0 &&
-                allValues.stamps
-                  .filter(x => x?.stamp_group == "4")
-                  .map(x => stamps[Number(x.code) - 1]?.label)
-                  .join(" ")}
+              {borders && getStamp("4").join(" ")}
             </span>
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 132 : 129}mm`, left: '65mm', width: '70mm', height: '5mm', fontWeight: 'bold' }}>
-              {!borders && allValues.stamps?.length > 0 &&
-                allValues.stamps
-                  .filter(x => x?.stamp_group == "5")
-                  .map(x => stamps[Number(x.code) - 1]?.label)
-                  .join(" ")}
+              {!borders && getStamp("5").join(" ")}
             </span>
             {/*As agent or on behalf of Carrier*/}
+            {console.log("AllValues: ",allValues)}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 286 : 279}mm`, left: '134mm', width: '68mm', height: '15mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
-              {borders && allValues.stamps
-                ?.filter(x => x.stamp_group === "5")
-                .map(x => stamps[Number(x.code) - 1]?.label)
-              }
+              {borders && getStamp("5")}
             </span>
               {/*Gross Weight*/}
               <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 131 : 127}mm`, left: '145mm', width: '30mm', height: '10mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
@@ -216,7 +211,7 @@ console.log(pTagsToString(state.notifyOneContent))
               {/*For Delivery Please Apply to*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '10mm', width: '85mm', height: '24mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.deliveryContent)}</span>
               {/*Freight Payable At*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '100mm', width: '50mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{allValues.freightPaybleAt=="DJDST"?"DESTINATION":allValues.freightPaybleAt.toUpperCase()}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '100mm', width: '50mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{allValues.freightPaybleAt=="DJDST"?"DESTINATION":allValues.freightPaybleAt?.toUpperCase()}</span>
               {/*Date and Place of Issue*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '151mm', width: '51mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{moment(allValues?.issueDate).format('DD/MMM/YYYY') + " | " + allValues.issuePlace}</span>
               {/*No of Original Bills of Lading*/}

@@ -57,13 +57,15 @@ const BlComp = ({id, blData, partiesData, type}) => {
   }, [id]);
 
   const getStamps = async () => {
-    const req = await axiosClient.get(
-      process.env.NEXT_PUBLIC_CLIMAX_GET_STAMPS_BY_ID,
-      { headers: { id: id } }
-    );
-    const result = req.data.result;
-    reset({ ...allValues, stamps: result });
-  };
+  if (id === "new") return; // nothing to fetch yet — BL doesn't exist in DB
+
+  const req = await axiosClient.get(
+    process.env.NEXT_PUBLIC_CLIMAX_GET_STAMPS_BY_ID,
+    { headers: { id: id } }
+  );
+  const result = req.data.result;
+  reset({ ...allValues, stamps: result });
+};
 
   const onDelete = (id) => {
     setDeleteArr((prev) => [...prev, id]);
@@ -244,11 +246,11 @@ const BlComp = ({id, blData, partiesData, type}) => {
             <Tabs.TabPane tab={(type=="SE"||type=="SI")?"BL Detail":"Basic Information"} key="3">
               <BlDetail control={control} id={id} register={register} state={state} useWatch={useWatch} dispatch={dispatch} reset={reset} type={type} />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Ref No's / Stamps" key="4">
+            {id != "new" &&<Tabs.TabPane tab="Ref No's / Stamps" key="4">
               {allValues.jobNo && <Stamps state={state} id={id} control={control} register={register} useWatch={useWatch} handleSubmit={handleSubmit} 
                 fields={fields} append={append} remove={remove} onDelete={onDelete} errors={errors} data={data}
               />}
-            </Tabs.TabPane>
+            </Tabs.TabPane>}
           </Tabs>
           {/* {allValues.jobNo && (
             <button type="submit" disabled={state.load ? true : false} className="btn-custom mt-3">

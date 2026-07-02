@@ -1,6 +1,6 @@
 import { delay } from "functions/delay";
 import moment from "moment";
-import axios from "axios";
+import axiosClient from "apis/axiosClient";
 
 function recordsReducer(state, action){
     switch (action.type) {
@@ -115,6 +115,7 @@ const baseValues = {
   agentM3:'',
   coloadM3:'',
   equip:[],
+  stamps: [], 
   gross:0,
   net:0,
   tare:0,  

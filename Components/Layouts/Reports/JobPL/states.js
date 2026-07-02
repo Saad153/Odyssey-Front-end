@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosClient from "apis/axiosClient";
 import { delay } from 'functions/delay';
 import openNotification from "Components/Shared/Notification";
 import moment from "moment";

@@ -24,7 +24,9 @@ const BlDetail = ({control, register, state, useWatch, dispatch, reset, type}) =
 
   const Editor = (variable) => useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        paragraph: false,
+      }),
       // CharacterCount.configure({
       //   limit: 10
       // }),

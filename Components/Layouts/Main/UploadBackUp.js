@@ -27,7 +27,7 @@ const Upload_CoA = () => {
         // await importCOA();
         // await importCharges();
         // await importParties();
-        await importJobs();
+        // await importJobs();
         // await importLGJobs();
         // await importVouchers();
         // await FixAirJobs();
@@ -765,12 +765,15 @@ const filterData = (map, filter) => {
 const importJobs = async () => {
     try{
         console.log("Fetching Air Jobs data")
-        const result0 = await axiosClient.get("http://localhost:8081/jobs/getAll");
+        const result0 = await axiosClient.get("http://localhost:8081/jobs/getAll0");
+        const result = await axiosClient.get("http://localhost:8081/jobs/getAll");
         const result1 = await axiosClient.get("http://localhost:8081/jobs/getAll1");
         console.log(result0)
+        console.log(result)
         console.log(result1)
         const data = {
             ...result0.data,
+            ...result.data,
             ...result1.data
         }
         console.log("Air Job Data:", data)
@@ -1530,7 +1533,7 @@ const importJobs = async () => {
 
         lookupMaps.SExp_SeaExportJob_ChargesRecv = createGroupedMap(tempSIChargesRecv, "SIJobId");
 
-        let SIJobs = data.SeaExportJob.map(job => ({
+        let SIJobs = data.SeaImportJob.map(job => ({
             ...job,
             Packages: lookupMaps.UNPacking.get(job.PackagesCode),
             CostCenter: lookupMaps.GL_PropertiesLOV.get(job.CostCenterId),
@@ -1538,8 +1541,8 @@ const importJobs = async () => {
             IncoTerms: lookupMaps.Gen_IncoTerms.get(job.IncoTermsId),
             SeaExportJob_ChargesPayb: lookupMaps.SExp_SeaExportJob_ChargesPayb.get(job.Id),
             SeaExportJob_ChargesRecv: lookupMaps.SExp_SeaExportJob_ChargesRecv.get(job.Id),
-            SExp_BL: lookupMaps.SExp_BL.get(job.Id),
-            SExp_SeaExportJob_Equipment: lookupMaps.SExp_SeaExportJob_Equipment.get(job.Id),
+            SImp_BL: lookupMaps.SImp_BL.get(job.Id),
+            SImp_SeaImportJob_Equipment: lookupMaps.SImp_SeaImportJob_Equipment.get(job.Id),
             
         }))
 

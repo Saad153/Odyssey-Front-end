@@ -2,7 +2,7 @@ import CSVReader from "react-csv-reader";
 import axiosClient from 'apis/axiosClient';
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { Col, Row } from "antd";
+import { Col, Result, Row } from "antd";
 import { loopHooks } from "react-table";
 import { Spin } from 'antd';
 
@@ -22,21 +22,22 @@ const Upload_CoA = () => {
         {/* <button onClick={()=>{importCommodities()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>9. Import Commodities from Climax DB</button> */}
         {/* <button onClick={()=>{importBls()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>10. Import BLs from Climax DB</button> */}
         {/* <button onClick={()=>{importAECharges()}} style={{width: 'auto'}} className='btn-custom mt-3 px-3 mx-3'>11. Import AE Charges from Climax DB</button> */}
-        // await importCommodities();
-        // await importVoyages();
-        // await importCOA();
-        // await importCharges();
-        // await importParties();
-        // await importJobs();
-        // await importLGJobs();
-        // await importVouchers();
-        // await FixAirJobs();
-        // await FixSeaJobs();
+        // await importCommodities(); // Run
+        // await importVoyages(); // Run
+        // await importCOA(); // Run
+        // await importCharges(); // Run
+        // await importParties(); // Run
+        // await importJobs(); // Run
+        // await importVouchers(); // Run
+        // await FixAirJobs(); // Run
+        // await FixSeaJobs(); // Run
+        // await fixSalesRep() // Run
+        // await FixCommodity();
         // await checkInvoices()
         // await importAirPorts()
         // await importEmployees()
         // await importAECharges()
-        // await fixSalesRep()
+        // awaiSt importLGJobs();
         setStatus("Success")
     }
 
@@ -188,6 +189,18 @@ const Upload_CoA = () => {
             const { BL, ...rest } = result.data.result
             await axiosClient.post("http://localhost:8084/seaJob/fixAirJobs", rest)
             // await axiosClient.post("http://localhost:8084/seaJob/fixAEBL", BL)
+        }catch(e){
+            console.error(e)
+        }
+    }
+
+    const FixCommodity = async () => {
+        try{
+            console.log("Getting Air Jobs Data for Fix")
+            const { data } = await axiosClient.get("http://localhost:8081/jobs/getCommodities");
+            console.log("Fix Jobs Result:", data)
+            const result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/commodity/updateCommodity`, data);
+            console.log(result)
         }catch(e){
             console.error(e)
         }

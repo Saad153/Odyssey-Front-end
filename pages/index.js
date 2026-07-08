@@ -1,5 +1,5 @@
 import React from 'react';
-import axiosClient from 'apis/axiosClient';
+import axios from 'axios';
 import Cookies from 'cookies';
 import Main from 'Components/Layouts/Main/';
 
@@ -17,23 +17,43 @@ export async function getServerSideProps({ req, res }) {
 
   let sessionData = { isLoggedIn: false };
 
-  if (token) {
-    try {
-      const sessionRes = await axiosClient.get(
-        process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,
-        {
-          headers: { "x-access-token": token },
-        }
-      );
-      sessionData = sessionRes.data;
-    } catch (err) {
-      sessionData = { isLoggedIn: false };
-    }
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
   }
 
-  return {
-    props: {
-      sessionData
-    },
-  };
+  try {
+    const sessionRes = await axios.get(
+      process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION,
+      {
+        headers: { 'x-access-token': token },
+      }
+    );
+
+    if (sessionRes.data?.isLoggedIn === false) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {
+        sessionData: sessionRes.data,
+      },
+    };
+  } catch (err) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 }

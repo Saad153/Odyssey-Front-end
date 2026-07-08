@@ -13,8 +13,17 @@ const BlDetail = ({control, register, state, useWatch, dispatch, reset, type}) =
 
 
   const [roundedGross, setRoundedGross] = useState();
+  const [totalPkgs, setTotalPkgs] = useState(0);
   const set = (a, b) => dispatch({type:'toggle', fieldName:a, payload:b});
   const allValues = useWatch({control})
+
+  useEffect(() => {
+    const cumulativeGross = state?.Container_Infos.reduce((total, container) => total + parseFloat(container.gross || 0), 0);
+    setRoundedGross(cumulativeGross.toFixed(2));
+
+    const cumulativePkgs = state?.Container_Infos.reduce((total, container) => total + (parseFloat(container.pkgs) || 0), 0);
+    setTotalPkgs(cumulativePkgs);
+  }, [state])
 
   useEffect(() => {
     const cumulativeGross = state?.Container_Infos.reduce((total, container) => total + parseFloat(container.gross), 0);
@@ -166,7 +175,7 @@ return(
         </Col>
         <Col md={6} className='mt-2'>
           <div>Packages</div>
-          <div className='dummy-input'>{allValues.pkgs}</div>
+          <div className='dummy-input'>{totalPkgs}</div>
         </Col>
         <Col md={6} className='mt-2'>
           <div>Units</div>

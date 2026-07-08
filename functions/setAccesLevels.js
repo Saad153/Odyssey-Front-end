@@ -314,7 +314,8 @@ function setAccesLevels(dispatch, collapsed){
             setup,
             accounts,
             reports
-        ]
+        ];
+        break;
         default:
           break;
       }
@@ -332,7 +333,8 @@ function setAccesLevels(dispatch, collapsed){
             setup,
             accounts,
             reports
-        ]
+        ];
+        break;
         default:
           break;
       }
@@ -354,7 +356,8 @@ function setAccesLevels(dispatch, collapsed){
             setup,
             accounts,
             reports
-        ]
+        ];
+        break;
         default:
           break;
       }
@@ -379,7 +382,8 @@ function setAccesLevels(dispatch, collapsed){
             setup,
             accounts,
             reports
-        ]
+        ];
+        break;
         default:
           break;
       }
@@ -405,7 +409,8 @@ function setAccesLevels(dispatch, collapsed){
             setup,
             accounts,
             reports
-        ]
+        ];
+        break;
         default:
           break;
       }

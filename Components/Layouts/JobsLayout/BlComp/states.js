@@ -389,42 +389,33 @@ const setAndFetchBlData = async(reset, state, allValues, set, dispatch, blData) 
 
 // Browser-safe: parses HTML, inspects <p> elements, and returns cleaned plain text
 function cleanNullParagraphs(html) {
-  // console.log("Original HTML:", html);
-
-  // Normalize common non-breaking spaces to regular spaces
   html = html.replace(/&nbsp;/gi, ' ');
 
-  // Parse HTML into DOM so we can reliably read textContent
   const container = document.createElement('div');
   container.innerHTML = html;
 
-  // Collect kept text content (no HTML tags)
   const kept = [];
   container.querySelectorAll('p').forEach(p => {
-    // Get visible text, normalize whitespace and lowercase for checks
     let text = p.textContent || '';
-    text = text.replace(/\s+/g, ' ').trim(); // collapse whitespace
+    text = text.replace(/\s+/g, ' ').trim();
     const lower = text.toLowerCase();
 
-    // Conditions to remove:
-    // - exactly "null" (after trimming)
-    // - empty string
-    // - contains "tel null" (or similar)
     if (
       lower === '' ||
       lower === 'null' ||
       lower.includes('tel null')
     ) {
-      return; // skip / remove this paragraph
+      return;
     }
 
-    // Keep but normalize spacing inside tag
-    const cleanText = text; // already trimmed/collapsed
-    kept.push(cleanText);
+    kept.push(text);
   });
 
-  const result = kept.join(' ');
-  // console.log("Cleaned text:", result);
+  // Rebuild as actual <p> tags so Tiptap gets real paragraph structure
+  const result = kept
+    .map(text => `<p class="my-custom-paragraph">${text}</p>`)
+    .join('');
+
   return result;
 }
 

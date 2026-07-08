@@ -25,12 +25,15 @@ const BlPrintImage = ({
 
 const gross_weight = allValues?.Container_Infos?.[0]?.gross || 0
 
-    
 function pTagsToString(html) {
   const doc = new DOMParser().parseFromString(html, "text/html");
   return Array.from(doc.querySelectorAll("p"))
     .map(p => p.textContent.trim())
-    .filter(text => text && text !== "null")
+    .filter(text => {
+      if (!text) return false;
+      const lower = text.toLowerCase();
+      return lower !== "null" && !lower.includes("tel null");
+    })
     .join("\n");
 }
 
@@ -109,11 +112,11 @@ console.log(pTagsToString(state.notifyOneContent))
           left: '3mm'
         }} zIndex={1}>
           {/*Shipper*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 16 : 16}mm`, left: '7mm', width: '93mm', height: '23mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.shipperContent)}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 17 : 17}mm`, left: '5mm', width: '93mm', height: '23mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.shipperContent)}</span>
           {/*Consignee*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 47 : 46}mm`, left: '7mm', width: '93mm', height: '23mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.consigneeContent)}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 48 : 47}mm`, left: '5mm', width: '93mm', height: '23mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.consigneeContent)}</span>
           {/*Notify One*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 78 : 75}mm`, left: '7mm', width: '93mm', height: '20mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.notifyOneContent)}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 78 : 75}mm`, left: '5mm', width: '93mm', height: '20mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.notifyOneContent)}</span>
           {/*Job No*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 10 : 11}mm`, left: '115mm', width: '35mm', height: '5mm', fontWeight: 'bold' }}>{allValues.jobNo}</span>
           {/*HBL No*/}
@@ -133,7 +136,7 @@ console.log(pTagsToString(state.notifyOneContent))
               return port ? `${port.name.toUpperCase()}` : allValues.podTwo?.toUpperCase();
             })()}</span>
             {/*Vessel*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 115 : 113}mm`, left: '9mm', width: '40mm', height: '5mm', fontWeight: 'bold' }}>{allValues.vessel}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 115 : 113}mm`, left: '7mm', width: '40mm', height: '5mm', fontWeight: 'bold' }}>{allValues.vessel}</span>
             {/*Voyage*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 115 : 113}mm`, left: '50mm', width: '22mm', height: '5mm', fontWeight: 'bold' }}>{allValues.voyage}</span>
             {/*Port of Loading*/}
@@ -147,11 +150,13 @@ console.log(pTagsToString(state.notifyOneContent))
               return port ? `${port.name.toUpperCase()}` : allValues.poDeliveryTwo?.toUpperCase();
             })()}</span>
             {/*CBM*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 130 : 127}mm`, left: '180mm', width: '22mm', height: '5mm', fontWeight: 'bold' }}>{!cbm && `${parseFloat(allValues.cbm).toFixed(3)} CBM`}</span>
-            {/*Marks and Nos; Container Nos;*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 130 : 127}mm`, left: '10mm', width: '50mm', height: '45mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.marksContent)}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 130 : 127}mm`, left: '182mm', width: '22mm', height: '5mm', fontWeight: 'bold' }}>{!cbm && `${parseFloat(allValues.cbm).toFixed(3)} CBM`}</span>
+            {/*Marks and Nos;*/}
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 130 : 127}mm`, left: '8mm', width: '30mm', height: '45mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.marksContent)}</span>
+            {/*Container Nos;*/}
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 130 : 127}mm`, left: '40mm', width: '20mm', height: '45mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.noOfPckgs)}</span>
             {/*Container No | Size | Seal*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 176 : 173}mm`, left: '10mm', width: '50mm', height: '30mm', fontWeight: 'bold' }}>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 176 : 173}mm`, left: '8mm', width: '50mm', height: '30mm', fontWeight: 'bold' }}>
               <span style={{ padding: 0, margin: 0, lineHeight: 1.2 }}>CONTAINER NO .SIZE SEAL</span>
               {state?.Container_Infos.slice(0, 4).map((x, i)=>{
                 return(
@@ -164,56 +169,61 @@ console.log(pTagsToString(state.notifyOneContent))
               })}
               </span>
             {/*Stamp No 1*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 155 : 152}mm`, left: '180mm', width: '20mm', height: '5mm', fontWeight: 'bold' }}>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 155 : 152}mm`, left: '182mm', width: '20mm', height: '5mm', fontWeight: 'bold', fontSize: '4mm' }}>
               {getStamp("1").join(" ")}
             </span>
             {/*Stamp No 2*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 155 : 152}mm`, left: '145mm', width: '20mm', height: '5mm', fontWeight: 'bold' }}>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 155 : 152}mm`, left: '147mm', width: '20mm', height: '5mm', fontWeight: 'bold', fontSize: '4mm' }}>
               {getStamp("2").join(" ")}
               </span>
             {/*Stamp No 4*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 191 : 188}mm`, left: '145mm', width: '55mm', height: '10mm', fontWeight: 'bold' }}>
-              {!borders && getStamp("4").join(" ")}
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 191 : 188}mm`, left: '145mm', width: '55mm', height: '10mm', fontWeight: 'bold', fontSize: '4mm' }}>
+              {borders && getStamp("4").join(" ")}
               </span>
             {/*Stamp No 4 & 5*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 132 : 129}mm`, left: '65mm', width: '70mm', height: '5mm', fontWeight: 'bold' }}>
-              {borders && getStamp("4").join(" ")}
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 127 : 124}mm`, left: '63mm', width: '72mm', height: '5mm', fontWeight: 'bold', fontSize: '4mm'}}>
+              {!borders && getStamp("4").join(" ")}
             </span>
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 132 : 129}mm`, left: '65mm', width: '70mm', height: '5mm', fontWeight: 'bold' }}>
-              {!borders && getStamp("5").join(" ")}
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 132 : 129}mm`, left: '65mm', width: '70mm', height: '5mm', fontWeight: 'bold', fontSize: '4mm' }}>
+              {borders && getStamp("5").join(" ")}
             </span>
             {/*As agent or on behalf of Carrier*/}
             {console.log("AllValues: ",allValues)}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 286 : 279}mm`, left: '134mm', width: '68mm', height: '15mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 286 : 279}mm`, left: '134mm', width: '68mm', height: '15mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2', fontSize: '4mm' }}>
               {borders && getStamp("5")}
             </span>
               {/*Gross Weight*/}
-              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 131 : 127}mm`, left: '145mm', width: '30mm', height: '10mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
+              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 131 : 127}mm`, left: '147mm', width: '30mm', height: '10mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
                 Gross Weight
                 <br/>
                 {!grossWeight && `${parseFloat(gross_weight).toFixed(3)} KGS`}
               </span>
               {/*Net Weight*/}
-              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 140 : 136}mm`, left: '145mm', width: '30mm', height: '10mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
+              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 140 : 136}mm`, left: '147mm', width: '30mm', height: '10mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
                 Net Weight
                 <br/>
                 {!netWeight && `${parseFloat(allValues.net).toFixed(3)} KGS`}
               </span>
               {/*Number and kind of Packages; Description of Goods*/}
-              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 137 : 134}mm`, left: '65mm', width: '70mm', height: '65mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.descOfGoodsContent)}</span>
+              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 137 : 134}mm`, left: '63mm', width: '72mm', height: '65mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.descOfGoodsContent)}</span>
               {/*Freight Perpaid / Collect*/}
               <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 169 : 166}mm`, left: '145mm', width: '55mm', height: '22mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2', textAlign: 'center' }}>
-                <h6 style={{ margin: 0, padding: 0 }}><b>FREIGHT {allValues.freightType.toUpperCase()}</b></h6>
+                <h6 style={{ margin: 0, padding: 0 }}><b>FREIGHT {allValues.freightType == '2' ? 'PREPAID' : allValues.freightType == '1' ? 'COLLECT' : allValues.freightType.toUpperCase()}</b></h6>
               </span>
-              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 176 : 171}mm`, left: '145mm', width: '55mm', height: '22mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2', textAlign: 'justify' }}>
-                All Terminal charge/Demurrage Etc. at the port of discharge Destination as per Line’s Tariff & At the Account of Consignee
+              <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 176 : 171}mm`, left: '145mm', width: '55mm', height: '22mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2', textAlign: 'center' }}>
+                {"All Terminal charge/Demurrage\nEtc. at the port of discharge\nDestination as per Line's Tariff &\nAt the Account of Consignee"}
               </span>
               {/*For Delivery Please Apply to*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '10mm', width: '85mm', height: '24mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.deliveryContent)}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '8mm', width: '85mm', height: '24mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{pTagsToString(state.deliveryContent)}</span>
               {/*Freight Payable At*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '100mm', width: '50mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{allValues.freightPaybleAt=="DJDST"?"DESTINATION":allValues.freightPaybleAt?.toUpperCase()}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '100mm', width: '50mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{allValues.freightType == '2' ? 'KARACHI, PAKISTAN' : allValues.freightType == '1' ? 'DESTINATION' : allValues.freightType.toUpperCase() == 'PREPAID' ? 'KARACHI, PAKISTAN' : 'DESTINATION'}</span>
               {/*Date and Place of Issue*/}
-            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '151mm', width: '51mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{moment(allValues?.issueDate).format('DD/MMM/YYYY') + " | " + allValues.issuePlace}</span>
+            <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 269 : 261}mm`, left: '151mm', width: '51mm', height: '9mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>
+              {[
+                allValues?.issueDate ? moment(allValues.issueDate).format('DD/MMM/YYYY') : null,
+                allValues?.issuePlace || null
+              ].filter(Boolean).join(' | ')}
+            </span>
               {/*No of Original Bills of Lading*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 286 : 279}mm`, left: '100mm', width: '25mm', height: '10mm', fontWeight: 'bold', whiteSpace: 'pre-line', lineHeight: '1.2' }}>{allValues.noBls}</span>
         </div>

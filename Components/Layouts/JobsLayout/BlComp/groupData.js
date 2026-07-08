@@ -70,7 +70,7 @@ export const stamps = [
   },
   {
     value: "18",
-    label: "SHIPPER LOAD STOW & CONT S.T.C",
+    label: "SHIPPER LOAD & COUNT S.T.C",
   },
   {
     value: "19",

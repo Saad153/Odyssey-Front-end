@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // <-- use this in Next.js 13+
+import { useRouter } from 'next/router';
 import AuditLog from './AuditLog';
 import UploadBackUp from './UploadBackUp';
 import Cookies from 'js-cookie';
@@ -44,8 +44,8 @@ const Main = ({ sessionData }) => {
       {/* {username == 'Saad' && <VannaChat /> } */}
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
-      {/* <UploadBackUp /> */}
-      {audit && <AuditLog /> }
+      <UploadBackUp />
+      {/* {audit && <AuditLog /> } */}
     </div>
   );
 };

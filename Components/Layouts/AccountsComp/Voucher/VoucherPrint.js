@@ -42,7 +42,8 @@ const VoucherPrint = ({ compLogo, voucherData }) => {
   }, [voucherData])
 
   return (
-    <div className='pb-5 px-5 pt-4'>
+    <div className='voucher-print-root pb-5 px-5 pt-4' style={{ page: 'voucherPortrait' }}>
+      <style>{`@media print { @page voucherPortrait { size: A4 portrait; margin: 10mm; } .voucher-print-root { page: voucherPortrait; } }`}</style>
       <Row>
         <Col md={4} className='text-center'>
           {compLogo == "1" &&

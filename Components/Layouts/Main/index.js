@@ -44,8 +44,8 @@ const Main = ({ sessionData }) => {
       {/* {username == 'Saad' && <VannaChat /> } */}
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
-      <UploadBackUp />
-      {/* {audit && <AuditLog /> } */}
+      {/* <UploadBackUp /> */}
+      {audit && <AuditLog /> }
     </div>
   );
 };

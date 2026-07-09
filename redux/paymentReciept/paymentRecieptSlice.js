@@ -7,7 +7,7 @@ const initialState = {
   currency: 'PKR',
   search: '',
   searchAccount: '',
-  accounts: [],
+  PRaccounts: [],
   oldVouchers: [],
   oldVouchersList: [],
   selectedAccount: undefined,
@@ -16,7 +16,7 @@ const initialState = {
   editing: false,
   voucherId: undefined,
   invoices: [],
-  load: false,
+  PRload: false,
   transactionMode: 'Cash',
   receivingAccounts: [],
   receivingAccount: undefined,
@@ -48,7 +48,7 @@ export const paymentRecieptSlice = createSlice({
   name: 'records',
   initialState,
   reducers: {
-    setField(state, action) {
+    setPRField(state, action) {
         const { field, value } = action.payload;
         if (field in state) {
           state[field] = value;
@@ -70,6 +70,6 @@ export const paymentRecieptSlice = createSlice({
   },
 });
 
-export const { setField, resetState } = paymentRecieptSlice.actions;
+export const { setPRField, resetState } = paymentRecieptSlice.actions;
 
 export default paymentRecieptSlice.reducer;

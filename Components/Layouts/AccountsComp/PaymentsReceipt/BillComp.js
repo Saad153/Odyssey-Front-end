@@ -12,8 +12,9 @@ import { useRouter } from 'next/router';
 import axiosClient from 'apis/axiosClient';
 import Gl from './Gl';
 import moment from 'moment';
-import { setField } from 'redux/paymentReciept/paymentRecieptSlice';
+import { setPRField } from 'redux/paymentReciept/paymentRecieptSlice';
 import Cookies from 'js-cookie';
+import PrintTransaction from './PrintTransaction';
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
@@ -61,7 +62,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         };
       });
     
-      dispatch(setField({ field: 'invoices', value: updatedInvoices }));
+      dispatch(setPRField({ field: 'invoices', value: updatedInvoices }));
     }
   }, [state.knockOffAmount]);
   
@@ -101,8 +102,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           }
         });
         // console.log("Fetch Invoice Function")
-        dispatch(setField({ field: 'invoices', value: temp }))
-        dispatch(setField({ field: 'load', value: false }))
+        dispatch(setPRField({ field: 'invoices', value: temp }))
+        dispatch(setPRField({ field: 'PRload', value: false }))
       })
     }catch(e){
       console.log(e)
@@ -115,13 +116,13 @@ const BillComp = ({back, companyId, state, dispatch}) => {
       setFirst(true)
     }
     if(state.currency=="PKR"){
-      dispatch(setField({ field: 'exRate', value: 1.0 }))
+      dispatch(setPRField({ field: 'exRate', value: 1.0 }))
     }
   }, [state.selectedAccount, state.payType, state.currency])
 
   useEffect(() => {
     const fetchreceivingAccount = async () => {
-      dispatch(setField({ field: 'load', value: true }))
+      dispatch(setPRField({ field: 'PRload', value: true }))
       try{
         await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
           headers: {
@@ -130,8 +131,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           }
         }).then((x) => {
           // console.log(x.data.result)
-          dispatch(setField({ field: 'receivingAccounts', value: x.data.result }))
-          dispatch(setField({ field: 'load', value: false }))
+          dispatch(setPRField({ field: 'receivingAccounts', value: x.data.result }))
+          dispatch(setPRField({ field: 'PRload', value: false }))
         })
       }catch(e){
         console.log(e)
@@ -142,7 +143,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
 
   useEffect(() => {
     const fetchreceivingAccount = async () => {
-      dispatch(setField({ field: 'load', value: true }))
+      dispatch(setPRField({ field: 'PRload', value: true }))
       try{
         await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ACCOUNT_FOR_TRANSACTION, {
           headers: {
@@ -150,8 +151,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
             companyid: companyId,
           }
         }).then((x) => {
-          dispatch(setField({ field: 'adjustAccounts', value: x.data.result }))
-          dispatch(setField({ field: 'load', value: false }))
+          dispatch(setPRField({ field: 'adjustAccounts', value: x.data.result }))
+          dispatch(setPRField({ field: 'PRload', value: false }))
         })
       }catch(e){
         console.log(e)
@@ -199,8 +200,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
     // console.log("GainLoss Amount: ", gainLoss)
     if(state.invoices.length>0){
       // setTotal(temp)
-      dispatch(setField({ field: 'totalReceivable', value: temp }))
-      dispatch(setField({ field: 'gainLossAmount', value: gainLoss }))
+      dispatch(setPRField({ field: 'totalReceivable', value: temp }))
+      dispatch(setPRField({ field: 'gainLossAmount', value: gainLoss }))
       
     }
   },[state.invoices, state.exRate])
@@ -211,7 +212,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
       state.totalReceivable>0?
       temp = state.totalReceivable*(state.taxPercent/100):
       temp = (state.totalReceivable*-1)*(state.taxPercent/100)
-      dispatch(setField({ field: 'taxAmount', value: temp }))
+      dispatch(setPRField({ field: 'taxAmount', value: temp }))
     }
   },[state.taxPercent, state.invoices])
 
@@ -224,7 +225,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           gainLoss: state.gainLossAmount,
           totalReceiving: state.totalReceivable,
           partyId: state.selectedAccount,
-          partyName: state.accounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
+          partyName: state.PRaccounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
           partyType: state.type,
           type: state.onAccount,
           transactionMode: state.transactionMode,
@@ -246,7 +247,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         }).then((x) => {
           x.data.status=="success"?back():null
           x.data.status=="success"?openNotification('Success', `Transaction Saved`, 'green'):openNotification('Error', `Error saving transaction`, 'red')
-          dispatch(setField({ field: 'modal', value: false }))
+          dispatch(setPRField({ field: 'modal', value: false }))
         })
 
       }catch(e){
@@ -295,7 +296,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         temp.push({
           partyId: state.selectedAccount,
           accountType: "partyAccount",
-          accountName: state.accounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
+          accountName: state.PRaccounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
           debit: state.totalReceivable<0?state.totalReceivable*-1:0,
           credit: state.totalReceivable>0?state.totalReceivable:0,
           type: state.totalReceivable<0?'debit':'credit'
@@ -327,7 +328,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         temp.push({
           partyId: state.selectedAccount,
           accountType: "Gain/Loss Account",
-          accountName: state.accounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
+          accountName: state.PRaccounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
           debit: state.gainLossAmount>0?state.gainLossAmount/state.exRate:0,
           credit: state.gainLossAmount<0?(state.gainLossAmount*-1)/state.exRate:0,
           type: state.gainLossAmount>0?'debit':'credit'
@@ -358,7 +359,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         temp.push({
           partyId: state.selectedAccount,
           accountType: "partyAccount",
-          accountName: state.accounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
+          accountName: state.PRaccounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
           debit: state.payType!="Recievable"?state.totalReceivable:0,
           credit: state.payType=="Recievable"?state.totalReceivable:0,
           type: state.payType!="Recievable"?'debit':'credit'
@@ -422,8 +423,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
       debit: totalDebit,
       credit: totalCredit
     })
-    dispatch(setField({ field: 'transactions', value: temp }))
-    dispatch(setField({ field: 'modal', value: true }))
+    dispatch(setPRField({ field: 'transactions', value: temp }))
+    dispatch(setPRField({ field: 'modal', value: true }))
 
   }
 
@@ -458,7 +459,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
       <Row>
         <Col md={5}>
           <span style={{marginLeft: '5px'}}>Transaction Mode</span>
-          <Radio.Group style={{display: 'flex', marginLeft: '5px', marginTop: '5px'}} value={state.transactionMode} onChange={(e) => {dispatch(setField({ field: 'transactionMode', value: e.target.value })); e.target.value=="Cash"?dispatch(setField({ field: 'subType', value: "Cash" })):dispatch(setField({ field: 'subType', value: "Cheque" })); dispatch(setField({field: "receivingAccount", value: undefined}))}}>
+          <Radio.Group style={{display: 'flex', marginLeft: '5px', marginTop: '5px'}} value={state.transactionMode} onChange={(e) => {dispatch(setPRField({ field: 'transactionMode', value: e.target.value })); e.target.value=="Cash"?dispatch(setPRField({ field: 'subType', value: "Cash" })):dispatch(setPRField({ field: 'subType', value: "Cheque" })); dispatch(setPRField({field: "receivingAccount", value: undefined}))}}>
             <Radio value={"Cash"}>  Cash  </Radio>
             <Radio value={"Bank"}>  Bank  </Radio>
             <Radio value={"Adjust"}>Adjust</Radio>
@@ -466,11 +467,11 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         </Col>
         <Col md={2}>
         <span style={{marginLeft: '5px'}}>Date</span>
-          <DatePicker allowClear={false} style={{width: '100%'}} value={moment(state.date)} onChange={(e) => {dispatch(setField({ field: 'date', value: moment(e) }))}}></DatePicker>
+          <DatePicker allowClear={false} style={{width: '100%'}} value={moment(state.date)} onChange={(e) => {dispatch(setPRField({ field: 'date', value: moment(e) }))}}></DatePicker>
         </Col>
         <Col md={2}>
         <span style={{marginLeft: '5px'}}>SubType</span>
-          <Select style={{width: '100%'}} value={state.subType} onChange={(e) => dispatch(setField({ field: 'subType', value: e }))}>
+          <Select style={{width: '100%'}} value={state.subType} onChange={(e) => dispatch(setPRField({ field: 'subType', value: e }))}>
             <Select.Option value="Cheque">Cheque</Select.Option>
             <Select.Option value="Credit Cart">Credit Card</Select.Option>
             <Select.Option value="Online Transfer">Online Transfer</Select.Option>
@@ -482,11 +483,11 @@ const BillComp = ({back, companyId, state, dispatch}) => {
       <Row style={{marginTop: '25px'}}>
         <Col md={3}>
           <span style={{marginLeft: '5px'}}>Cheque/Tran #</span>
-          <Input disabled={state.transactionMode=="Cash"} value={state.checkNo} onChange={(e) => dispatch(setField({ field: 'checkNo', value: e.target.value }))}></Input>
+          <Input disabled={state.transactionMode=="Cash"} value={state.checkNo} onChange={(e) => dispatch(setPRField({ field: 'checkNo', value: e.target.value }))}></Input>
         </Col>
         <Col md={2}>
         <span style={{marginLeft: '5px', width: '100%'}}>Cheque Date</span>
-          <DatePicker disabled={state.transactionMode=="Cash"} style={{width: '100%'}} value={moment(state.checkDate)} onChange={(e) => dispatch(setField({ field: 'checkDate', value: e }))}></DatePicker>
+          <DatePicker disabled={state.transactionMode=="Cash"} style={{width: '100%'}} value={moment(state.checkDate)} onChange={(e) => dispatch(setPRField({ field: 'checkDate', value: e }))}></DatePicker>
         </Col>
         <Col md={4}>
         <span style={{marginLeft: '5px'}}>{state.payType!="Recievable"?"Paying":"Receiving"} Account*</span>
@@ -503,12 +504,12 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           filterOption={(input, option) =>
             option?.label.toLowerCase().includes(input.toLowerCase())
           }
-          onChange={(e) => {dispatch(setField({ field: 'receivingAccount', value: e }))}}
+          onChange={(e) => {dispatch(setPRField({ field: 'receivingAccount', value: e }))}}
         />
         </Col>
         <Col md={3}>
         <span style={{marginLeft: '5px'}}>On Account</span>
-          <Select value={state.onAccount} onChange={(e)=>{dispatch(setField({field: 'onAccount', value: e.target.value}))}} style={{width: '100%'}}>
+          <Select value={state.onAccount} onChange={(e)=>{dispatch(setPRField({field: 'onAccount', value: e.target.value}))}} style={{width: '100%'}}>
             <Select.Option value="client">Client</Select.Option>
             <Select.Option value="shipper">Shipper</Select.Option>
             <Select.Option value="importer">Importer</Select.Option>
@@ -520,7 +521,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         <Col md={8}>
         <span style={{marginLeft: '5px'}}>Narration</span>
         <Input value={state.voucherNarration} onChange={(e)=>{
-          dispatch(setField({ field: 'voucherNarration', value: e.target.value }))
+          dispatch(setPRField({ field: 'voucherNarration', value: e.target.value }))
         }}/>
         </Col>
       </Row>
@@ -535,7 +536,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         parser={(value) =>
           value?.replace(/,/g, '') // Remove commas for the actual value
         }
-        style={{width: '100%'}} value={state.bankChargesAmount} onChange={(e) => dispatch(setField({ field: 'bankChargesAmount', value: e }))}></InputNumber>
+        style={{width: '100%'}} value={state.bankChargesAmount} onChange={(e) => dispatch(setPRField({ field: 'bankChargesAmount', value: e }))}></InputNumber>
         </Col>
         <Col md={6}>
         <span style={{marginLeft: '5px'}}>Bank Charges Account</span>
@@ -552,7 +553,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           filterOption={(input, option) =>
             option?.label.toLowerCase().includes(input.toLowerCase())
           }
-          onChange={(e) => {dispatch(setField({ field: 'bankChargesAccount', value: e })); e==undefined?dispatch(setField({ field: 'bankChargesAmount', value: 0.0 })):null}}
+          onChange={(e) => {dispatch(setPRField({ field: 'bankChargesAccount', value: e })); e==undefined?dispatch(setPRField({ field: 'bankChargesAmount', value: 0.0 })):null}}
         />
         </Col>
       </Row>
@@ -563,7 +564,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         <Row>
           <Col md={3}>
             <span style={{marginLeft: '5px', fontWeight: 'bold'}}>Ex. Rate</span>
-            <InputNumber disabled={state.currency=='PKR'} style={{width: '100%'}} value={state.exRate} onChange={(e) => dispatch(setField({ field: 'exRate', value: e }))}></InputNumber>
+            <InputNumber disabled={state.currency=='PKR'} style={{width: '100%'}} value={state.exRate} onChange={(e) => dispatch(setPRField({ field: 'exRate', value: e }))}></InputNumber>
           </Col>
           <Col md={4}>
           {state.totalReceivable<0||(state.advance&&state.payType=='Payble')?<span style={{fontWeight: 'bold'}}>Total Payable Amount</span>:<span style={{fontWeight: 'bold'}}>Total Receivable Amount</span>}
@@ -574,9 +575,9 @@ const BillComp = ({back, companyId, state, dispatch}) => {
             // console.log(state.advance)
             // console.log(state.autoKnockOff)
             if(state.advance){
-              dispatch(setField({ field: 'totalReceivable', value: e }))
+              dispatch(setPRField({ field: 'totalReceivable', value: e }))
             }else if(state.autoKnockOff){
-              dispatch(setField({ field: 'knockOffAmount', value: e }))
+              dispatch(setPRField({ field: 'knockOffAmount', value: e }))
             }
           }}
           style={{width: '100%'}}
@@ -595,7 +596,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
         </Row>
         <Row style={{marginTop:'10px'}}>
           <Col md={3}>
-            <Checkbox style={{marginTop: '25px'}} onChange={(e) => {dispatch(setField({ field: 'autoKnockOff', value: e.target.checked }))}} checked={state.autoKnockOff}>Auto KnockOff</Checkbox>
+            <Checkbox style={{marginTop: '25px'}} onChange={(e) => {dispatch(setPRField({ field: 'autoKnockOff', value: e.target.checked }))}} checked={state.autoKnockOff}>Auto KnockOff</Checkbox>
           </Col>
           <Col md={3}>
             {state.editing&&<span style={{marginLeft: '5px'}}>Current Payment:</span>}
@@ -623,16 +624,16 @@ const BillComp = ({back, companyId, state, dispatch}) => {
             style={{width: '100%'}} value={state.taxAmount} onChange={(e) => {
               // e<0?e = e *-1:null
               const value = e || 0;
-              dispatch(setField({ field: 'taxAmount', value: value }))
+              dispatch(setPRField({ field: 'taxAmount', value: value }))
             }}></InputNumber>
           </Col>
           <Col md={1} style={{ paddingTop: '5%'}}>
-            <Checkbox checked={state.percent} onChange={(e) => {dispatch(setField({ field: 'percent', value: e.target.checked })); dispatch(setField({ field: 'taxPercent', value: 0 })); dispatch(setField({ field: 'taxAmount', value: 0 }))}}>%</Checkbox>
+            <Checkbox checked={state.percent} onChange={(e) => {dispatch(setPRField({ field: 'percent', value: e.target.checked })); dispatch(setPRField({ field: 'taxPercent', value: 0 })); dispatch(setPRField({ field: 'taxAmount', value: 0 }))}}>%</Checkbox>
           </Col>
           <Col md={2} style={{marginTop: '10px'}}>
             <span style={{marginLeft: '5px'}}>Tax %</span>
             <InputNumber value={state.taxPercent} onChange={(e) => {
-              dispatch(setField({ field: 'taxPercent', value: e }))
+              dispatch(setPRField({ field: 'taxPercent', value: e }))
             }} disabled={!state.percent} style={{width: '100%'}}></InputNumber>
           </Col>
           <Col md={6} style={{marginTop: '10px'}}>
@@ -650,7 +651,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
               filterOption={(input, option) =>
                 option?.label.toLowerCase().includes(input.toLowerCase())
               }
-              onChange={(e) => {dispatch(setField({ field: 'taxAccount', value: e })), e==undefined?dispatch(setField({ field: 'taxAmount', value: 0.0 })):null}}
+              onChange={(e) => {dispatch(setPRField({ field: 'taxAccount', value: e })), e==undefined?dispatch(setPRField({ field: 'taxAmount', value: 0.0 })):null}}
             />
           </Col>
         </Row>
@@ -677,7 +678,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
               filterOption={(input, option) =>
                 option?.label.toLowerCase().includes(input.toLowerCase())
               }
-              onChange={(e) => {dispatch(setField({ field: 'gainLossAccount', value: e }))}}
+              onChange={(e) => {dispatch(setPRField({ field: 'gainLossAccount', value: e }))}}
             />
           </Col>
         </Row>
@@ -760,7 +761,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
                         receiving: value, 
                       };
                       // console.log("Input Number")
-                      dispatch(setField({ field: 'invoices', value: updatedInvoiceList })); 
+                      dispatch(setPRField({ field: 'invoices', value: updatedInvoiceList })); 
                     }}
                     ></InputNumber>
                     }</td>
@@ -806,7 +807,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
                         receiving: value, 
                       };
                       // console.log("Another input")
-                      dispatch(setField({ field: 'invoices', value: updatedInvoiceList }));
+                      dispatch(setPRField({ field: 'invoices', value: updatedInvoiceList }));
                     }} />
                   </td>
                   <td style={{width: '10%', paddingLeft: '5px', borderLeft: '1px solid #dee2e6', padding: '10px 10px', borderRight: '1px solid #dee2e6'}}>{invoice.container}</td>
@@ -814,9 +815,10 @@ const BillComp = ({back, companyId, state, dispatch}) => {
               ))}
             </tbody>
           </table>
+          {/* <PrintTransaction state={state} companyId={companyId} dispatch={dispatch}/> */}
     </Col>}
-    <Modal title={`Proceed with transaction?`} open={state.modal} onOk={()=>dispatch(setField({ field: 'modal', value: false }))} 
-        onCancel={()=>dispatch(setField({ field: 'modal', value: false }))} footer={false} maskClosable={false} width={'80%'} centered
+    <Modal title={`Proceed with transaction?`} open={state.modal} onOk={()=>dispatch(setPRField({ field: 'modal', value: false }))} 
+        onCancel={()=>dispatch(setPRField({ field: 'modal', value: false }))} footer={false} maskClosable={false} width={'80%'} centered
       >
         <span style={{float:'right'}}>Ex Rate: <b>{state.exRate}</b> Currency: <b>{state.currency}</b></span>
         <table style={{width: '100%'}}>

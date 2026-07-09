@@ -15,7 +15,7 @@ const PrintTransaction = ({companyId, state, dispatch}) => {
   
   useEffect(() => {
     getInvoices(state, companyId, dispatch);
-  }, [state.selectedParty, state.payType]);  
+  }, [state.selectedAccount, state.payType]);  
   
   useEffect(() => { 
     if(state.invoices.length>0){

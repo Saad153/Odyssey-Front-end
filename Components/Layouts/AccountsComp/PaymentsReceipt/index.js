@@ -18,7 +18,7 @@ import Pagination from '../../../Shared/Pagination';
 import openNotification from "../../../Shared/Notification";
 import {checkEditAccess} from "functions/checkEditAccess";
 import {checkEmployeeAccess} from "functions/checkEmployeeAccess";
-import { setField, resetState } from 'redux/paymentReciept/paymentRecieptSlice';
+import { setPRField, resetState } from 'redux/paymentReciept/paymentRecieptSlice';
 import Cookies from "js-cookie";
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -36,7 +36,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      dispatch(setField({ field: "search", value: searchInput }));
+      dispatch(setPRField({ field: "search", value: searchInput }));
     }, 500); // 👈 delay in ms
 
     return () => clearTimeout(handler);
@@ -97,7 +97,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
       }
 
       if (temp.length > 0) {
-        dispatch(setField({ field: "oldVouchers", value: temp[0] }));
+        dispatch(setPRField({ field: "oldVouchers", value: temp[0] }));
       }
     } catch (error) {
       console.error("Error fetching old vouchers:", error);
@@ -121,7 +121,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
       { headers:{companyid: Cookies.get('companyId'), type: state.type} }
     ).then((x) => {
       console.log(">>>>>>>>>>>.", x.data.result)
-      dispatch(setField({ field: 'accounts', value: x.data.result }));
+      dispatch(setPRField({ field: 'PRaccounts', value: x.data.result }));
     })
   }
 
@@ -184,9 +184,9 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         // Get the union as an array
         const union = Array.from(map.values());
         console.log(union)
-        dispatch(setField({ field: 'editing', value: true }))
-        dispatch(setField({ field: 'advance', value: false }))
-        dispatch(setField({ field: 'invoices', value: union }))
+        dispatch(setPRField({ field: 'editing', value: true }))
+        dispatch(setPRField({ field: 'advance', value: false }))
+        dispatch(setPRField({ field: 'invoices', value: union }))
       })
     }catch(e){
       console.log(e)
@@ -210,18 +210,18 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
 
     console.log("CONSOLE: ", x.x)
     console.log("Selected Account>>", x.x.invoice);
-    dispatch(setField({ field: 'type', value: x.party }))
-    dispatch(setField({ field: 'edit', value: true }))
-    dispatch(setField({ field: 'selectedAccount', value: parseInt(x.partyId) }))
-    dispatch(setField({ field: 'currency', value: x.currency }))
-    dispatch(setField({ field: 'date', value: x.data }))
-    dispatch(setField({ field: 'checkNo', value: x.x.chequeNo }))
-    dispatch(setField({ field: 'checkDate', value: moment(x.x.chequeDate) }))
-    dispatch(setField({ field: 'exRate', value: x.x.exRate }))
-    dispatch(setField({ field: 'subType', value: x.x.subType }))
-    dispatch(setField({ field: 'voucherId', value: x.id }))
+    dispatch(setPRField({ field: 'type', value: x.party }))
+    dispatch(setPRField({ field: 'edit', value: true }))
+    dispatch(setPRField({ field: 'selectedAccount', value: parseInt(x.partyId) }))
+    dispatch(setPRField({ field: 'currency', value: x.currency }))
+    dispatch(setPRField({ field: 'date', value: x.data }))
+    dispatch(setPRField({ field: 'checkNo', value: x.x.chequeNo }))
+    dispatch(setPRField({ field: 'checkDate', value: moment(x.x.chequeDate) }))
+    dispatch(setPRField({ field: 'exRate', value: x.x.exRate }))
+    dispatch(setPRField({ field: 'subType', value: x.x.subType }))
+    dispatch(setPRField({ field: 'voucherId', value: x.id }))
     if(x.x.invoice.length == 0){
-      dispatch(setField({ field: 'advance', value: true }))
+      dispatch(setPRField({ field: 'advance', value: true }))
     }else{
       let temp = x.x.invoice.map((inv) => {
       let newInv = { ...inv } // create a shallow copy
@@ -233,53 +233,53 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         return newInv
       })
       console.log("TEMP: ", temp)
-      dispatch(setField({ field: 'invoices', value: temp }))
+      dispatch(setPRField({ field: 'invoices', value: temp }))
     }
     // console.log("Invoice in P/R", x.x.invoice)
-    dispatch(setField({ field: 'voucherNarration', value: x.x.voucherNarration }))
+    dispatch(setPRField({ field: 'voucherNarration', value: x.x.voucherNarration }))
     x.x.Voucher_Heads.forEach((y) => {
       console.log("Voucher Heads: ", y)
       if(y.accountType=="payAccount"){
-        dispatch(setField({ field: 'receivingAccount', value: y.ChildAccountId }));
-        dispatch(setField({ field: 'receivingAmount', value: parseFloat(y.amount) }))
+        dispatch(setPRField({ field: 'receivingAccount', value: y.ChildAccountId }));
+        dispatch(setPRField({ field: 'receivingAmount', value: parseFloat(y.amount) }))
       }
       if(y.accountType=="partyAccount"||y.accountType=="General"||y.accountType=="Admin Expense"){
-        // dispatch(setField({ field: 'voucherNarration', value: y.narration }))
-        dispatch(setField({ field: 'totalReceivable', value: parseFloat(y.amount) }));
-        // dispatch(setField({ field: 'selectedAccount', value: parseInt(y.ChildAccountId) }))
+        // dispatch(setPRField({ field: 'voucherNarration', value: y.narration }))
+        dispatch(setPRField({ field: 'totalReceivable', value: parseFloat(y.amount) }));
+        // dispatch(setPRField({ field: 'selectedAccount', value: parseInt(y.ChildAccountId) }))
       }
       if((y.accountType=="Gain/Loss Account") && y.ChildAccountId != x.x.Voucher_Heads.find((x)=>x.accountType=="partyAccount").ChildAccountId){
         y.type!='debit'?
-        dispatch(setField({ field: 'gainLossAmount', value: parseFloat(y.amount)*parseFloat(x.x.exRate) })):
-        dispatch(setField({ field: 'gainLossAmount', value: (parseFloat(y.amount)*-1)*parseFloat(x.x.exRate) }))
-        dispatch(setField({ field: 'gainLossAccount', value: y.ChildAccountId }))
+        dispatch(setPRField({ field: 'gainLossAmount', value: parseFloat(y.amount)*parseFloat(x.x.exRate) })):
+        dispatch(setPRField({ field: 'gainLossAmount', value: (parseFloat(y.amount)*-1)*parseFloat(x.x.exRate) }))
+        dispatch(setPRField({ field: 'gainLossAccount', value: y.ChildAccountId }))
       }
       if(y.accountType.includes('Charges Account')){
-        dispatch(setField({ field: 'bankChargesAmount', value: parseFloat(y.amount) }));
-        dispatch(setField({ field: 'bankChargesAccount', value: y.ChildAccountId }))
+        dispatch(setPRField({ field: 'bankChargesAmount', value: parseFloat(y.amount) }));
+        dispatch(setPRField({ field: 'bankChargesAccount', value: y.ChildAccountId }))
       }
       if(y.accountType.includes('Tax Account')){
-        dispatch(setField({ field: 'taxAmount', value: parseFloat(y.amount) }));
-        dispatch(setField({ field: 'taxAccount', value: y.ChildAccountId }))
+        dispatch(setPRField({ field: 'taxAmount', value: parseFloat(y.amount) }));
+        dispatch(setPRField({ field: 'taxAccount', value: y.ChildAccountId }))
       }
 
     })
 
     if(x.type.includes('P')){
-      dispatch(setField({ field: 'payType', value: 'Payble' }))
+      dispatch(setPRField({ field: 'payType', value: 'Payble' }))
     }else{
-      dispatch(setField({ field: 'payType', value: 'Recievable' }))
+      dispatch(setPRField({ field: 'payType', value: 'Recievable' }))
     }
     if(x.type.includes('C')){
-      dispatch(setField({ field: 'transactionMode', value: 'Cash' }))
-      dispatch(setField({ field: 'subType', value: 'Cash' }))
+      dispatch(setPRField({ field: 'transactionMode', value: 'Cash' }))
+      dispatch(setPRField({ field: 'subType', value: 'Cash' }))
     }else if(x.type.includes('B')){
-      dispatch(setField({ field: 'transactionMode', value: 'Bank' }))
-      dispatch(setField({ field: 'subType', value: 'Cheque' }))
+      dispatch(setPRField({ field: 'transactionMode', value: 'Bank' }))
+      dispatch(setPRField({ field: 'subType', value: 'Cheque' }))
     }else if(x.type.includes('ADJ')){
       console.log("Caught Adjust")
-      dispatch(setField({ field: 'transactionMode', value: 'Adjust' }))
-      dispatch(setField({ field: 'subType', value: 'Cheque' }))
+      dispatch(setPRField({ field: 'transactionMode', value: 'Adjust' }))
+      dispatch(setPRField({ field: 'subType', value: 'Cheque' }))
     }
   }
 
@@ -290,9 +290,9 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
 
   useEffect(() => {
     if(q.partyId){
-      dispatch(setField({ field: 'type', value: q.partyType }));
-      dispatch(setField({ field: 'payType', value: q.payType }));
-      dispatch(setField({ field: 'selectedAccount', value: q.partyId.toString() }));
+      dispatch(setPRField({ field: 'type', value: q.partyType }));
+      dispatch(setPRField({ field: 'payType', value: q.payType }));
+      dispatch(setPRField({ field: 'selectedAccount', value: q.partyId.toString() }));
     }else{
       console.log("No query")
     }
@@ -311,22 +311,22 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
           <b>Type</b>
           <Radio.Group style={{marginLeft: 10}} value={state.type} onChange={(e)=>{
             if(e.target.value == 'client'){
-              dispatch(setField({ field: 'type', value: e.target.value }));
-              dispatch(setField({ field: 'payType', value: 'Recievable' }));
-              dispatch(setField({ field: 'currency', value: 'PKR' }));
-              dispatch(setField({ field: 'selectedAccount', value: undefined}));
+              dispatch(setPRField({ field: 'type', value: e.target.value }));
+              dispatch(setPRField({ field: 'payType', value: 'Recievable' }));
+              dispatch(setPRField({ field: 'currency', value: 'PKR' }));
+              dispatch(setPRField({ field: 'selectedAccount', value: undefined}));
             }
             if(e.target.value == 'vendor'){
-              dispatch(setField({ field: 'type', value: e.target.value }));
-              dispatch(setField({ field: 'payType', value: 'Payble' }));
-              dispatch(setField({ field: 'currency', value: 'PKR' }));
-              dispatch(setField({ field: 'selectedAccount', value: undefined }));
+              dispatch(setPRField({ field: 'type', value: e.target.value }));
+              dispatch(setPRField({ field: 'payType', value: 'Payble' }));
+              dispatch(setPRField({ field: 'currency', value: 'PKR' }));
+              dispatch(setPRField({ field: 'selectedAccount', value: undefined }));
             }
             if(e.target.value == 'agent'){
-              dispatch(setField({ field: 'type', value: e.target.value }));
-              dispatch(setField({ field: 'payType', value: 'Payble' }));
-              dispatch(setField({ field: 'currency', value: 'USD' }));
-              dispatch(setField({ field: 'selectedAccount', value: undefined }));
+              dispatch(setPRField({ field: 'type', value: e.target.value }));
+              dispatch(setPRField({ field: 'payType', value: 'Payble' }));
+              dispatch(setPRField({ field: 'currency', value: 'USD' }));
+              dispatch(setPRField({ field: 'selectedAccount', value: undefined }));
             }
           }}>
             <Radio value={'client'}>Client</Radio>
@@ -336,7 +336,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         </Col>
         <Col md={3}>
           <b>Pay Type</b>
-          <Radio.Group style={{marginLeft: 10}} disabled={state.type == 'agent' && !state.advance ? true : false} value={state.payType} onChange={(e)=>{dispatch(setField({ field: 'payType', value: e.target.value }))}}>
+          <Radio.Group style={{marginLeft: 10}} disabled={state.type == 'agent' && !state.advance ? true : false} value={state.payType} onChange={(e)=>{dispatch(setPRField({ field: 'payType', value: e.target.value }))}}>
             <Radio value={'Payble'}>Payable</Radio>
             <Radio value={'Recievable'}>Receivable</Radio>
           </Radio.Group>
@@ -346,12 +346,12 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
             {(!(state.selectedAccount==""||state.selectedAccount==undefined)&&state.edit)&&<Col md={2}>
               <button style={{ fontSize: 14, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: "100%", backgroundColor: "#921a12", color: "white", borderRadius: 20 }}
               onClick={()=>{
-                dispatch(setField({ field: 'delete', value: true }))
+                dispatch(setPRField({ field: 'delete', value: true }))
               }}
               ><span style={{marginRight: 5}}>Delete</span> <MdDeleteForever style={{ fontSize: 16 }}/></button>
             </Col>}
             {((state.selectedAccount!=""&&state.selectedAccount!=undefined)&&!state.edit)&&<Col md={3}>
-              <button onClick={()=>{dispatch(setField({ field: 'advance', value: true }))}} style={{ fontSize: 14, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: "100%", backgroundColor: "#1f2937", color: "white", borderRadius: 20 }}><span style={{marginRight: 5}}>Advance Tran.</span> <DollarOutlined  style={{ fontSize: 16 }}/></button>
+              <button onClick={()=>{dispatch(setPRField({ field: 'advance', value: true }))}} style={{ fontSize: 14, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: "100%", backgroundColor: "#1f2937", color: "white", borderRadius: 20 }}><span style={{marginRight: 5}}>Advance Tran.</span> <DollarOutlined  style={{ fontSize: 16 }}/></button>
             </Col>}
             {(!(state.selectedAccount==""||state.selectedAccount==undefined)&&state.edit)&&<Col md={2}>
               <button onClick={() =>{
@@ -372,7 +372,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
           style={{ width: '90%' }}
           placeholder={`Select ${state.type.toUpperCase()}`}
           value={state.selectedAccount}
-          options={state.accounts?.map((account) => ({
+          options={state.PRaccounts?.map((account) => ({
             label: account.name,
             // label: `(${account.Client_Associations?account.Client_Associations[0].Child_Account.code:account.Vendor_Associations?account.Vendor_Associations[0].Child_Account.code:account.code}) ${account.name}`,
             value: account.id,
@@ -387,7 +387,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
               fetchAccounts();
             }else{
               console.log("Selected Account:",e)
-              dispatch(setField({ field: 'selectedAccount', value: e }))
+              dispatch(setPRField({ field: 'selectedAccount', value: e }))
             }
           }}
         />
@@ -399,7 +399,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
             placeholder={`Curr`}
             value={state.currency}
             disabled={state.type != 'agent' ? true : false}
-            onChange={(e)=>{dispatch(setField({ field: 'currency', value: e }))}}
+            onChange={(e)=>{dispatch(setPRField({ field: 'currency', value: e }))}}
           >
             <Select.Option value="PKR">PKR</Select.Option>
             <Select.Option value="USD">USD</Select.Option>
@@ -421,7 +421,7 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         </Col>
       </Row>
       <hr></hr>
-      <div style={{overflowY: 'auto', maxHeight: '350px', width: '100%'}}>
+      <div style={{overflowY: 'auto', maxHeight: '500px', width: '100%'}}>
       {(state.selectedAccount==""||state.selectedAccount==undefined)&&<table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead className='sticky-header' style={{backgroundColor: '#f3f3f3', color: 'black'}}>
           <tr>
@@ -462,14 +462,16 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
         )}
       </table>}
       </div>
-      <div style={{ textAlign: "center", paddingTop: "20px" }}>
-        <Pagination noOfPages={totalPages} currentPage={page} setCurrentPage={fetchOldVouchers}/>
-      </div>
+      {(state.selectedAccount==""||state.selectedAccount==undefined)&&(
+        <div style={{ textAlign: "center", paddingTop: "20px" }}>
+          <Pagination noOfPages={totalPages} currentPage={page} setCurrentPage={fetchOldVouchers}/>
+        </div>
+      )}
       {!(state.selectedAccount==""||state.selectedAccount==undefined)&&<BillComp back={back} companyId={Cookies.get('companyId')} state={state} dispatch={dispatch} />}
       <Modal 
         open={state.delete}
-        onOk={()=>dispatch(setField({ field: 'delete', value: false }))}
-        onCancel={()=> dispatch(setField({ field: 'delete', value: false }))}
+        onOk={()=>dispatch(setPRField({ field: 'delete', value: false }))}
+        onCancel={()=> dispatch(setPRField({ field: 'delete', value: false }))}
         footer={false}
         maskClosable={false}
         title={<>Delete Voucher</>}
@@ -479,9 +481,9 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
           <div className='flex '>
             <button className='btn-red' onClick={()=>{
               deleteVoucher()
-              dispatch(setField({ field: 'delete', value: false }))
+              dispatch(setPRField({ field: 'delete', value: false }))
             }}>Confirm</button>
-            <button className='btn-custom mx-2 px-3'  onClick={() => dispatch(setField({ field: 'delete', value: false }))}>Cancel</button>
+            <button className='btn-custom mx-2 px-3'  onClick={() => dispatch(setPRField({ field: 'delete', value: false }))}>Cancel</button>
           </div>
         </div>
       </Modal>

@@ -134,7 +134,7 @@ const Voyage = ({vesselsData}) => {
   }
   
   const onSubmit = async(data) => {
-    if(data.exportSailDate!="" && data.exportSailDate!=undefined){
+    if(data.type == "Import" || (data.exportSailDate!="" && data.exportSailDate!=undefined)){
       set('submitLoad', true);
       await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_VOYAGE,{...data, VesselId:state.selectedRecord.id})
       .then((x)=>{

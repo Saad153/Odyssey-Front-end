@@ -8,89 +8,123 @@ const LedgerReport = ({ voucherData, from, to, name, company, currency }) => {
   const [opening, setOpening] = useState(0.0);
   const [closing, setClosing] = useState(0.0);
   const [openingVoucher, setOpeningVoucher] = useState({});
-  
-  useEffect(() => {
-    console.log(voucherData)
-    if (name && voucherData.status == "success") {
-      let result = voucherData.result
-      if(currency!="PKR"){
-        // console.log("Voucher Data:", voucherData.result)
-        result = voucherData.result.filter( (x) => x.accountType!="Gain/Loss Account" && x.accountType!="General" )
-        // console.log("Result Data:", result)
-      }
-      let openingBalance = 0.0, closingBalance = 0.0, tempArray = [], prevBalance = 0, isDone = false, finalClosing = 0;
-      result.forEach((y) => {
-        // console.log("TO:",y)
-        let exRate = parseFloat(y["Voucher.exRate"])>0?parseFloat(y["Voucher.exRate"]):1;
-        // console.log(moment(from, "DD-MM-YYYY"))
-        const createdAtDate = moment(y.createdAt);
-        if (
-          createdAtDate.isBetween(moment(from, "DD-MM-YYYY"),moment(to, "DD-MM-YYYY"),"day","[]") ||
-          createdAtDate.isSame(moment(to, "DD-MM-YYYY"),"day")
-        ) {
-          // console.log("Is between")
-          if(!(currency!="PKR" && y.narration && y.narration.includes("Ex-Rate"))){
-            closingBalance =
-              y.type === "debit" ? 
-                closingBalance + (currency=="PKR"? parseFloat(y.defaultAmount):parseFloat(y.amount)): 
-                closingBalance - (currency=="PKR"? parseFloat(y.defaultAmount):parseFloat(y.amount))
-            
-          }
-          if(!(currency!="PKR" && y.narration?.includes("Ex-Rate"))){
+  const [loading, setLoading] = useState(true);
 
-            let tempBalance = parseFloat(closingBalance) + parseFloat(prevBalance)
-            // console.log("Voucher Head",y)
-            let chequeTemp = y["Voucher.chequeNo"] + " | " + moment(y["Voucher.chequeDate"]).format("DD-MM-YYYY")
-            tempArray.push({
-              date: y.createdAt,
-              voucherType: y["Voucher.type"],
-              vouchervType: y["Voucher.vType"],
-              voucherId: y["Voucher.id"],
-              amount: currency=="PKR" ? parseFloat(y.defaultAmount) : parseFloat(y.amount),
-              checkDets: (chequeTemp.includes("null")||chequeTemp.includes("Invalid"))?"":chequeTemp,
-              balance: tempBalance,
-              voucher: y["Voucher.voucher_Id"],
-              type: y.type,
-              narration: y.narration,
-            });
-            finalClosing = tempBalance
-            isDone = true;
-          }
-          
-        } else {
-          y["Voucher.vType"]=="OP"?
-          setOpeningVoucher(y):null
-          openingBalance =
-          y.type === "debit" ?
-            openingBalance + (currency=="PKR"? parseFloat(y.defaultAmount):parseFloat(y.amount)): 
-            openingBalance - (currency=="PKR"? parseFloat(y.defaultAmount):parseFloat(y.amount))
-            prevBalance = isDone?prevBalance:openingBalance;
-        }
-      });
-      setOpening(openingBalance);
-      setClosing(finalClosing);
-      setLedger(tempArray);
+  useEffect(() => {
+    setLoading(true);
+    setOpening(0.0);
+    setClosing(0.0);
+    setOpeningVoucher({});
+    setLedger([]);
+
+    const result = Array.isArray(voucherData?.result) ? voucherData.result : [];
+
+    if (!name || voucherData?.status !== "success" || result.length === 0) {
+      setLoading(false);
+      return;
     }
-  }, []);
+
+    const isPKR = currency === "PKR";
+
+    // For foreign-currency ledgers, exclude system accounts
+    const rows = isPKR
+      ? result
+      : result.filter(
+          (x) =>
+            x.accountType !== "Gain/Loss Account" && x.accountType !== "General"
+        );
+
+    const fromDate = moment(from, "DD-MM-YYYY");
+    const toDate = moment(to, "DD-MM-YYYY");
+
+    const getAmount = (y) => {
+      const raw = isPKR ? y.defaultAmount : y.amount;
+      const parsed = parseFloat(raw);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+    const signedAmount = (y) =>
+      y.type === "debit" ? getAmount(y) : -getAmount(y);
+    const isExRateEntry = (y) => !isPKR && y.narration?.includes("Ex-Rate");
+
+    // Pass 1: split rows into opening (before `from`) and in-range (from..to inclusive)
+    let openingBalance = 0;
+    let openingVoucherEntry = null;
+    const inRange = [];
+
+    rows.forEach((y) => {
+      const createdAt = moment(y.createdAt);
+      if (createdAt.isBetween(fromDate, toDate, "day", "[]")) {
+        inRange.push(y);
+      } else if (createdAt.isBefore(fromDate, "day")) {
+        if (y["Voucher.vType"] === "OP") {
+          openingVoucherEntry = y;
+        }
+        openingBalance += signedAmount(y);
+      }
+      // Entries after `to` are ignored entirely — they belong to neither
+      // the opening balance nor the report period.
+    });
+
+    // Pass 2: build ledger rows with a running balance seeded from the opening
+    let runningBalance = openingBalance;
+    const ledgerRows = [];
+
+    inRange.forEach((y) => {
+      if (isExRateEntry(y)) return;
+
+      runningBalance += signedAmount(y);
+
+      const chequeTemp =
+        y["Voucher.chequeNo"] +
+        " | " +
+        moment(y["Voucher.chequeDate"]).format("DD-MM-YYYY");
+
+      ledgerRows.push({
+        date: y.createdAt,
+        voucherType: y["Voucher.type"],
+        vouchervType: y["Voucher.vType"],
+        voucherId: y["Voucher.id"],
+        amount: getAmount(y),
+        checkDets:
+          chequeTemp.includes("null") || chequeTemp.includes("Invalid")
+            ? ""
+            : chequeTemp,
+        balance: runningBalance,
+        voucher: y["Voucher.voucher_Id"],
+        type: y.type,
+        narration: y.narration,
+      });
+    });
+
+    setOpening(openingBalance);
+    setClosing(ledgerRows.length > 0 ? runningBalance : 0);
+    if (openingVoucherEntry) setOpeningVoucher(openingVoucherEntry);
+    setLedger(ledgerRows);
+    setLoading(false);
+  }, [voucherData, from, to, name, company, currency]);
 
   return (
     <div className="base-page-layout">
-      {ledger.length>0 && <MainTable
-        ledger={ledger}
-        closing={closing}
-        opening={opening}
-        openingVoucher={openingVoucher}
-        name={name}
-        company={company}
-        currency={currency}
-        from={from}
-        to={to}
-      />}
-      {ledger.length==0 && <div style={{textAlign:"center", marginTop:50}}>
-        <Spinner animation="border" role="status"/>
-      </div>}
+      {!loading && ledger.length > 0 && (
+        <MainTable
+          ledger={ledger}
+          closing={closing}
+          opening={opening}
+          openingVoucher={openingVoucher}
+          name={name}
+          company={company}
+          currency={currency}
+          from={from}
+          to={to}
+        />
+      )}
+      {loading && (
+        <div style={{ textAlign: "center", marginTop: 50 }}>
+          <Spinner animation="border" role="status" />
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default React.memo(LedgerReport)
+export default React.memo(LedgerReport);

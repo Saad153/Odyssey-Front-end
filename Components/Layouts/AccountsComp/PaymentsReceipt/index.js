@@ -350,6 +350,9 @@ const PaymentsReceipt = ({ id, voucherData, q }) => {
               }}
               ><span style={{marginRight: 5}}>Delete</span> <MdDeleteForever style={{ fontSize: 16 }}/></button>
             </Col>}
+            {(!(state.selectedAccount==""||state.selectedAccount==undefined)&&state.edit)&&<Col md={2}>
+              <PrintTransaction state={state} companyId={Cookies.get('companyId')} />
+            </Col>}
             {((state.selectedAccount!=""&&state.selectedAccount!=undefined)&&!state.edit)&&<Col md={3}>
               <button onClick={()=>{dispatch(setPRField({ field: 'advance', value: true }))}} style={{ fontSize: 14, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: "100%", backgroundColor: "#1f2937", color: "white", borderRadius: 20 }}><span style={{marginRight: 5}}>Advance Tran.</span> <DollarOutlined  style={{ fontSize: 16 }}/></button>
             </Col>}

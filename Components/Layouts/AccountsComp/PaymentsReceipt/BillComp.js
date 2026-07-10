@@ -1,7 +1,5 @@
 import { getNetInvoicesAmount } from 'functions/amountCalculations';
-import { getAccounts, totalRecieveCalc, getInvoices, getTotal } from './states';
 import openNotification from 'Components/Shared/Notification';
-import TransactionInfo from './TransactionInfo';
 import { Empty, InputNumber, Checkbox, Radio, Input, DatePicker, Select, Modal } from 'antd';
 import { Spinner, Table, Col, Row } from 'react-bootstrap';
 import React, { useEffect, useReducer, useState } from 'react';
@@ -10,11 +8,9 @@ import { incrementTab } from 'redux/tabs/tabSlice';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import axiosClient from 'apis/axiosClient';
-import Gl from './Gl';
 import moment from 'moment';
 import { setPRField } from 'redux/paymentReciept/paymentRecieptSlice';
 import Cookies from 'js-cookie';
-import PrintTransaction from './PrintTransaction';
 
 const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
@@ -815,7 +811,6 @@ const BillComp = ({back, companyId, state, dispatch}) => {
               ))}
             </tbody>
           </table>
-          {/* <PrintTransaction state={state} companyId={companyId} dispatch={dispatch}/> */}
     </Col>}
     <Modal title={`Proceed with transaction?`} open={state.modal} onOk={()=>dispatch(setPRField({ field: 'modal', value: false }))} 
         onCancel={()=>dispatch(setPRField({ field: 'modal', value: false }))} footer={false} maskClosable={false} width={'80%'} centered

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosClient from "apis/axiosClient";
 import moment from "moment";
 
 function recordsReducer(state, action){

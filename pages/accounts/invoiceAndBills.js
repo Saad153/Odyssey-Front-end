@@ -13,9 +13,10 @@ export default invoiceAndBills
 
 export async function getServerSideProps({req,res}){
   const cookies = new Cookies(req, res)
+  const token = cookies.get('token');
   try{
     const invoiceData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_FILTERED_INVOICES,{
-      headers:{ "type": "Job Invoice" }
+      headers:{ Authorization: token, "type": "Job Invoice" }
     }).then((x)=>x.data);
   
     return{

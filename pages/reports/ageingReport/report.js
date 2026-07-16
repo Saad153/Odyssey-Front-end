@@ -3,6 +3,8 @@ import AgeingDetail from 'Components/Layouts/Reports/AgeingReport';
 import Summary from 'Components/Layouts/Reports/AgeingReport/AgeingSummary';
 import Weekly from 'Components/Layouts/Reports/AgeingReport/AgeingWeekly';
 import axiosClient from 'apis/axiosClient';
+import Cookies from 'cookies';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 
 const report = ({query, result}) => {
@@ -28,17 +30,23 @@ const report = ({query, result}) => {
 
 export default report
 
-export async function getServerSideProps(context) {
-  const { query } = context;
-  console.log("Summary Query:", query)
-  const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingSummary`,{headers: query}).then((x)=>x.data);
-  // result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingReport`,{headers:{...query}}).then((x)=>x.data);
+export async function getServerSideProps({ query, req, res }) {
+  const cookies = new Cookies(req, res);
+  const token = cookies.get('token');
+  try {
+    const result = await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/ageingSummary`,{headers: {...query, Authorization: token}}).then((x)=>x.data);
 
-  return{ 
-    props: {
-      query,
-      result
+    return{
+      props: {
+        query,
+        result
+      }
     }
+  } catch (error) {
+    if (error.response?.status === 401) {
+      return handleSSRAuthError(error, res, cookies);
+    }
+    throw error;
   }
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import OfficeVoucher from 'Components/Layouts/AccountsComp/OfficeVouchers/OfficeVoucher';
 import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
+import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
 const officeVoucher = ({voucherData, id, employeeData}) => {
   return (
@@ -11,16 +12,17 @@ const officeVoucher = ({voucherData, id, employeeData}) => {
 
 export default officeVoucher
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps({ req, res, params }) {
     const cookies = new Cookies(req, res)
+    const token = cookies.get('token');
   try{
-    const { params } = context;
     let voucherData = { }
-    const employeeData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_EMPLOYEE_ID_AND_NAME)
-    .then((x)=>x.data.result);
+    const employeeData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_EMPLOYEE_ID_AND_NAME, {
+      headers:{ Authorization: token }
+    }).then((x)=>x.data.result);
     if(params.id!="new") {
       voucherData = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_OFFICE_VOUCHER_BY_ID,{
-        headers:{ "id": `${params.id}` }
+        headers:{ Authorization: token, "id": `${params.id}` }
       }).then((x)=>x.data.result);
         if (!voucherData.id) {
         return {
@@ -28,7 +30,7 @@ export async function getServerSideProps(context) {
         }
       }
     }
-    return{ 
+    return{
       props: {
         voucherData,
         id:params.id,
@@ -36,6 +38,9 @@ export async function getServerSideProps(context) {
       }
     }
   }catch(error){
-    return handleSSRAuthError(error, res, cookies);
+    if (error.response?.status === 401) {
+      return handleSSRAuthError(error, res, cookies);
+    }
+    throw error;
   }
 }

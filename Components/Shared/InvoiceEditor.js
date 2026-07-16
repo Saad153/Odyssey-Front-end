@@ -56,7 +56,7 @@ const InvoiceEditor = ({data, reload}) => {
 
   return (
   <>
-    <button className='btn-custom px-3 text-center' type='button' onClick={()=>setVisible(true)}>
+    <button disabled={data.resultOne?.approved!="0"} className={(data.resultOne?.approved!="0"?'btn-custom-disabled':'btn-custom')+' px-3 text-center'} type='button' onClick={()=>setVisible(true)}>
     <PlusOutlined style={{fontSize:18, marginTop:1, paddingTop:2, paddingBottom:2}} /><span style={{ fontSize:14}}>Charge</span>
     </button>
     {visible &&

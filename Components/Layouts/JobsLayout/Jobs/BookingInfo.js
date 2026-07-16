@@ -8,8 +8,7 @@ import TimeComp from 'Components/Shared/Form/TimeComp';
 import { Row, Col } from 'react-bootstrap';
 import CustomBoxSelect from 'Components/Shared/Form/CustomBoxSelect';
 // import Notes from "./Notes";
-// import ports from "jsonData/ports";
-// import destinations from "jsonData/destinations";
+import { getAllPorts, getAllDestinations, getAllAirports } from 'apis/pickLists';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementTab, removeTab } from 'redux/tabs/tabSlice';
 import { getStatus } from './states';
@@ -38,15 +37,18 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
   const [airports, setAirports] = useState([]);
   const [destinations, setDestinations] = useState([]);
 
+  const fetchPorts = () => {
+    getAllPorts().then(rows => setPorts({ ports: rows }));
+  };
+
   // Load only what's needed based on job type
   useEffect(() => {
     if (type === "SE" || type === "SI") {
-      import("jsonData/ports").then(m => setPorts(m.default));
-      import("jsonData/destinations").then(m => setDestinations(m.default));
+      fetchPorts();
     }
     if (type === "AE" || type === "AI") {
-      import("jsonData/airports").then(m => setAirports(m.default));
-      import("jsonData/destinations").then(m => setDestinations(m.default));
+      getAllAirports().then(setAirports);
+      getAllDestinations().then(setDestinations);
     }
   }, [type]);
 
@@ -352,7 +354,7 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
               options={ports.ports} />
             <FaPlus onClick={() => setIsOpen(true)} style={{ cursor: "pointer" }} />
             <Space />
-            {isOpen && <AddPort isOpen={isOpen} onClose={() => setIsOpen(false)} />}
+            {isOpen && <AddPort isOpen={isOpen} onClose={() => setIsOpen(false)} onCreated={fetchPorts} />}
           </>
           }
           {(type == "AE" || type == "AI") && <>
@@ -511,7 +513,7 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
                     await Router.push(`${type == "SE" ? "/seaJobs/export/bl/" : type == "SI" ? "/seaJobs/import/bl/" : type == "AE" ? "/airJobs/export/bl/" : "/airJobs/import/bl/"}${state.selectedRecord.Bl != null ? state.selectedRecord.Bl.id : "new"}`);
                   }
                 }}
-            >{(type == "SE" || type == "SI") ? "BL" : "AWBL"}</button>
+            >{(type == "SE" || type == "SI") ? "Bill of Lading" : "AWBL"}</button>
             <Popover
               content={
                 <>{state.InvoiceList?.map((x, i) =>

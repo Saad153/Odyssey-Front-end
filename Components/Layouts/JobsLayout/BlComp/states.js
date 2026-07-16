@@ -387,6 +387,16 @@ const setAndFetchBlData = async(reset, state, allValues, set, dispatch, blData) 
   reset(result);
 } 
 
+// Some port names carry alternate-spelling and/or UN/LOCODE parentheticals
+// baked in (e.g. "Raumo (Rauma) (FIRAU)"), inconsistently across the source
+// data. Strip all of that out and append the country for a clean, uniform
+// "City, Country" print label (e.g. "Raumo, Finland").
+function formatPortForPrint(port) {
+  if (!port) return null;
+  const cleanName = port.name.replace(/\s*\([^)]*\)/g, '').trim();
+  return `${cleanName}, ${port.country}`;
+}
+
 // Browser-safe: parses HTML, inspects <p> elements, and returns cleaned plain text
 function cleanNullParagraphs(html) {
   html = html.replace(/&nbsp;/gi, ' ');
@@ -403,6 +413,7 @@ function cleanNullParagraphs(html) {
     if (
       lower === '' ||
       lower === 'null' ||
+      lower === 'tel' ||
       lower.includes('tel null')
     ) {
       return;
@@ -431,5 +442,6 @@ export {
   initialState,
   baseValues,
   setJob,
-  cleanNullParagraphs
+  cleanNullParagraphs,
+  formatPortForPrint
 }

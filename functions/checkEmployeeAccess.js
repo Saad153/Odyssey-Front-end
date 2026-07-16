@@ -1,53 +1,28 @@
-import { setAccesLevels } from 'functions/setAccesLevels';
 import logout from 'functions/logout';
 import Cookies from "js-cookie";
 import jwt_decode from 'jwt-decode';
 
+// Returns whether the current user is an admin. Only logs out when the
+// session itself is genuinely invalid (no token, or it fails to decode) -
+// not having "admin" access is a normal, expected case for most users and
+// must not log them out.
 function checkEmployeeAccess(){
-
-    let token = null;
-    let firstCall1 = false;
-  if(Cookies.get("token") != null && Cookies.get("token") != "" && Cookies.get("token") != "undefined"){
-    let tempToken = Cookies.get('token');
-    if(tempToken == Cookies.get('token')){
-      token = jwt_decode(tempToken);
-      console.log("Check Employee Access", token.access) 
-    }else{
-      logout();
-    }
-  }else if(!firstCall1){
+  const token = Cookies.get("token");
+  if(!token || token === "undefined"){
     logout();
+    return false;
   }
 
-  let levels = null;
-  if(token != null){
-    levels = token.access;
+  let decoded;
+  try {
+    decoded = jwt_decode(token);
+  } catch (err) {
+    logout();
+    return false;
   }
 
-  let access = false;
-  let newTemp = [];
-  if(levels.length > 0){
-    levels.split(",").forEach((x)=>{
-      newTemp.push(x)
-    })
-
-  }
-  newTemp.forEach((x)=>{
-    x = x.trim()
-    if(x == 'admin'){
-      // console.log("admin triggered")
-      access = true;
-      // console.log(access);
-    }else{
-      logout();
-    }
-
-   
-  })
-  
-  
-
-  return access
+  const levels = decoded.access || "";
+  return levels.split(",").some((x) => x.trim() === 'admin');
 }
 
 export { checkEmployeeAccess }

@@ -1,7 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Row, Col } from 'react-bootstrap';
 import AuditLog from './AuditLog';
+import DashboardStats from './DashboardStats';
+import ChartComp from './ChartComp';
+import PendingInvoices from 'Components/Layouts/Dashboard/Home/Accounts';
 import UploadBackUp from './UploadBackUp';
 import Cookies from 'js-cookie';
 import OllamaChat from './ollama';
@@ -40,12 +44,36 @@ const Main = ({ sessionData }) => {
   }, [username])
 
   return (
-    <div className="base-page-layout">
+    <div className="base-page-layout home-styles dashboard-home-styles">
       {/* {username == 'Saad' && <VannaChat /> } */}
       {/* <OllamaChat/> */}
       {/* {username == 'Saad' && <UploadBackUp /> } */}
       {/* <UploadBackUp /> */}
-      {audit && <AuditLog /> }
+      {audit && <>
+        <DashboardStats />
+        <Row className="mt-2">
+          <Col md={6} className="mb-3">
+            <div className="wh-bg-round">
+              <ChartComp type="One" />
+            </div>
+          </Col>
+          <Col md={6} className="mb-3">
+            <div className="wh-bg-round">
+              <ChartComp type="Two" />
+            </div>
+          </Col>
+        </Row>
+        <Row className="mt-2">
+          <Col md={7} className="mb-3">
+            <div className="wh-bg-round" style={{ height: '100%' }}>
+              <PendingInvoices />
+            </div>
+          </Col>
+          <Col md={5} className="mb-3">
+            <AuditLog />
+          </Col>
+        </Row>
+      </> }
     </div>
   );
 };

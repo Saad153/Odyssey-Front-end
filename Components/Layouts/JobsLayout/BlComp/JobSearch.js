@@ -5,7 +5,7 @@ import { Tag, Input } from 'antd';
 import moment from "moment";
 import { setJob } from "./states";
 
-const JobSearch = ({state, useWatch, dispatch, control, reset}) => {
+const JobSearch = ({state, useWatch, dispatch, control, reset, id}) => {
   const set = (a, b) => dispatch({type:'toggle', fieldName:a, payload:b});
   const setAll = (obj) => dispatch({type:'set', payload:obj});
   const allValues = useWatch({control});
@@ -42,7 +42,7 @@ const JobSearch = ({state, useWatch, dispatch, control, reset}) => {
       }).map((x, i)=> {
           return (
           <tr key={i} className={`${x.check?"table-select-list-selected":"table-select-list"}`}
-            onClick={()=>setJob(set, x, state, reset, allValues, dispatch)}
+            onClick={()=>setJob(set, x, state, reset, allValues, dispatch, id)}
           >
             <td className='text-center px-3'>
               {x.check?<CheckCircleOutlined style={{color:'green', position:'relative', bottom:2}} />:i+1 }

@@ -237,7 +237,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
   const checkApprovability = (x) => {
     let result = false;
     if(!checkEmployeeAccess()){
-      return result
+      return true // non-admins can view the invoice but can't toggle approve/unapprove
     }
     if(x?.payType=="Recievable" && x?.recieved=="0"){
         result = false;

@@ -1,18 +1,16 @@
 import React from 'react'
 import axiosClient from 'apis/axiosClient';
-import PortOfDischarge from 'Components/Layouts/Setup/portOfDischarge';
+import Airports from 'Components/Layouts/Setup/Airports';
 import Cookies from 'cookies';
 import { handleSSRAuthError } from 'functions/withAuthRedirect';
 
-const ports = ({ portsData, initialPage, initialSearch }) => {
+const airports = ({ airportsData, initialPage, initialSearch }) => {
   return (
-    <div className='base-page-layout'>
-      <PortOfDischarge portsData={portsData} initialPage={initialPage} initialSearch={initialSearch} />
-    </div>
+    <Airports airportsData={airportsData} initialPage={initialPage} initialSearch={initialSearch} />
   )
 }
 
-export default ports
+export default airports
 
 export async function getServerSideProps({ query, req, res }) {
   const cookies = new Cookies(req, res);
@@ -23,7 +21,7 @@ export async function getServerSideProps({ query, req, res }) {
   const initialSearch = typeof query.search === 'string' ? query.search.trim() : '';
 
   try {
-    const response = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_PORTS, {
+    const response = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_AIRPORTS, {
       headers: { Authorization: token },
       params: {
         search: initialSearch || undefined,
@@ -35,7 +33,7 @@ export async function getServerSideProps({ query, req, res }) {
 
     return {
       props: {
-        portsData: data,
+        airportsData: data,
         initialPage,
         initialSearch,
       }

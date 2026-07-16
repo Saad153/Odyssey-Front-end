@@ -270,6 +270,15 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/setup/vendor/[id]"){
       setToggleState('2-8');
     }
+    if(newRouter.pathname==="/setup/ports"){
+      setToggleState('2-10');
+    }
+    if(newRouter.pathname==="/setup/destinations"){
+      setToggleState('2-11');
+    }
+    if(newRouter.pathname==="/setup/airports"){
+      setToggleState('2-12');
+    }
     if(newRouter.pathname==="setup/voyage"){
       setToggleState('2-4');
     }
@@ -464,6 +473,8 @@ const MainLayout = ({children}) => {
     else if(x.key=='2-1'){ Router.push('/employees') }
     else if(x.key=='2-2'){ Router.push('/setup/clientList') }
     else if(x.key=='2-10'){ Router.push('/setup/ports') }
+    else if(x.key=='2-11'){ Router.push('/setup/destinations') }
+    else if(x.key=='2-12'){ Router.push('/setup/airports') }
     else if(x.key=='2-7'){ Router.push(`/setup/client/${setKey(x)}`) } //these routes are also settled in 2nd useEffect
     else if(x.key=='2-3'){ Router.push('/commodity') }
     else if(x.key=='2-4'){ Router.push('/setup/voyage') }

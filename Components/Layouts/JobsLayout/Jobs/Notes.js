@@ -58,6 +58,7 @@ const Notes = ({state, dispatch}) => {
   return (
     <div className='my-3' >
       <p>Tracing Notes</p>
+      <div className='d-flex' style={{gap:8}}>
       <Popover trigger="click"
         content={
           <div className='p-2 m-0' style={{border:'1px solid silver'}}>
@@ -109,8 +110,9 @@ const Notes = ({state, dispatch}) => {
         }
         trigger="click"
       >
-      <div className='div-btn px-3 mt-2' style={{maxWidth:110}} onClick={()=>getNotes()}>View Notes</div>
+      <div className='div-btn px-3' style={{maxWidth:110}} onClick={()=>getNotes()}>View Notes</div>
       </Popover>
+      </div>
     </div>
   )
 }

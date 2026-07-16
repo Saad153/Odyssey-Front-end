@@ -1,6 +1,6 @@
 import React from "react";
 import ReactToPrint from "react-to-print";
-import { cleanNullParagraphs } from './states';
+import { cleanNullParagraphs, formatPortForPrint } from './states';
 import parse from "html-react-parser";
 import ports from '../../../../jsonData/ports'
 import moment from "moment";
@@ -32,7 +32,7 @@ function pTagsToString(html) {
     .filter(text => {
       if (!text) return false;
       const lower = text.toLowerCase();
-      return lower !== "null" && !lower.includes("tel null");
+      return lower !== "null" && lower !== "tel" && !lower.includes("tel null");
     })
     .join("\n");
 }
@@ -128,12 +128,12 @@ console.log(pTagsToString(state.notifyOneContent))
           {/*Initial Place of Reciept*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 103 : 101}mm`, left: '77mm', width: '55mm', height: '5mm', fontWeight: 'bold' }}>{(() => {
               const port = ports.ports.find((x) => x.id == allValues.por);
-              return port ? `${port.name.toUpperCase()}` : allValues.por?.toUpperCase();
+              return port ? formatPortForPrint(port).toUpperCase() : allValues.por?.toUpperCase();
             })()}</span>
             {/*Port of Discharge*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 103 : 101}mm`, left: '140mm', width: '55mm', height: '5mm', fontWeight: 'bold' }}>{(() => {
               const port = ports.ports.find((x) => x.id == allValues.podTwo);
-              return port ? `${port.name.toUpperCase()}` : allValues.podTwo?.toUpperCase();
+              return port ? formatPortForPrint(port).toUpperCase() : allValues.podTwo?.toUpperCase();
             })()}</span>
             {/*Vessel*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 115 : 113}mm`, left: '7mm', width: '40mm', height: '5mm', fontWeight: 'bold' }}>{allValues.vessel}</span>
@@ -142,12 +142,12 @@ console.log(pTagsToString(state.notifyOneContent))
             {/*Port of Loading*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 115 : 113}mm`, left: '77mm', width: '55mm', height: '5mm', fontWeight: 'bold' }}>{(() => {
               const port = ports.ports.find((x) => x.id == allValues.polTwo);
-              return port ? `${port.name.toUpperCase()}` : allValues.polTwo?.toUpperCase();
+              return port ? formatPortForPrint(port).toUpperCase() : allValues.polTwo?.toUpperCase();
             })()}</span>
             {/*Place of Delivery*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 115 : 113}mm`, left: '140mm', width: '55mm', height: '5mm', fontWeight: 'bold' }}>{(() => {
               const port = ports.ports.find((x) => x.id == allValues.poDeliveryTwo);
-              return port ? `${port.name.toUpperCase()}` : allValues.poDeliveryTwo?.toUpperCase();
+              return port ? formatPortForPrint(port).toUpperCase() : allValues.poDeliveryTwo?.toUpperCase();
             })()}</span>
             {/*CBM*/}
             <span style={{ position: 'absolute', zIndex: 1, top: `${!borders ? 130 : 127}mm`, left: '182mm', width: '22mm', height: '5mm', fontWeight: 'bold' }}>{!cbm && `${parseFloat(allValues.cbm).toFixed(3)} CBM`}</span>

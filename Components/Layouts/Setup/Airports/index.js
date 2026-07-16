@@ -5,7 +5,7 @@ import { Modal, Input, Pagination, Spin, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import CreateOrEdit from './CreateOrEdit';
 import openNotification from 'Components/Shared/Notification';
-import { getPorts, deletePort } from 'apis/pickLists';
+import { getAirports, deleteAirport } from 'apis/pickLists';
 
 function recordsReducer(state, action) {
     switch (action.type) {
@@ -28,9 +28,10 @@ function recordsReducer(state, action) {
 }
 
 const baseValues = {
-    portId: "",
-    portName: "",
-    portCountry: "",
+    airportCode: "",
+    airportName: "",
+    city: "",
+    country: "",
 }
 
 const initialState = {
@@ -42,37 +43,37 @@ const initialState = {
     selectedRecord: {},
 };
 
-const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => {
+const Airports = ({ airportsData, initialPage = 1, initialSearch = '' }) => {
     const [state, dispatch] = useReducer(recordsReducer, initialState);
     const { records, visible } = state;
     const [searchText, setSearchText] = useState(initialSearch);
     const [loading, setLoading] = useState(false);
     const [tablePagination, setTablePagination] = useState({
         currentPage: initialPage,
-        totalRecords: portsData?.pagination?.totalRecords || 0,
-        totalPages: portsData?.pagination?.totalPages || 1,
+        totalRecords: airportsData?.pagination?.totalRecords || 0,
+        totalPages: airportsData?.pagination?.totalPages || 1,
     });
     const searchTimerRef = useRef(null);
     const pageSize = 50;
 
     useEffect(() => {
-        dispatch({ type: 'toggle', fieldName: 'records', payload: portsData?.result || [] });
+        dispatch({ type: 'toggle', fieldName: 'records', payload: airportsData?.result || [] });
         setTablePagination({
-            currentPage: portsData?.pagination?.currentPage || initialPage,
-            totalRecords: portsData?.pagination?.totalRecords || 0,
-            totalPages: portsData?.pagination?.totalPages || 1,
+            currentPage: airportsData?.pagination?.currentPage || initialPage,
+            totalRecords: airportsData?.pagination?.totalRecords || 0,
+            totalPages: airportsData?.pagination?.totalPages || 1,
         });
-    }, [portsData, initialPage]);
+    }, [airportsData, initialPage]);
 
     const totalRecords = tablePagination.totalRecords || records.length;
     const totalPages = tablePagination.totalPages || 1;
     const activePage = tablePagination.currentPage || 1;
     const startIndex = (activePage - 1) * pageSize + 1;
 
-    const fetchPorts = async (nextPage = 1, nextSearch = searchText) => {
+    const fetchAirports = async (nextPage = 1, nextSearch = searchText) => {
         setLoading(true);
         try {
-            const payload = await getPorts({ page: nextPage, limit: pageSize, search: nextSearch.trim() });
+            const payload = await getAirports({ page: nextPage, limit: pageSize, search: nextSearch.trim() });
             const nextRecords = Array.isArray(payload?.result) ? payload.result : [];
             const pagination = payload?.pagination || {};
 
@@ -83,7 +84,7 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
                 totalPages: Number(pagination.totalPages) || 1,
             });
         } catch (error) {
-            console.error('Ports fetch failed', error);
+            console.error('Airports fetch failed', error);
         } finally {
             setLoading(false);
         }
@@ -98,28 +99,28 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
         }
 
         searchTimerRef.current = setTimeout(() => {
-            fetchPorts(1, value);
+            fetchAirports(1, value);
         }, 600);
     };
 
     const handlePageChange = (page) => {
-        fetchPorts(page, searchText);
+        fetchAirports(page, searchText);
     };
 
     const handleDelete = async (record) => {
         try {
-            await deletePort(record.id);
-            openNotification('Success', 'Port Deleted!', 'green');
-            fetchPorts(activePage, searchText);
+            await deleteAirport(record.id);
+            openNotification('Success', 'Airport Deleted!', 'green');
+            fetchAirports(activePage, searchText);
         } catch (error) {
-            openNotification('Error', 'Could Not Delete Port', 'red');
+            openNotification('Error', 'Could Not Delete Airport', 'red');
         }
     };
 
     return (
-        <div>
+        <div className='base-page-layout'>
             <Row>
-                <Col md={6}><h5>Ports</h5></Col>
+                <Col md={6}><h5>Airports</h5></Col>
                 <Col md={6}><button className='btn-custom right' onClick={() => dispatch({ type: 'create' })}>Create</button></Col>
             </Row>
             <hr className='my-2' />
@@ -129,7 +130,7 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
                         allowClear
                         value={searchText}
                         style={{ maxWidth: 360 }}
-                        placeholder='Search ports'
+                        placeholder='Search airports'
                         onChange={handleSearch}
                     />
                 </Col>
@@ -144,9 +145,10 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
                     <thead>
                         <tr>
                             <th style={{ width: 70 }}>Sr No</th>
-                            <th>Port Code</th>
-                            <th>Port Name</th>
-                            <th>Port Country</th>
+                            <th>Code</th>
+                            <th>Airport Name</th>
+                            <th>City</th>
+                            <th>Country</th>
                             <th>Created Date</th>
                             <th>Modify</th>
                         </tr>
@@ -154,7 +156,7 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={6}>
+                                <td colSpan={7}>
                                     <div className='d-flex justify-content-center py-3'>
                                         <Spin />
                                     </div>
@@ -164,13 +166,14 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
                             records.map((x, index) => (
                                 <tr key={x.id || index}>
                                     <td>{startIndex + index}</td>
-                                    <td>{x.portId}</td>
-                                    <td>{x.portName}</td>
-                                    <td>{x.portCountry}</td>
+                                    <td>{x.airportCode}</td>
+                                    <td>{x.airportName}</td>
+                                    <td>{x.city}</td>
+                                    <td>{x.country}</td>
                                     <td>{moment(x.createdAt).format("DD-MM-YYYY")}</td>
                                     <td>
                                         <EditOutlined className='modify-edit' onClick={() => dispatch({ type: 'edit', payload: x })} />
-                                        <Popconfirm title="Delete this port?" onConfirm={() => handleDelete(x)} okText="Yes" cancelText="No">
+                                        <Popconfirm title="Delete this airport?" onConfirm={() => handleDelete(x)} okText="Yes" cancelText="No">
                                             <DeleteOutlined className='mx-2' style={{ cursor: 'pointer' }} />
                                         </Popconfirm>
                                     </td>
@@ -192,7 +195,7 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
             <Modal
                 open={visible}
                 onOk={() => dispatch({ type: 'modalOff' })} onCancel={() => dispatch({ type: 'modalOff' })}
-                width={800} footer={false} centered={false}
+                width={900} footer={false} centered={false}
             >
                 <CreateOrEdit state={state} dispatch={dispatch} baseValues={baseValues} />
             </Modal>
@@ -200,4 +203,4 @@ const PortOfDischarge = ({ portsData, initialPage = 1, initialSearch = '' }) => 
     )
 }
 
-export default PortOfDischarge
+export default Airports

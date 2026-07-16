@@ -2,49 +2,60 @@ import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
 import InputComp from 'Components/Shared/Form/InputComp';
 import DateComp from 'Components/Shared/Form/DateComp';
 import { Row, Col } from 'react-bootstrap';
-import ports from "jsonData/ports";
-import airports from "jsonData/airports";
-import React from 'react';
+import { getAllPorts, getAllAirports } from 'apis/pickLists';
+import React, { useEffect, useState } from 'react';
 
 const Routing = ({register, control, errors, state, useWatch, type}) => {
 
   const Space = () => <div className='mt-2'/>
 
+  const [ports, setPorts] = useState([]);
+  const [airports, setAirports] = useState([]);
+
+  useEffect(() => {
+    if (type === "SE" || type === "SI") {
+      getAllPorts().then(setPorts);
+    }
+    if (type === "AE" || type === "AI") {
+      getAllAirports().then(setAirports);
+    }
+  }, [type]);
+
   return (
     <>
     {type == "SE" && <Row>
         <Col md={6}>
-            <SelectSearchComp register={register} name='por' control={control} 
-                label={'Initial Place Of Receipt'} 
+            <SelectSearchComp register={register} name='por' control={control}
+                label={'Initial Place Of Receipt'}
                 width={"100%"}
-                options={ports.ports} />
+                options={ports} />
             <Space/>
         </Col>
     </Row>
     }
     <Row>
         <Col md={6}>
-            <SelectSearchComp register={register} name='pol' control={control} 
-                label={(type=="SE"||type=="SI")?'Port Of Loading':'Airport of Loading'} 
+            <SelectSearchComp register={register} name='pol' control={control}
+                label={(type=="SE"||type=="SI")?'Port Of Loading':'Airport of Loading'}
                 width={"100%"}
-                options={(type=="SE"||type=="SI")?ports.ports:airports} />
+                options={(type=="SE"||type=="SI")?ports:airports} />
             <Space/>
         </Col>
-        <Col md={6} style={{paddingTop:19}}> 
+        <Col md={6} style={{paddingTop:19}}>
             <DateComp register={register} name='polDate' control={control} label=''  /> <Space/>
         </Col>
         <Col md={6}>
-            <SelectSearchComp register={register} name='pod' control={control} 
+            <SelectSearchComp register={register} name='pod' control={control}
                 label={(type=="SE"||type=="SI")?'Port Of Discharge':'Airport of Discharge'} width={"100%"}
-                options={(type=="SE"||type=="SI")?ports.ports:airports} />
+                options={(type=="SE"||type=="SI")?ports:airports} />
             <Space/>
         </Col>
-        <Col md={6} style={{paddingTop:19}}> 
+        <Col md={6} style={{paddingTop:19}}>
             <DateComp register={register} name='podDate' control={control} label='' /> <Space/>
         </Col>
         <Col md={6}>
             <SelectSearchComp register={register} name='fd' control={control} label='Final Destination' width={"100%"}
-                options={ports.ports} />
+                options={ports} />
             <Space/>
         </Col>
         <Col md={6}></Col>
@@ -54,7 +65,7 @@ const Routing = ({register, control, errors, state, useWatch, type}) => {
         <Col md={6}></Col>
         <Col md={6}>
             <SelectSearchComp register={register} name='terminal' control={control} label='Terminal' width={"100%"}
-                options={[  
+                options={[
                     {id:'Direct', name:'Direct'},
                 ]}
             />
@@ -63,7 +74,7 @@ const Routing = ({register, control, errors, state, useWatch, type}) => {
         <Col md={6}></Col>
         <Col md={6}>
             <SelectSearchComp register={register} name='delivery' control={control} label='Delivery' width={"100%"}
-                options={[  
+                options={[
                     {id:'CY/CY', name:'CY/CY'},
                 ]}
             /> <Space/>

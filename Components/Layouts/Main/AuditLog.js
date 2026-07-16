@@ -4,8 +4,10 @@ import React, { useEffect, useRef, useState } from "react";
 import axiosClient from "apis/axiosClient";
 import Cookies from "js-cookie";
 import moment from "moment";
+import Router from "next/router";
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
+const VISIBLE_ROWS = 8;
 
 const AuditLog = () => {
   const [logs, setLogs] = useState([]);
@@ -73,13 +75,10 @@ const AuditLog = () => {
 
   return (
     <div
+      className="wh-bg-round"
       style={{
-        width: "80vw",
-        height: "75vh",
-        margin: "0 auto",
-        border: "1px solid #222",
-        borderRadius: "8px",
-        padding: "16px",
+        width: "100%",
+        height: "360px",
         boxSizing: "border-box",
         display: "flex",
         flexDirection: "column",
@@ -91,15 +90,16 @@ const AuditLog = () => {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          marginBottom: "12px",
+          alignItems: "flex-start",
+          marginBottom: "10px",
         }}
       >
-        <h4 style={{ margin: 0 }}>Audit Log</h4>
-        <div style={{ textAlign: "right", fontSize: "13px" }}>
+        <h6 className="fw-7 top-section-heading" style={{ margin: 0 }}>Audit Log</h6>
+        <div style={{ textAlign: "right", fontSize: "11px" }}>
           <div style={{ color: "green", fontWeight: 600 }}>
             ● Live (10s refresh)
           </div>
-          <div>
+          <div className="grey-txt">
             Last updated:{" "}
             {lastUpdated
               ? moment(lastUpdated).format("HH:mm:ss")
@@ -108,7 +108,7 @@ const AuditLog = () => {
         </div>
       </div>
 
-      {/* SCROLLABLE TABLE */}
+      {/* SCROLLABLE TABLE (most recent VISIBLE_ROWS entries) */}
       <div
         style={{
           flex: 1,
@@ -125,7 +125,6 @@ const AuditLog = () => {
         >
           <thead>
             <tr style={{ position: "sticky", top: 0, background: "#f3f3f3" }}>
-              <th style={th}>#</th>
               <th style={th}>Date | Time</th>
               <th style={th}>User</th>
               <th style={th}>Form</th>
@@ -137,7 +136,7 @@ const AuditLog = () => {
           <tbody>
             {loading && (
               <tr>
-                <td colSpan="6" style={{ padding: 16, textAlign: "center" }}>
+                <td colSpan="5" style={{ padding: 16, textAlign: "center" }}>
                   Loading audit logs...
                 </td>
               </tr>
@@ -145,18 +144,17 @@ const AuditLog = () => {
 
             {!loading && logs.length === 0 && (
               <tr>
-                <td colSpan="6" style={{ padding: 16, textAlign: "center" }}>
+                <td colSpan="5" style={{ padding: 16, textAlign: "center" }}>
                   No audit records found.
                 </td>
               </tr>
             )}
 
-            {logs.map((log, index) => (
+            {logs.slice(0, VISIBLE_ROWS).map((log, index) => (
               <tr key={log.id || index}>
-                <td style={td}>{index + 1}</td>
                 <td style={td}>
                   {moment(log.createdAt).format(
-                    "DD-MM-YYYY | HH:mm:ss"
+                    "DD-MM-YY | HH:mm:ss"
                   )}
                 </td>
                 <td style={td}>{log.Employee?.name || ""}</td>
@@ -167,6 +165,16 @@ const AuditLog = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* FOOTER */}
+      <div style={{ textAlign: "right", marginTop: "8px" }}>
+        <span
+          className="custom-link fs-12"
+          onClick={() => Router.push('/reports/auditLog')}
+        >
+          View Full Log →
+        </span>
       </div>
     </div>
   );

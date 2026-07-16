@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Col, Row } from "react-bootstrap";
 import parse from "html-react-parser";
 import ReactToPrint  from "react-to-print";
-import { cleanNullParagraphs } from './states';
+import { cleanNullParagraphs, formatPortForPrint } from './states';
 import ports from '../../../../jsonData/ports'
 import moment from 'moment';
 
@@ -129,7 +129,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                   <div className="fw-7" style={{marginTop: 5, marginBottom: 5, marginLeft: 15}}>
                     {(() => {
                       const port = ports.ports.find((x) => x.id == allValues.por);
-                      return port ? `${port.name}, ${port.country}` : allValues.por;
+                      return port ? formatPortForPrint(port) : allValues.por;
                     })()}
                   </div>
                 </div>
@@ -141,7 +141,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                   <div className="fw-7" style={{marginTop: 5, marginBottom: 5, marginLeft: 15}}>
                     {(() => {
                       const port = ports.ports.find((x) => x.id == allValues.podTwo);
-                      return port ? `${port.name}, ${port.country}` : allValues.podTwo;
+                      return port ? formatPortForPrint(port) : allValues.podTwo;
                     })()}
                   </div>
                 </div>
@@ -169,7 +169,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                   >
                     {(() => {
                       const port = ports.ports.find((x) => x.id == allValues.polTwo);
-                      return port ? `${port.name}, ${port.country}` : allValues.polTwo;
+                      return port ? formatPortForPrint(port) : allValues.polTwo;
                     })()}
                   </div>
                 </div>
@@ -181,7 +181,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                   <div className="fw-7" style={{marginTop: 5, marginBottom: 5, marginLeft: 15}}>
                     {(() => {
                       const port = ports.ports.find((x) => x.id == allValues.poDeliveryTwo);
-                      return port ? `${port.name}, ${port.country}` : allValues.poDeliveryTwo;
+                      return port ? formatPortForPrint(port) : allValues.poDeliveryTwo;
                     })()}
                   </div>
                 </div>

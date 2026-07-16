@@ -5,208 +5,121 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 import moment from "moment";
 import axiosClient from 'apis/axiosClient';
 
-const ChartComp = ({chartData, type}) => {
+// Validated against scripts/validate_palette.js (light mode): all checks pass.
+const COLOR_INCOME = '#1D90C5';
+const COLOR_EXPENSE = '#D4442E';
+const COLOR_CASHFLOW = '#0696AC';
 
-  const [chartOptions, setChartOptions] = useState({
-    series: [
-      { name: "Income", data: [] },
-      { name: "Expense", data: [] },
-    ],
-    options: {
-      chart: {
-        height: 350,
-        type: 'line',
-        dropShadow: { enabled: true, color: '#000', top: 18, left: 7, blur: 10, opacity: 0.2 },
-        toolbar: {
-          show: false
-        }
-      },
-      colors: ['#40a347', '#EE7C6F'],
-      dataLabels: { enabled: true },
-      stroke: { curve: 'smooth' },
-      title: {
-        text: 'Income & Expense',
-        align: 'left'
-      },
-      grid: {
-        borderColor: '#e7e7e7',
-        row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.5 },
-      },
-      markers: {
-        size: 1
-      },
-      xaxis: {
-        categories: [],
-        title: {
-          text: 'Month'
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Amount'
-        },
-      },
-    },
+const baseOptions = (title, colors) => ({
+  chart: {
+    height: 320,
+    type: 'line',
+    toolbar: { show: false },
+  },
+  colors,
+  dataLabels: { enabled: false },
+  stroke: { curve: 'smooth', width: 2 },
+  title: { text: title, align: 'left' },
+  grid: {
+    borderColor: '#e7e7e7',
+    row: { colors: ['#f8f8f8', 'transparent'], opacity: 0.5 },
+  },
+  markers: { size: 0, hover: { size: 5 } },
+  tooltip: { shared: true, intersect: false, y: { formatter: (v) => (v || 0).toLocaleString() } },
+  xaxis: { categories: [], title: { text: 'Month' }, labels: { rotate: -45 } },
+  yaxis: { title: { text: 'Amount' }, labels: { formatter: (v) => (v || 0).toLocaleString() } },
+});
+
+const ChartComp = ({ type }) => {
+
+  const [incomeExpense, setIncomeExpense] = useState({
+    series: [{ name: 'Income', data: [] }, { name: 'Expense', data: [] }],
+    options: baseOptions('Income & Expense', [COLOR_INCOME, COLOR_EXPENSE]),
   });
-  const [chartOptionsTwo, setChartOptionsTwo] = useState({
-    series: [
-      { name: "Cash Flow", data: [] },
-    ],
-    options: {
-      chart: {
-        height: 350,
-        type: 'line',
-        dropShadow: { enabled: true, color: '#000', top: 18, left: 7, blur: 10, opacity: 0.2 },
-        toolbar: {
-          show: false
-        }
-      },
-      colors: ['#3492BA'],
-      dataLabels: { enabled: true },
-      stroke: { curve: 'smooth' },
-      title: {
-        text: 'Cash Flow',
-        align: 'left'
-      },
-      grid: {
-        borderColor: '#e7e7e7',
-        row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.5 },
-      },
-      markers: {
-        size: 1
-      },
-      xaxis: {
-        categories: [],
-        title: {
-          text: 'Month'
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Amount'
-        },
-      },
-    },
+  const [cashFlow, setCashFlow] = useState({
+    series: [{ name: 'Cash Flow', data: [] }],
+    options: baseOptions('Cash Flow', [COLOR_CASHFLOW]),
   });
 
-  useEffect(() => {
-    getcashflow()
-  }, [])
+  useEffect(() => { getCashFlow() }, [])
 
-  async function getcashflow(){
-    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CASH_FLOW_TWO, {}).then((res)=>{
-      let dates = [];
-      let valuesOne = [];
-      let valuesTwo = [];
-      let valuesThree = [];
-      //cashexpenditure
-      res.data.result.forEach((x) => {
-        let date = moment(x.createdAt).format("MMM-DD");
-        if(dates.includes(date)) {
-          x.type == 'Job Payment'?
-          valuesTwo[valuesTwo.length-1] = parseFloat(valuesTwo[valuesTwo.length-1]) + parseFloat(x['Invoice_Transactions.amount']):
-          valuesOne[valuesOne.length-1] = parseFloat(valuesOne[valuesOne.length-1]) + parseFloat(x['Invoice_Transactions.amount']);
-        } else if(x.type == 'Job Reciept') {
-          dates.push(date)
-          valuesOne.push(parseFloat(x['Invoice_Transactions.amount']))
-          valuesTwo.push(0)
-        } else if(x.type == 'Job Payment') {
-          dates.push(date)
-          valuesOne.push(0)
-          valuesTwo.push(parseFloat(x['Invoice_Transactions.amount']))
+  async function getCashFlow() {
+    await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CASH_FLOW_TWO, {}).then((res) => {
+      if (res.data.status !== 'success') {
+        console.error('getCashFlowTwo returned an error:', res.data.result);
+        return;
+      }
+      const rows = res.data.result || [];
+
+      // Bucket by month (key = YYYY-MM so it sorts chronologically across
+      // year boundaries).
+      const buckets = {};
+      rows.forEach((x) => {
+        const key = moment(x.createdAt).format('YYYY-MM');
+        const rawAmount = parseFloat(x['Invoice_Transactions.amount']) || 0;
+        // Invoice_Transactions.amount is stored in the voucher's original
+        // currency, not PKR (unlike Voucher_Heads, which also stores a
+        // PKR-converted defaultAmount) - convert here using the voucher's
+        // own exRate so a non-PKR transaction (e.g. a USD Agent Invoice
+        // settlement) isn't summed as if its raw number were PKR.
+        const rate = (!x.currency || x.currency === 'PKR') ? 1 : (parseFloat(x.exRate) || 1);
+        const amount = rawAmount * rate;
+        if (!buckets[key]) {
+          buckets[key] = { income: 0, expense: 0 };
         }
-      })
-      valuesTwo.forEach((x, i)=>{
-        valuesThree.push(parseFloat(valuesOne[i]) - parseFloat(valuesTwo[i]))
-      })
-      setChartOptions({
-        series: [
-          { name: "Income", data: valuesOne },
-          { name: "Sales", data: valuesTwo },
-        ],
+        if (x.type === 'Job Reciept') {
+          buckets[key].income += amount;
+        } else if (x.type === 'Job Payment') {
+          buckets[key].expense += amount;
+        }
+      });
+
+      // Anchor the 12-month window to the most recent transaction date
+      // rather than today's wall-clock date - otherwise, against a demo/
+      // restored copy with no very recent activity, "last 12 months" would
+      // overlap none of the actual data and render an empty chart.
+      const latest = rows.reduce(
+        (max, x) => (moment(x.createdAt).isAfter(max) ? moment(x.createdAt) : max),
+        rows.length ? moment(rows[0].createdAt) : moment()
+      );
+
+      // Always show exactly the last 12 calendar months (relative to the
+      // latest activity), even ones with no activity (shown as 0), rather
+      // than only whatever months had data.
+      const last12 = [];
+      for (let i = 11; i >= 0; i--) {
+        const m = moment(latest).subtract(i, 'months');
+        last12.push({ key: m.format('YYYY-MM'), label: m.format('MMM-YY') });
+      }
+
+      const labels = last12.map((m) => m.label);
+      const income = last12.map((m) => Math.round(buckets[m.key]?.income || 0));
+      const expense = last12.map((m) => Math.round(buckets[m.key]?.expense || 0));
+      const net = last12.map((m) => Math.round((buckets[m.key]?.income || 0) - (buckets[m.key]?.expense || 0)));
+
+      setIncomeExpense({
+        series: [{ name: 'Income', data: income }, { name: 'Expense', data: expense }],
         options: {
-          chart: {
-            height: 350,
-            type: 'line',
-            dropShadow: { enabled: true, color: '#000', top: 18, left: 7, blur: 10, opacity: 0.2 },
-            toolbar: {
-              show: false
-            }
-          },
-          colors: ['#40a347', '#EE7C6F'],
-          dataLabels: { enabled: true },
-          stroke: { curve: 'smooth' },
-          title: {
-            text: 'Income & Expense',
-            align: 'left'
-          },
-          grid: {
-            borderColor: '#e7e7e7',
-            row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.5 },
-          },
-          markers: {
-            size: 1
-          },
-          xaxis: {
-            categories: dates,
-            title: {
-              text: 'Month'
-            }
-          },
-          yaxis: {
-            title: {
-              text: 'Amount'
-            },
-          },
+          ...baseOptions('Income & Expense', [COLOR_INCOME, COLOR_EXPENSE]),
+          xaxis: { categories: labels, title: { text: 'Month' }, labels: { rotate: -45 } },
         },
       });
-      setChartOptionsTwo({
-        series: [
-          { name: "Cash Flow", data: valuesThree },
-        ],
+      setCashFlow({
+        series: [{ name: 'Cash Flow', data: net }],
         options: {
-          chart: {
-            height: 350,
-            type: 'line',
-            dropShadow: { enabled: true, color: '#000', top: 18, left: 7, blur: 10, opacity: 0.2 },
-            toolbar: {
-              show: false
-            }
-          },
-          colors: ['#3492BA'],
-          dataLabels: { enabled: true },
-          stroke: { curve: 'smooth' },
-          title: {
-            text: 'Cash Flow',
-            align: 'left'
-          },
-          grid: {
-            borderColor: '#e7e7e7',
-            row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.5 },
-          },
-          markers: {
-            size: 1
-          },
-          xaxis: {
-            categories: dates,
-            title: {
-              text: 'Month'
-            }
-          },
-          yaxis: {
-            title: {
-              text: 'Amount'
-            },
-          },
+          ...baseOptions('Cash Flow', [COLOR_CASHFLOW]),
+          xaxis: { categories: labels, title: { text: 'Month' }, labels: { rotate: -45 } },
         },
-      })
+      });
+    }).catch((err) => {
+      console.error('getCashFlowTwo request failed:', err);
     })
   }
 
-  return(
+  return (
     <div>
-      { type=="One" && <Chart options={chartOptions.options} series={chartOptions.series} type="line" width="100%" height={"200%"} />}
-      { type=="Two" && <Chart options={chartOptionsTwo.options} series={chartOptionsTwo.series} type="line" width="100%" height={"200%"} />}
+      {type === "One" && <Chart options={incomeExpense.options} series={incomeExpense.series} type="line" width="100%" height={320} />}
+      {type === "Two" && <Chart options={cashFlow.options} series={cashFlow.series} type="line" width="100%" height={320} />}
     </div>
   )
 }

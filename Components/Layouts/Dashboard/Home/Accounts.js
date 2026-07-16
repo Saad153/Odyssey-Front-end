@@ -3,6 +3,7 @@ import axiosClient from 'apis/axiosClient';
 import SecondaryLoader from 'Components/Shared/SecondaryLoader';
 import { Table, Row, Col } from 'react-bootstrap';
 import moment from "moment";
+import Router from 'next/router';
 import { getNetInvoicesAmount } from 'functions/amountCalculations';
 
 const Accounts = () => {
@@ -28,14 +29,15 @@ const Accounts = () => {
       :
       <>
       <Row>
-      <Col>
-          <h4 className='fw-7'>Pending Invoices/Bills</h4>
-          <hr/>
+      <Col className='d-flex justify-content-between align-items-start'>
+          <h4 className='fw-7'>Pending Invoices/Bills <span className='grey-txt fs-13'>(10 most recent)</span></h4>
+          <span className='custom-link fs-12' onClick={()=>Router.push('/accounts/invoiceAndBills')}>View All →</span>
         </Col>
       </Row>
+      <hr/>
       <Row>
         <Col>
-          <div className='mt-3' style={{maxHeight:500, overflowY:'auto'}}>
+          <div className='mt-3' style={{maxHeight:320, overflowY:'auto'}}>
             <Table className='tableFixHead '>
             <thead>
               <tr style={{whiteSpace:"nowrap"}}>
@@ -83,7 +85,7 @@ const Accounts = () => {
                       </span>
                     </div>
                     <div className='fs-13 mt-2'>Party: {x.party_Name}</div>
-                    <div className='fs-13'>Amount: {getNetInvoicesAmount(x.Charge_Heads)}</div>
+                    <div className='fs-13'>Amount: {getNetInvoicesAmount(x.Charge_Heads).netAmount}</div>
                     <hr className='my-0 mb-3' />
                   </div>
                 )

@@ -102,6 +102,21 @@ function setAccesLevels(dispatch, collapsed){
       key: '2-6',
       children: `Content of Tab Pane 2`,
     }):null,
+    (levels?.includes("Ports")||levels?.includes("admin"))?getItem('Ports', '2-10',<></>, null, {
+      label: `Ports`,
+      key: '2-10',
+      children: `Content of Tab Pane 2`,
+    }):null,
+    (levels?.includes("Destinations")||levels?.includes("admin"))?getItem('Destinations', '2-11',<></>, null, {
+      label: `Destinations`,
+      key: '2-11',
+      children: `Content of Tab Pane 2`,
+    }):null,
+    (levels?.includes("Airports")||levels?.includes("admin"))?getItem('Airports', '2-12',<></>, null, {
+      label: `Airports`,
+      key: '2-12',
+      children: `Content of Tab Pane 2`,
+    }):null,
   ]
   )
   const accounts = getParentItem('Accounts', '3', <AccountBookOutlined />,
@@ -347,6 +362,10 @@ function setAccesLevels(dispatch, collapsed){
         case "NonGLParties":
         case "Commodity":
         case "Voyage":
+        case "Ports":
+        case "Destinations":
+        case "Airports":
+        case "Charges":
           items.indexOf(setup) === -1 ? items.push(setup) : null;
           break;
         case "admin":
@@ -364,8 +383,7 @@ function setAccesLevels(dispatch, collapsed){
     })
     levels.forEach(x => {
       switch (x) {
-        case "Charges":
-        case "ChartofAccount":
+        case "ChartOfAccount":
         case "Invoice/Bills":
         case "Payment/Reciept":
         case "Voucher":
@@ -470,8 +488,6 @@ function setAccesLevels(dispatch, collapsed){
     
   }
 
-  items.unshift(dashboard)
-  items.push(tasks)
   // console.log(items)
   return items
 }

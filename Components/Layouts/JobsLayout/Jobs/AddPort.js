@@ -1,23 +1,23 @@
 "use client"
-import React, { useState, useEffect } from 'react'
-import { Row, Col } from 'react-bootstrap';
-import axios  from "axios"
+import React, { useState } from 'react'
+import { Row } from 'react-bootstrap';
 import { Modal, Input } from 'antd';
 import openNotification from '../../../Shared/Notification';
+import { createPort } from 'apis/pickLists';
 
-const AddPort = ({ isOpen, onClose }) => {
+const AddPort = ({ isOpen, onClose, onCreated }) => {
 
     const [data, setData] = useState({})
 
-    const onSubmit =async () => {
+    const onSubmit = async () => {
         try {
-            // console.log(data)
-            const res = await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_CREATE_PORT,data).then((x)=>{
-                openNotification("Success","Port Created","green")
-            })
+            await createPort(data);
+            openNotification("Success", "Port Created", "green")
+            onCreated?.();
             onClose()
         } catch (error) {
             console.log(error)
+            openNotification("Error", "Could Not Create Port", "red")
         }
     }
 
@@ -36,10 +36,6 @@ const AddPort = ({ isOpen, onClose }) => {
                     <div className='my-2'>
                         <label>Country *</label>
                         <Input placeholder="Enter Country" className='rounded' onChange={(e) => setData({ ...data, portCountry: e.target.value })} />
-                    </div>
-                    <div className='my-2'>
-                        <label>operation *</label>
-                        <Input placeholder="Enter Operation" className='rounded' onChange={(e) => setData({ ...data, operation: e.target.value })} />
                     </div>
                 </Row>
                 <div className='d-flex justify-content-end mt-4'>

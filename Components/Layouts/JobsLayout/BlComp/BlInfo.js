@@ -273,7 +273,7 @@ const BlInfo = ({control, id, register, state, useWatch, dispatch, reset, type, 
         onOk={()=>set('partyVisible', false)}
         onCancel={()=>set('partyVisible', false)}
         footer={false}
-    ><JobSearch state={state} useWatch={useWatch} dispatch={dispatch} control={control} reset={reset} />    
+    ><JobSearch state={state} useWatch={useWatch} dispatch={dispatch} control={control} reset={reset} id={id} />
     </Modal>
     </div>
   )

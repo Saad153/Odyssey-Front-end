@@ -64,7 +64,7 @@ const Print = ({ compLogo, voucherData }) => {
         <Col className='mt-4'>
           <div className='text-center '>
             <div style={{ fontSize: 20 }}><b>{compLogo == "1" ? "SEA NET SHIPPING & LOGISTICS" : "AIR CARGO SERVICES"}</b></div>
-            <div style={paraStyles}>House# D-213, DMCHS, Siraj Ud Daula Road, Karachi</div>
+            <div style={paraStyles}>House# A230, PECHS, Block 2,  Karachi</div>
             <div style={paraStyles}>Tel: 9221 34395444-55-66   Fax: 9221 34385001</div>
             <div style={paraStyles}>Email: {compLogo == "1" ? "info@seanetpk.com" : "info@acs.com.pk"}   Web: {compLogo == "1" ? "www.seanetpk.com" : "www.acs.com.pk"}</div>
             <div style={paraStyles}>NTN # {compLogo == "1" ? "8271203-5" : "0287230-7"}</div>

@@ -239,7 +239,7 @@ const ChartOFAccount = ({ accountsData }) => {
       // add some top lines (company header)
       worksheet.insertRow(1, ['']);
       worksheet.insertRow(1, ['']);
-      worksheet.insertRow(1, ['', '', 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi']);
+      worksheet.insertRow(1, ['', '', 'House# A230, PECHS, Block 2,  Karachi']);
       if (Cookies.get('companyId') === '1') worksheet.insertRow(1, ['', '', 'Seanet Shipping & Logistics']);
       if (Cookies.get('companyId') === '2') worksheet.insertRow(1, ['', '', 'Air Cargo Services']);
       worksheet.insertRow(1, ['']);

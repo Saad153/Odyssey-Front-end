@@ -59,6 +59,7 @@ const Weights = ({register, control, type, approved, equipments, useWatch}) => {
             {"id":"BLOCKS" , "name":"BLOCKS"},
             {"id":"BOATS"  , "name":"BOATS"},
             {"id":"PELLETS"  , "name":"PELLETS"},
+            {"id":"PACKAGES"  , "name":"PACKAGES"}
             ]} />
         </Col>
         </>}
@@ -77,6 +78,7 @@ const Weights = ({register, control, type, approved, equipments, useWatch}) => {
             {"id":"BLOCKS" , "name":"BLOCKS"},
             {"id":"BOATS"  , "name":"BOATS"},
             {"id":"PELLETS"  , "name":"PELLETS"},
+            {"id":"PACKAGES"  , "name":"PACKAGES"}
             ]} />
         </Col>
         <Col md={6} className='mt-2'>

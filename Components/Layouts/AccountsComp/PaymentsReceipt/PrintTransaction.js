@@ -28,7 +28,7 @@ const companyDetails = {
   3: {
     name: 'AIR CARGO SERVICES',
     logo: '/aircargo-logo.png',
-    address: 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi',
+    address: 'House# A230, PECHS, Block 2,  Karachi',
     tel: 'Tel: 9221 34395444-55-66   Fax: 9221 34385001',
     email: 'info@acs.com.pk',
     web: 'www.acs.com.pk',

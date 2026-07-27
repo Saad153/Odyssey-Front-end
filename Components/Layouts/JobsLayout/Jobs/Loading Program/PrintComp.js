@@ -36,7 +36,7 @@ const PrintComp = ({allValues, state}) => {
                 SEA NET SHIPPING & LOGISTICS
               </p>
               <p className="fs-13" style={{ lineHeight: "5px" }}>
-                House# D-213 DMCHS, Siraj Ud Daula Road, Karachi
+                House# A230, PECHS, Block 2,  Karachi
               </p>
               <p className="fs-13" style={{ lineHeight: "5px" }}>
                 Tel: 9221 34395444-55-66 Fax 9221 34385001

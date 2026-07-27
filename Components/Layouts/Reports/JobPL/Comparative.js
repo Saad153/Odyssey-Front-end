@@ -274,7 +274,7 @@ const Comparative = ({ query, result }) => {
 
         exportExcelFile(flatData, flatColumns, {
             title: query.company == '1' ? 'SEA NET SHIPPING & LOGISTICS' : query.company == '2' ? 'AIR CARGO SERVICES' : 'SEANET + AIR CARGO',
-            address: 'House# D-213, DMCHS, Siraj Ud Daula Road, Karachi',
+            address: 'House# A230, PECHS, Block 2,  Karachi',
             dateRange: `Date: From ${from1} To ${to1}`,
             fileName: `Comparative_Report_${from1}_${to1}.xlsx`,
         });

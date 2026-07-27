@@ -105,7 +105,7 @@ const BlPrint = ({ caller, allValues, state, borders, heading, border, inputRef,
                     <div className="grey-txt">
                       <img src={"/seanet-logo.png"} height={120} className="invert"/>
                       <div style={{ fontFamily: "sans-serif" }} className="fs-15"> SHIPPING & LOGISTICS</div>
-                      <div className="mt-2" style={{ lineHeight: 1.3 }}>House# D-213, DMCHS, Siraj Ud Daula Road, Karachi</div>
+                      <div className="mt-2" style={{ lineHeight: 1.3 }}>House# A230, PECHS, Block 2,  Karachi</div>
                       <div style={{ lineHeight: 1.5 }}> Tel: {"("}92-21{")"} 34547575, 34395444, 34395444, 34395444</div>
                       <div style={{ lineHeight: 1.5 }}> Email info@seanetpk.com, URL www.seanetpk.com{" "}</div>
                     </div>

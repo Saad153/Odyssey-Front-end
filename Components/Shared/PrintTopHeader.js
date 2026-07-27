@@ -15,7 +15,7 @@ const PrintTopHeader = ({company, from, to}) => {
                 </b>
             </h5>
             <div className="fs-13">
-                House# D-213, DMCHS, Siraj Ud Daula Road, Karachi
+                House# A230, PECHS, Block 2,  Karachi
             </div>
             <b>
                 <span>{from?'Dated: '+from:''}</span> <span className='mx-2'>-</span> <span>{to?to:''}</span>

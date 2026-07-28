@@ -42,6 +42,10 @@ function setAccesLevels(dispatch, collapsed){
   if(token != null){
     levels = token.access;
   }
+  // Designations are stored lowercase (e.g. 'ceo', 'cfo', 'admin') - compare case-insensitively.
+  const designation = (token?.designation || '').toLowerCase();
+  const isAdminDesignation = designation === 'admin';
+  const isCeoOrCfo = designation === 'ceo' || designation === 'cfo' || isAdminDesignation;
 
 //getParentItem only returns the section data as objects to store in items array.
   const dashboard = getParentItem('Dashboard', '1', <HomeOutlined />,[
@@ -62,7 +66,8 @@ function setAccesLevels(dispatch, collapsed){
   const setup = getParentItem('Setup', '2', <SettingOutlined />,
   [
     //checks whether the given strings are part of the access level array or not, and includes the subsection into the children array of the parent section.
-    (levels?.includes("Employees")||levels?.includes("admin"))?getItem('Employees', '2-1', <></>, null, {
+    // Employees page is restricted to CEO/CFO/admin designations, not access levels.
+    isCeoOrCfo?getItem('Employees', '2-1', <></>, null, {
       label: 'Employees',
       key: '2-1',
       children: 'Content of Tab Pane 2',
@@ -115,6 +120,11 @@ function setAccesLevels(dispatch, collapsed){
     (levels?.includes("Airports")||levels?.includes("admin"))?getItem('Airports', '2-12',<></>, null, {
       label: `Airports`,
       key: '2-12',
+      children: `Content of Tab Pane 2`,
+    }):null,
+    isCeoOrCfo?getItem('Fiscal Years', '2-13',<></>, null, {
+      label: `Fiscal Years`,
+      key: '2-13',
       children: `Content of Tab Pane 2`,
     }):null,
   ]
@@ -485,7 +495,19 @@ function setAccesLevels(dispatch, collapsed){
     //       break;
     //   }
     // });
-    
+
+  }
+
+  // CEO/CFO/admin always see Setup (for Fiscal Years and Employees), regardless of
+  // their other access levels, and even if `levels` (token.access) is empty.
+  if(isCeoOrCfo && items.indexOf(setup) === -1){
+    items.push(setup);
+  }
+
+  // The 'admin' designation grants full access to everything, same as the
+  // 'admin' access-level string does, but independent of it.
+  if(isAdminDesignation){
+    items = [SeaJobs, importJobs, setup, accounts, reports];
   }
 
   // console.log(items)

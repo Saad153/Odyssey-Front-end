@@ -272,6 +272,8 @@ const saveHeads = async(charges, state, dispatch, reset) => {
       await delay(500)
       await getHeadsNew(state.selectedRecord.id, dispatch, reset)
       // await getHeadsNew(state.selectedRecord.id, dispatch, reset)
+    }else{
+      openNotification('Error', x.data.result || 'Something went wrong', 'red')
     }
   })
 }

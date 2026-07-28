@@ -278,6 +278,10 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
                     axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_JOBS,{
                       id:allValues.id, employeeId: Cookies.get("loginId")
                     }).then(async(x)=>{
+                      if(x.data.status!=='success'){
+                        openNotification('Error', x.data.result || 'Something went wrong', 'red')
+                        return
+                      }
                       let oldTabs = await type=="SE"?tabs.filter((x)=> {return x.key!="4-3" }):
                       await type=="SI"?tabs.filter((x)=> {return x.key!="4-6" }):
                       await type=="AE"?tabs.filter((x)=> {return x.key!="7-2" }):
@@ -338,6 +342,10 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
                 axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_DELETE_JOBS,{
                   id:allValues.id, employeeId: Cookies.get("loginId")
                 }).then(async(x)=>{
+                  if(x.data.status!=='success'){
+                    openNotification('Error', x.data.result || 'Something went wrong', 'red')
+                    return
+                  }
                   let oldTabs = await type=="SE"?tabs.filter((x)=> {return x.key!="4-3" }):
                   await type=="SI"?tabs.filter((x)=> {return x.key!="4-6" }):
                   await type=="AE"?tabs.filter((x)=> {return x.key!="7-2" }):

@@ -475,6 +475,7 @@ const MainLayout = ({children}) => {
     else if(x.key=='2-10'){ Router.push('/setup/ports') }
     else if(x.key=='2-11'){ Router.push('/setup/destinations') }
     else if(x.key=='2-12'){ Router.push('/setup/airports') }
+    else if(x.key=='2-13'){ Router.push('/setup/fiscalYears') }
     else if(x.key=='2-7'){ Router.push(`/setup/client/${setKey(x)}`) } //these routes are also settled in 2nd useEffect
     else if(x.key=='2-3'){ Router.push('/commodity') }
     else if(x.key=='2-4'){ Router.push('/setup/voyage') }

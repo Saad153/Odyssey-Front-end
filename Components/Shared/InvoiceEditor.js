@@ -42,9 +42,13 @@ const InvoiceEditor = ({data, reload}) => {
       setLoad(true)
       axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_SAVE_SE_HEADS_NEW, {
         charges:charges, employeeId: Cookies.get("loginId")
-      }).then(async() => {
+      }).then(async(x) => {
         await delay(2000)
         setLoad(false)
+        if(x.data.status!=='success'){
+          openNotification('Error', x.data.result || 'Something went wrong', 'red')
+          return
+        }
         setVisible(false)
         openNotification('Success', `Sample Charge Added in Invoice!`, 'green')
         await delay(500)

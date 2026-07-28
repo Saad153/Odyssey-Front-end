@@ -8,6 +8,8 @@ import { Input } from 'antd';
 import Cookies from 'js-cookie';
 import { check } from 'prettier';
 import { checkEmployeeAccess } from 'functions/checkEmployeeAccess';
+import openNotification from 'Components/Shared/Notification';
+import Router from 'next/router';
 
 const Employees = () => {
 
@@ -28,6 +30,12 @@ const Employees = () => {
   }
 
   useEffect(() => {
+    const designation = (Cookies.get('designation') || '').toLowerCase();
+    if (designation !== 'ceo' && designation !== 'cfo' && designation !== 'admin') {
+      openNotification('Error', 'This page is restricted to CEO/CFO/admin.', 'red');
+      Router.push('/');
+      return;
+    }
     checkEmployeeAccess();
     getEmployees();
   }, [])

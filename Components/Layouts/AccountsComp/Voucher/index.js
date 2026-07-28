@@ -350,6 +350,10 @@ const Voucher = ({ id }) => {
           id: state.id, employeeId: Cookies.get('loginId'),
           ...voucher
         }).then((x) => {
+          if (x.data.status !== 'success') {
+            openNotification('Error', x.data.result || 'Error updating voucher', 'red')
+            return
+          }
           openNotification('Success', `Voucher Updated Successfully`, 'green')
           dispatch(setField({ field: 'edit', value: true }))
           fetchVoucherData()
@@ -357,6 +361,10 @@ const Voucher = ({ id }) => {
         });
       }else{
         result = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/createVoucher`, { ...voucher, employeeId: Cookies.get("loginId")}).then((x) => {
+          if (x.data.status !== 'success') {
+            openNotification('Error', x.data.result || 'Error saving voucher', 'red')
+            return
+          }
           openNotification('Success', `Voucher Saved Successfully`, 'green')
           dispatch(setField({ field: 'edit', value: true }))
           Router.push(`/accounts/vouchers/${x.data.result.id}`);

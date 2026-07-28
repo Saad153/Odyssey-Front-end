@@ -314,8 +314,9 @@ useEffect(() => {
   const updateVoucherHeads = async (e, index) => {
     console.log("Updating", e)
     let temp = allValues.Voucher_Heads;
-    temp[index].amount = e*allValues.exRate;
-    temp[index].defaultAmount = e;
+    let value = Math.abs(parseFloat(e) || 0);
+    temp[index].amount = value*allValues.exRate;
+    temp[index].defaultAmount = value;
     console.log(temp)
     reset({ ...allValues, Voucher_Heads: temp });
   }
@@ -540,18 +541,19 @@ useEffect(() => {
                 </td>
                 {allValues.currency != "PKR" &&
                   <td style={{ padding: 3, width: 90 }}>
-                    <InputNumber value={field.amount} style={{ width: '100%' }}
+                    <InputNumber value={field.amount} min={0} style={{ width: '100%' }}
                       onChange={(e) => {
                         let tempRecords = [...allValues.Voucher_Heads];
                         console.log("tempRecords", tempRecords)
-                        tempRecords[index].amount = e;
-                        tempRecords[index].defaultAmount = e ? (parseFloat(e) * parseFloat(allValues.exRate)).toFixed(2) : tempRecords[index].amount;
+                        let value = Math.abs(parseFloat(e) || 0);
+                        tempRecords[index].amount = value;
+                        tempRecords[index].defaultAmount = value ? (value * parseFloat(allValues.exRate)).toFixed(2) : tempRecords[index].amount;
                         reset({ ...allValues, Voucher_Heads: tempRecords });
                       }}
                     />
                   </td>}
                 <td style={{ padding: 3, width: 90 }}>
-                  <InputNumber value={field.defaultAmount} readOnly={allValues.currency != "PKR"} onChange={(e) => {updateVoucherHeads(e, index)}} width={"100%"} />
+                  <InputNumber value={field.defaultAmount} min={0} readOnly={allValues.currency != "PKR"} onChange={(e) => {updateVoucherHeads(e, index)}} width={"100%"} />
                 </td>
                 <td style={{ padding: 3 }}>
                   <InputComp type="text" name={`Voucher_Heads.${index}.narration`} placeholder="Narration" control={control} register={register} />

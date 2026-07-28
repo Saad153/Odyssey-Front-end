@@ -242,7 +242,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           employeeId: Cookies.get("loginId")
         }).then((x) => {
           x.data.status=="success"?back():null
-          x.data.status=="success"?openNotification('Success', `Transaction Saved`, 'green'):openNotification('Error', `Error saving transaction`, 'red')
+          x.data.status=="success"?openNotification('Success', `Transaction Saved`, 'green'):openNotification('Error', x.data.result || `Error saving transaction`, 'red')
           dispatch(setPRField({ field: 'modal', value: false }))
         })
 
@@ -356,8 +356,8 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           partyId: state.selectedAccount,
           accountType: "partyAccount",
           accountName: state.PRaccounts.find((x) => x.id === state.selectedAccount)?.name || "N/A",
-          debit: state.payType!="Recievable"?state.totalReceivable:0,
-          credit: state.payType=="Recievable"?state.totalReceivable:0,
+          debit: state.payType!="Recievable"?Math.abs(state.totalReceivable):0,
+          credit: state.payType=="Recievable"?Math.abs(state.totalReceivable):0,
           type: state.payType!="Recievable"?'debit':'credit'
         })
       }

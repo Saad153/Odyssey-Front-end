@@ -6,10 +6,16 @@ import CreateOrEdit from './CreateOrEdit';
 import openNotification from 'Components/Shared/Notification';
 import PopConfirm from '../../../Shared/PopConfirm';
 import Cookies from 'js-cookie';
-import Router from 'next/router';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { fiscalYearSelect } from 'redux/fiscalYear/fiscalYearSlice';
 
 const FiscalYears = () => {
+
+    const dispatch = useDispatch();
+    const selectedFiscalYearId = useSelector((state) => state.fiscalYear.value);
+    const designation = (Cookies.get('designation') || '').toLowerCase();
+    const isAdmin = designation === 'ceo' || designation === 'cfo' || designation === 'admin';
 
     const [fiscalYears, setFiscalYears] = useState([]);
     const [loaded, setLoaded] = useState(false);
@@ -19,12 +25,6 @@ const FiscalYears = () => {
     const [load, setLoad] = useState(false);
 
     useEffect(() => {
-        const designation = (Cookies.get('designation') || '').toLowerCase();
-        if (designation !== 'ceo' && designation !== 'cfo' && designation !== 'admin') {
-            openNotification('Error', 'This page is restricted to CEO/CFO/admin.', 'red');
-            Router.push('/');
-            return;
-        }
         getFiscalYears();
     }, []);
 
@@ -37,6 +37,12 @@ const FiscalYears = () => {
             }
             setLoaded(true);
         }).catch(() => setLoaded(true));
+    };
+
+    const selectFiscalYear = (x) => {
+        Cookies.set('fiscalYearId', x.id, { expires: 1000000000 });
+        dispatch(fiscalYearSelect(x.id));
+        openNotification('Success', `Now working in ${x.label}`, 'green');
     };
 
     const lock = (id) => {
@@ -76,15 +82,15 @@ const FiscalYears = () => {
                     <Col md={12}>
                         <Row>
                             <Col md="8"><h5>Fiscal Years</h5></Col>
-                            <Col md="4">
+                            {isAdmin && <Col md="4">
                                 <button className='btn-custom' style={{ float: 'right' }}
                                     onClick={() => { setEdit(false); setSelectedFiscalYear({}); setVisible(true); }}>
                                     Create
                                 </button>
-                            </Col>
+                            </Col>}
                         </Row>
                         <div className='my-2' style={{ backgroundColor: 'silver', height: 1 }}></div>
-                        <MediumModal visible={visible} setVisible={setVisible} setEdit={setEdit} width={700}>
+                        {isAdmin && <MediumModal visible={visible} setVisible={setVisible} setEdit={setEdit} width={700}>
                             <CreateOrEdit
                                 edit={edit}
                                 selectedFiscalYear={selectedFiscalYear}
@@ -92,35 +98,52 @@ const FiscalYears = () => {
                                 setLoad={setLoad}
                                 onSaved={() => { setVisible(false); setEdit(false); getFiscalYears(); }}
                             />
-                        </MediumModal>
+                        </MediumModal>}
                     </Col>
                     {fiscalYears.length > 0 && <Col md={12}>
                         <div style={{ maxHeight: 500, overflowY: 'auto' }}>
-                            <Table className='tableFixHead'>
-                                <thead><tr><th>Sr.</th><th>Label</th><th>Suffix</th><th>Period</th><th>Status</th><th></th></tr></thead>
+                            <Table className='tableFixHead' style={{ tableLayout: 'fixed' }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ width: 50 }}>Sr.</th>
+                                        <th style={{ width: 160 }}>Label</th>
+                                        <th style={{ width: 90 }}>Suffix</th>
+                                        <th style={{ width: 220 }}>Period</th>
+                                        <th style={{ width: 110 }}>Status</th>
+                                        <th style={{ width: 190 }}>Actions</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
-                                    {fiscalYears.map((x, index) => (
-                                        <tr key={index} className='f row-hov'>
+                                    {fiscalYears.map((x, index) => {
+                                        const isSelected = String(x.id) === String(selectedFiscalYearId);
+                                        return (
+                                        <tr key={index} className='f row-hov' style={isSelected ? { backgroundColor: '#eaf7ee' } : undefined}>
                                             <td>{index + 1}</td>
-                                            <td className='cur' onClick={() => { setSelectedFiscalYear(x); setEdit(true); setVisible(true); }}>
+                                            <td className={isAdmin ? 'cur' : undefined} onClick={() => { if(isAdmin){ setSelectedFiscalYear(x); setEdit(true); setVisible(true); } }}>
                                                 <span className='blue-txt fw-5'>{x.label}</span>
                                             </td>
                                             <td>{x.suffix}</td>
                                             <td>{moment(x.startDate).format('DD-MM-YYYY')} to {moment(x.endDate).format('DD-MM-YYYY')}</td>
-                                            <td>{x.isLocked ? <Badge bg='secondary'>Locked</Badge> : <Badge bg='success'>Unlocked</Badge>}</td>
                                             <td>
-                                                {x.isLocked
+                                                {x.isLocked ? <Badge bg='secondary'>Locked</Badge> : <Badge bg='success'>Unlocked</Badge>}
+                                                {isSelected && <Badge bg='primary' style={{ marginLeft: 4 }}>Selected</Badge>}
+                                            </td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                {!x.isLocked && !isSelected &&
+                                                    <button className='btn-custom fs-11 px-2 mx-1' onClick={() => selectFiscalYear(x)}>Select</button>}
+                                                {isAdmin && (x.isLocked
                                                     ? <button className='btn-custom fs-11 px-2 mx-1' onClick={() => unlock(x.id)}>Unlock</button>
-                                                    : <button className='btn-red fs-11 px-2 mx-1' onClick={() => lock(x.id)}>Lock</button>}
+                                                    : <button className='btn-red fs-11 px-2 mx-1' onClick={() => lock(x.id)}>Lock</button>)}
                                             </td>
                                         </tr>
-                                    ))}
+                                        );
+                                    })}
                                 </tbody>
                             </Table>
                         </div>
                     </Col>}
                     {!loaded && <div className='p-5 text-center'><Spinner /></div>}
-                    {loaded && fiscalYears.length === 0 && <div className='p-5 text-center grey-txt'>No fiscal years yet. Create one to get started.</div>}
+                    {loaded && fiscalYears.length === 0 && <div className='p-5 text-center grey-txt'>No fiscal years yet.{isAdmin?' Create one to get started.':' Ask a CEO/CFO/admin to create one.'}</div>}
                 </Row>
             </div>
         </div>

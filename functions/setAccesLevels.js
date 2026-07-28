@@ -122,11 +122,14 @@ function setAccesLevels(dispatch, collapsed){
       key: '2-12',
       children: `Content of Tab Pane 2`,
     }):null,
-    isCeoOrCfo?getItem('Fiscal Years', '2-13',<></>, null, {
+    // Visible to everyone - every user selects their own working fiscal
+    // year here; only CEO/CFO/admin see the create/edit/lock controls
+    // once on the page (enforced in the page itself + the backend routes).
+    getItem('Fiscal Years', '2-13',<></>, null, {
       label: `Fiscal Years`,
       key: '2-13',
       children: `Content of Tab Pane 2`,
-    }):null,
+    }),
   ]
   )
   const accounts = getParentItem('Accounts', '3', <AccountBookOutlined />,
@@ -498,9 +501,10 @@ function setAccesLevels(dispatch, collapsed){
 
   }
 
-  // CEO/CFO/admin always see Setup (for Fiscal Years and Employees), regardless of
+  // Everyone always sees Setup (it now always contains Fiscal Years, which
+  // every user needs to select their working fiscal year), regardless of
   // their other access levels, and even if `levels` (token.access) is empty.
-  if(isCeoOrCfo && items.indexOf(setup) === -1){
+  if(items.indexOf(setup) === -1){
     items.push(setup);
   }
 

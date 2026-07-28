@@ -128,6 +128,7 @@ const OpeningInvoice = (id) => {
         operation: state.operation,
         partyType: state.accountType,
         companyId: Cookies.get('companyId'),
+        fiscalYearId: Cookies.get('fiscalYearId'),
       })
       console.log(result)
       if (result.data.status == 'success') {

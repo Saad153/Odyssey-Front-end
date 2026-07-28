@@ -88,8 +88,9 @@ const OpeningBalance = ({id, voucherData}) => {
     setLoad(true)
     if(id=="new"){
       await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_CREATE_OPENING_BALANCE, {
-        exRate, currency, companyId, vType:"OP", costCenter:"KHI", 
-        type:"Opening Balance", Voucher_Heads:voucherAccounts
+        exRate, currency, companyId, vType:"OP", costCenter:"KHI",
+        type:"Opening Balance", Voucher_Heads:voucherAccounts,
+        fiscalYearId: Cookies.get('fiscalYearId'),
       }).then((x) => {
         if(x.data.status=="success"){
           // Router.push(`/accounts/openingBalance/list`)

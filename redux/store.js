@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from './counter/counterSlice';
 import tabsReducer from './tabs/tabSlice';
 import companyReducer from './company/companySlice';
+import fiscalYearReducer from './fiscalYear/fiscalYearSlice';
 import blCreationReducer from './BlCreation/blCreationSlice';
 import persistValuesReducer from './persistValues/persistValuesSlice';
 import { seJobValues } from './apis/seJobValues';
@@ -24,6 +25,7 @@ export const store = configureStore({
     counter: counterReducer,
     filterValues:filterValuesReducer,
     company: companyReducer,
+    fiscalYear: fiscalYearReducer,
     ledger: ledgerReducer,
     invoice: invoiceReducer,
     profitloss:profitLossReducer,

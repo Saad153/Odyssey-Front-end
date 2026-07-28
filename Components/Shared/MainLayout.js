@@ -1,6 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { companySelect, addCompanies } from 'redux/company/companySlice';
+import { fiscalYearSelect, addFiscalYears } from 'redux/fiscalYear/fiscalYearSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Layout, Menu, Select } from 'antd';
@@ -36,6 +37,8 @@ const MainLayout = ({children}) => {
   const [searchingList, setSearchingList] = useState([]);
   const [company, setCompany] = useState('');
   const [companies, setCompanies] = useState([]);
+  const [fiscalYear, setFiscalYear] = useState('');
+  const [fiscalYears, setFiscalYears] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
   const items = setAccesLevels(dispatch, collapsed);
   const tabs = useSelector((state) => state.tabs.value);
@@ -78,8 +81,9 @@ const MainLayout = ({children}) => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [collapsed]);
 
-  useEffect(() => { 
-    getCompanies(); 
+  useEffect(() => {
+    getCompanies();
+    getFiscalYears();
     if(items.length>0){
       let newTemp = [];
       items.forEach((x)=>{
@@ -118,6 +122,45 @@ const MainLayout = ({children}) => {
     setCompany(parseInt(value));
     dispatch(companySelect(value))
     Router.push('/')
+  };
+
+  async function getFiscalYears(){
+    let fiscalYearValue = await Cookies.get('fiscalYearId');
+    await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/fiscalYears/getSelectable`, {
+      headers: { Authorization: Cookies.get('token') }
+    })
+    .then((x)=>{
+      dispatch(addFiscalYears(x.data.result))
+      let tempState = [];
+      x.data?.result?.forEach((x, index) => {
+        tempState[index]={value:x.id, label:`${x.label} (${x.suffix})`}
+      });
+      setFiscalYears(tempState)
+
+      if(fiscalYearValue && x.data?.result?.some((y)=>String(y.id)===String(fiscalYearValue))){
+        // Respect an explicit prior selection (e.g. someone deliberately
+        // still working in a prior, not-yet-locked fiscal year).
+        dispatch(fiscalYearSelect(fiscalYearValue));
+        setFiscalYear(parseInt(fiscalYearValue));
+      }else{
+        // No stored selection (or it no longer points at a selectable
+        // fiscal year) - default to whichever unlocked fiscal year's
+        // period covers today, if any.
+        const today = new Date().toISOString().slice(0, 10);
+        const current = x.data?.result?.find((y)=> y.startDate <= today && today <= y.endDate);
+        if(current){
+          Cookies.set('fiscalYearId', current.id, { expires: 1000000000 });
+          dispatch(fiscalYearSelect(current.id));
+          setFiscalYear(parseInt(current.id));
+        }
+      }
+    });
+  }
+
+  const handleFiscalYearChange = (value) => {
+    Cookies.set('fiscalYearId', value, { expires: 1000000000 });
+    setFiscalYear(parseInt(value));
+    dispatch(fiscalYearSelect(value))
   };
 
   useEffect(() => {
@@ -691,6 +734,8 @@ useEffect(() => {
     {collapsed && <span className="menu-toggler" onClick={() => setCollapsed(!collapsed)}><AiOutlineRight /></span>}
     {!collapsed && <span className="menu-toggler" onClick={() => setCollapsed(!collapsed)} ><AiOutlineLeft /></span>}
     <Select style={{width: 155, opacity:0.9}} onChange={handleChange} options={companies} value={company} />
+    <span className='mx-2'></span>
+    <Select style={{width: 170, opacity:0.9}} placeholder="Fiscal Year" onChange={handleFiscalYearChange} options={fiscalYears} value={fiscalYear || undefined} />
     {/* //admin links  */}
     {username=="Saad" &&<>
       <span className='mx-3'></span>

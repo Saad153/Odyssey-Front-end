@@ -5,7 +5,7 @@ import { Spinner, Table, Col, Row } from 'react-bootstrap';
 import React, { useEffect, useReducer, useState } from 'react';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { incrementTab } from 'redux/tabs/tabSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import axiosClient from 'apis/axiosClient';
 import moment from 'moment';
@@ -17,6 +17,7 @@ const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace
 const BillComp = ({back, companyId, state, dispatch}) => {
   const [firstCall, setFirstCall] = useState(true);
   const router =  useRouter()
+  const fiscalYearId = useSelector((state) => state.fiscalYear.value);
 
   // useEffect(()=>{
   //   console.log("STATE INVOICES", state.invoices)
@@ -234,6 +235,7 @@ const BillComp = ({back, companyId, state, dispatch}) => {
           exRate: state.exRate,
           date: state.date,
           companyId: companyId,
+          fiscalYearId: fiscalYearId,
           tranDate: state.date,
           edit: state.edit,
           advance: state.advance,

@@ -274,6 +274,7 @@ const DirectJob = ({ id }) => {
       {
         direct_Job,
         direct_Job_Association,
+        fiscalYearId: Cookies.get('fiscalYearId'),
         employeeId: Cookies.get("loginId"),
       }
     );

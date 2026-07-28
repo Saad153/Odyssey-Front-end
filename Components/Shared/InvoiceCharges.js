@@ -213,9 +213,14 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
     setLoad(true);
     console.log(data.resultOne)
     if(invoice.approved=="0"){
-      await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
-        id:data.resultOne.id
+      const x = await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
+        id:data.resultOne.id, fiscalYearId: Cookies.get('fiscalYearId')
       })
+      if(x.data.status!=='success'){
+        openNotification('Error', x.data.result || 'Something went wrong', 'red')
+        setLoad(false)
+        return
+      }
       setInvoice({
         ...invoice,
         approved: "1"

@@ -29,6 +29,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) => {
   const queryClient = useQueryClient();
+  const fiscalYearId = useSelector((state) => state.fiscalYear.value);
   const {register, control, handleSubmit, reset, formState:{errors}, watch, getValues, setValue } = useForm({
     resolver:yupResolver(SignupSchema), defaultValues:state.values,
   });
@@ -157,6 +158,7 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
     data.shippingLineId = data.shippingLineId!=""?data.shippingLineId:null;
     data.approved = data.approved[0]=="1"?true:false;
     data.companyId = companyId;
+    data.fiscalYearId = fiscalYearId;
     data.operation = type
     let loginId = Cookies.get('loginId');
     data.createdById = loginId;

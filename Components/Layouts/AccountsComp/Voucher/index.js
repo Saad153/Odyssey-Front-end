@@ -22,6 +22,7 @@ const Voucher = ({ id }) => {
   const commas = (a) => a == 0 ? '0' : parseFloat(a).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
   const state  = useSelector((state) => state.vouchers);
+  const fiscalYearId = useSelector((state) => state.fiscalYear.value);
   const dispatch = useDispatch();
   const [ CompanyId, setCompanyId] = useState(Cookies.get('companyId'))
   const box = { border: '1px solid silver', paddingLeft: 10, paddingTop: 5, paddingBottom: 3, minHeight: 31 }
@@ -311,7 +312,8 @@ const Voucher = ({ id }) => {
         tranDate: state.date,
         subType: state.vType=="CPV"||state.vType=="CRV"?"Cash":state.vType=="BPV"||"BRV"?"Bank":state.vType=="JV"?"Journal":"Transfer",
         CompanyId: CompanyId,
-        createdAt: state.date
+        createdAt: state.date,
+        fiscalYearId: fiscalYearId,
       }
       if(state.edit){
         voucher.voucher_No = state.voucher_No

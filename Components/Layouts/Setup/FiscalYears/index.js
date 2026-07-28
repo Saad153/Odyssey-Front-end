@@ -39,13 +39,28 @@ const FiscalYears = () => {
         }).catch(() => setLoaded(true));
     };
 
-    const activate = (id) => {
-        PopConfirm('Confirmation', 'Activate this fiscal year? Any currently active fiscal year will be deactivated.', () => {
-            axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/fiscalYears/activate`, {
+    const lock = (id) => {
+        PopConfirm('Confirmation', 'Lock this fiscal year? Users will no longer be able to select it, and any record already in it becomes frozen.', () => {
+            axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/fiscalYears/lock`, {
                 id, employeeId: Cookies.get('loginId')
             }).then((x) => {
                 if (x.data.status === 'success') {
-                    openNotification('Success', 'Fiscal year activated!', 'green');
+                    openNotification('Success', 'Fiscal year locked!', 'green');
+                    getFiscalYears();
+                } else {
+                    openNotification('Error', x.data.result || 'Something went wrong', 'red');
+                }
+            });
+        });
+    };
+
+    const unlock = (id) => {
+        PopConfirm('Confirmation', 'Unlock this fiscal year so users can select it again?', () => {
+            axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/fiscalYears/unlock`, {
+                id, employeeId: Cookies.get('loginId')
+            }).then((x) => {
+                if (x.data.status === 'success') {
+                    openNotification('Success', 'Fiscal year unlocked!', 'green');
                     getFiscalYears();
                 } else {
                     openNotification('Error', x.data.result || 'Something went wrong', 'red');
@@ -92,9 +107,11 @@ const FiscalYears = () => {
                                             </td>
                                             <td>{x.suffix}</td>
                                             <td>{moment(x.startDate).format('DD-MM-YYYY')} to {moment(x.endDate).format('DD-MM-YYYY')}</td>
-                                            <td>{x.isActive ? <Badge bg='success'>Active</Badge> : <Badge bg='secondary'>Inactive</Badge>}</td>
+                                            <td>{x.isLocked ? <Badge bg='secondary'>Locked</Badge> : <Badge bg='success'>Unlocked</Badge>}</td>
                                             <td>
-                                                {!x.isActive && <button className='btn-custom fs-11 px-2 mx-1' onClick={() => activate(x.id)}>Activate</button>}
+                                                {x.isLocked
+                                                    ? <button className='btn-custom fs-11 px-2 mx-1' onClick={() => unlock(x.id)}>Unlock</button>
+                                                    : <button className='btn-red fs-11 px-2 mx-1' onClick={() => lock(x.id)}>Lock</button>}
                                             </td>
                                         </tr>
                                     ))}

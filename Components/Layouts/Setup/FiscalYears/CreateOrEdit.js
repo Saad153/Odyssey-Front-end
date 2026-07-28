@@ -5,7 +5,6 @@ import * as yup from "yup";
 import InputComp from 'Components/Shared/Form/InputComp';
 import DateComp from 'Components/Shared/Form/DateComp';
 import { Row, Col, Spinner } from 'react-bootstrap';
-import { Checkbox } from 'antd';
 import axiosClient from 'apis/axiosClient';
 import openNotification from 'Components/Shared/Notification';
 import Cookies from 'js-cookie';
@@ -18,16 +17,14 @@ const SignupSchema = yup.object().shape({
     endDate: yup.mixed().required('Required'),
 });
 
-const baseValues = { label: '', suffix: '', startDate: null, endDate: null, isActive: false };
+const baseValues = { label: '', suffix: '', startDate: null, endDate: null };
 
 const CreateOrEdit = ({ edit, selectedFiscalYear, onSaved, load, setLoad }) => {
 
-    const { register, control, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm({
+    const { register, control, handleSubmit, reset, formState: { errors } } = useForm({
         resolver: yupResolver(SignupSchema),
         defaultValues: baseValues
     });
-
-    const isActive = watch('isActive');
 
     useEffect(() => {
         if (edit && selectedFiscalYear) {
@@ -92,11 +89,6 @@ const CreateOrEdit = ({ edit, selectedFiscalYear, onSaved, load, setLoad }) => {
                     <Col md={6} className='py-2'>
                         <DateComp control={control} name='endDate' label='End Date' width={'100%'} />
                         {errors.endDate && <div className='error-line'>{errors.endDate.message}</div>}
-                    </Col>
-                    <Col md={12} className='py-2'>
-                        <Checkbox checked={isActive} onChange={(e) => setValue('isActive', e.target.checked)}>
-                            Make this the active fiscal year
-                        </Checkbox>
                     </Col>
                 </Row>
                 <div style={{ height: 16 }}></div>

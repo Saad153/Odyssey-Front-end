@@ -282,16 +282,18 @@ const approve = async(data) => {
   try{
     console.log(data.newInv)
     await axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/approve`,{
-      id:data.newInv.id, employeeId: Cookies.get("loginId")
+      id:data.newInv.id, fiscalYearId: Cookies.get('fiscalYearId'), employeeId: Cookies.get("loginId")
     }).then(async(x)=>{
       if(x.data.status=="success"){
         // await getHeadsNew(state.selectedRecord.id, dispatch, reset)
+      }else{
+        openNotification('Error', x.data.result || 'Something went wrong', 'red')
       }
     })
   }catch(e){
     console.error(e)
   }
-  
+
 };
 
 const approveHeads = async(charges, state, dispatch, reset) => {
@@ -479,6 +481,7 @@ const makeInvoice = async (
       {
         chargeList: tempList,
         companyId,
+        fiscalYearId: Cookies.get('fiscalYearId'),
         type,
         employeeId: Cookies.get("loginId"),
         shipDate,

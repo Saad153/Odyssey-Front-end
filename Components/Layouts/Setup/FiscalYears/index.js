@@ -128,12 +128,14 @@ const FiscalYears = () => {
                                                 {x.isLocked ? <Badge bg='secondary'>Locked</Badge> : <Badge bg='success'>Unlocked</Badge>}
                                                 {isSelected && <Badge bg='primary' style={{ marginLeft: 4 }}>Selected</Badge>}
                                             </td>
-                                            <td style={{ whiteSpace: 'nowrap' }}>
-                                                {!x.isLocked && !isSelected &&
-                                                    <button className='btn-custom fs-11 px-2 mx-1' onClick={() => selectFiscalYear(x)}>Select</button>}
-                                                {isAdmin && (x.isLocked
-                                                    ? <button className='btn-custom fs-11 px-2 mx-1' onClick={() => unlock(x.id)}>Unlock</button>
-                                                    : <button className='btn-red fs-11 px-2 mx-1' onClick={() => lock(x.id)}>Lock</button>)}
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    {!x.isLocked && !isSelected &&
+                                                        <button className='btn-custom fs-11' style={{ padding: '4px 14px' }} onClick={() => selectFiscalYear(x)}>Select</button>}
+                                                    {isAdmin && (x.isLocked
+                                                        ? <button className='btn-custom fs-11' style={{ padding: '4px 14px' }} onClick={() => unlock(x.id)}>Unlock</button>
+                                                        : <button className='btn-red fs-11' style={{ padding: '4px 14px' }} onClick={() => lock(x.id)}>Lock</button>)}
+                                                </div>
                                             </td>
                                         </tr>
                                         );

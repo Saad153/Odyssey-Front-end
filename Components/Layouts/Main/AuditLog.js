@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import axiosClient from "apis/axiosClient";
 import Cookies from "js-cookie";
 import moment from "moment";
@@ -50,7 +51,7 @@ const AuditLog = () => {
       setLogs(res.data.result || []);
       setLastUpdated(new Date());
     } catch (err) {
-      if (!axiosClient.isCancel(err)) {
+      if (!axios.isCancel(err)) {
         console.error("Audit fetch failed:", err);
       }
     } finally {

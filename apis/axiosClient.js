@@ -12,6 +12,10 @@ axiosInstance.interceptors.request.use(config => {
     if (token) {
       config.headers.Authorization = token;
     }
+    const fiscalYearId = Cookies.get('fiscalYearId');
+    if (fiscalYearId) {
+      config.headers['x-fiscal-year-id'] = fiscalYearId;
+    }
   }
   return config;
 });

@@ -38,6 +38,9 @@ const Login = ({sessionData}) => {
             Cookies.set('designation', token.designation, { expires: 1 });
             Cookies.set('username', token.username, { expires: 1 });
             Cookies.set('loginId', token.id, { expires: 1 });
+            if(token.defaultCompanyId){
+              Cookies.set('companyId', token.defaultCompanyId, { expires: 1000000000 });
+            }
             setShowForceLoginModal(false);
             Router.push('/');
           }else{
@@ -70,6 +73,9 @@ const Login = ({sessionData}) => {
             Cookies.set('designation', token.designation, { expires: 1 });
             Cookies.set('username', token.username, { expires: 1 });
             Cookies.set('loginId', token.id, { expires: 1 });
+            if(token.defaultCompanyId){
+              Cookies.set('companyId', token.defaultCompanyId, { expires: 1000000000 });
+            }
             // Cookies.set('access', JSON.stringify(token.access), { expires: 1 });
             Router.push('/');
           }else if(x.data.message=='Invalid'){

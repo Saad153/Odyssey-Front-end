@@ -69,7 +69,7 @@ const CreateOrEdit = ({appendClient, edit, setVisible, setEdit, selectedEmployee
 // New state to manage disabled status
 
   const [values, setValues] = useState({
-    selectDesignation:'', selectManager: '', //selectCompany:'',
+    selectDesignation:'', selectManager: '', defaultCompanyId:'',
     accessLevels:[], selectDepart:'', fatherName: '',
     accountNo: '', userName: '', address: '',
     empName: '', phone: '',  email: '',
@@ -91,7 +91,7 @@ const CreateOrEdit = ({appendClient, edit, setVisible, setEdit, selectedEmployee
       tempState={
         selectDesignation: selectedEmployee.designation,
         selectManager: selectedEmployee.manager,
-        //selectCompany: selectedEmployee.CompanyId,
+        defaultCompanyId: selectedEmployee.defaultCompanyId,
         selectDepart: selectedEmployee.department,
         fatherName: selectedEmployee.fatherName,
         accountNo: selectedEmployee.account_no,
@@ -199,6 +199,7 @@ return(
                 designation: values.selectDesignation,
                 department: values.selectDepart,
                 manager: values.selectManager,
+                defaultCompanyId: values.defaultCompanyId,
                 represent:values.represent,
                 date: values.date,
                 bank: values.bank,
@@ -274,6 +275,18 @@ return(
         </Form.Item>
         <Form.Item name="selectManager" hasFeedback={true} showValidateSuccess={true} style={{width:200}}>
           <div>Manager</div><MyField name="selectManager" selectedEmployee={selectedEmployee}  />
+        </Form.Item>
+
+        <Form.Item name="defaultCompanyId" hasFeedback={true} showValidateSuccess={true} style={{width:200}}>
+          <div>Default Company</div>
+          <Select name="defaultCompanyId" style={{ width: "100%" }} placeholder="Select Default Company" showSearch allowClear
+            filterOption={(input, option) => (option?.children ?? '').toLowerCase().includes(input.toLowerCase())}>
+            <Select.OptGroup label="Companies">
+              {company?.map((x, index)=>(
+                <Select.Option value={`${x.id}`} key={index}>{x.title}</Select.Option>
+              ))}
+            </Select.OptGroup>
+          </Select>
         </Form.Item>
 
         <Form.Item name="date" >

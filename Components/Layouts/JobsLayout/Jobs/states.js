@@ -245,14 +245,12 @@ const getVendors = memoize(async(id) => {
 const getHeadsNew = async(id, dispatch, reset) => {
   console.log("getHeadsNew from states is running<<<")
   dispatch({type:'toggle', fieldName:'chargeLoad', payload:true})
-  let paybleCharges = [];
-  let reciveableCharges = [];
   await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
     headers:{id: id, employeeId: Cookies.get("loginId")}
   }).then(async(x)=>{
     if(x.data.status=="success"){
 
-      let tempChargeHeadsArray = await calculateChargeHeadsTotal([...reciveableCharges, ...paybleCharges], "full");    
+      let tempChargeHeadsArray = await calculateChargeHeadsTotal([...x.data.result], "full");
       await reset({chargeList:[...x.data.result]});
       dispatch({type:'set', 
       payload:{

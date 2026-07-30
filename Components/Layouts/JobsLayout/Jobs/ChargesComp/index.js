@@ -2,13 +2,13 @@ import { useForm, useFieldArray, Controller, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getChargeHeads } from "apis/jobs";
 import { Row, Col } from 'react-bootstrap';
-import { setHeadsCache, getHeadsNew } from '../states';
+import { setHeadsCache } from '../states';
 import { useSelector,useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import {setApproved } from '../../../../../redux/invoice/invoiceSlice';
 import Charges from './Charges';
 import { Table, Tabs } from 'antd';
-import axios from "axios";
+import axiosClient from 'apis/axiosClient';
 
   const ChargesComp = ({state, dispatch, type, allValues}) => {
 
@@ -21,6 +21,7 @@ import axios from "axios";
   const chargeList = useWatch({ control, name:'chargeList' });
   const [ dataSource, setDataSource ] = useState([]);
   const [ er, setER ] = useState([]);
+  const [ summaryLoading, setSummaryLoading ] = useState(true);
 
   const chargeMap = Object.fromEntries(
     (state.fields.chargeList || []).map(c => [String(c.id), c.name])
@@ -28,14 +29,10 @@ import axios from "axios";
 
   const num = (v) => Number(v || 0);
 
-  const { data:chargesData, refetch } = useQuery({
+  const { data:chargesData, refetch, isLoading:chargesLoading } = useQuery({
     queryKey:["charges", {id:state.selectedRecord.id}],
     queryFn: () => getChargeHeads({id:state.selectedRecord.id})
   });
-
-  useEffect(() => {
-    getChargeHeads({id:state.selectedRecord.id})
-  }, [state.selectedRecord])
 
   const normalizeChargeProfitability = (voucherData, invoiceBillList) => {
   const grouped = {};
@@ -137,6 +134,7 @@ import axios from "axios";
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setSummaryLoading(true);
         // async logic here
         const response = await axiosClient.get(
           `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/voucher/getJobData`,
@@ -176,6 +174,8 @@ import axios from "axios";
         setER(response.data.result);
       } catch (error) {
         console.error(error);
+      } finally {
+        setSummaryLoading(false);
       }
     };
 
@@ -193,8 +193,14 @@ import axios from "axios";
           dispatchNew(setApproved("1"))
         }
       })
+      // chargesData already came from the useQuery fetch above - reuse it
+      // instead of re-fetching the exact same /invoice/getHeadesNew data
+      // via getHeadsNew(), which was firing a redundant network round trip
+      // on every load.
+      const { charges, ...totals } = chargesData;
+      reset({ chargeList: [...charges] });
+      dispatch({ type:'set', payload:{ chargeLoad:false, ...totals } });
     }
-    getHeadsNew(state.selectedRecord.id, dispatch, reset)
   }, [chargesData])
 
   const columns= [
@@ -268,19 +274,23 @@ import axios from "axios";
       <Tabs defaultActiveKey="1" onChange={(e)=> dispatch({type:'toggle', fieldName:'chargesTab',payload:e})}>
       <Tabs.TabPane tab="Receivable" key="1">
         <Charges state={state} dispatch={dispatch} type={"Recievable"} register={register} setValue={setValue}
-          chargeList={chargeList} fields={fields} append={append} reset={reset} remove={remove} control={control} 
+          chargeList={chargeList} fields={fields} append={append} reset={reset} remove={remove} control={control}
           companyId={companyId} operationType={type} allValues={allValues} chargesData={chargesData}
+          chargesLoading={chargesLoading}
         />
       </Tabs.TabPane>
       <Tabs.TabPane tab="Payable" key="2">
         <Charges state={state} dispatch={dispatch} type={"Payble"} register={register} setValue={setValue}
-          chargeList={chargeList} fields={fields} append={append} reset={reset} remove={remove} control={control} 
+          chargeList={chargeList} fields={fields} append={append} reset={reset} remove={remove} control={control}
           companyId={companyId} operationType={type} allValues={allValues} chargesData={chargesData}
+          chargesLoading={chargesLoading}
         />
       </Tabs.TabPane>
       <Tabs.TabPane tab="Summary" key="3">
         <div style={{minHeight:430, maxHeight:430}}>
-          <Table columns={columns} dataSource={dataSource}/>
+          <Table columns={columns} dataSource={dataSource} loading={summaryLoading}
+            locale={{ emptyText: summaryLoading ? 'Loading...' : 'No charges found for this job.' }}
+          />
         </div>
       </Tabs.TabPane>
     </Tabs>

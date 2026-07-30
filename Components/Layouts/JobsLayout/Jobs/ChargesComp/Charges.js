@@ -18,7 +18,7 @@ import { delay } from "functions/delay";
 
 
 
-const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, remove, control, setValue, register, companyId, operationType, allValues, chargesData}) => {
+const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, remove, control, setValue, register, companyId, operationType, allValues, chargesData, chargesLoading}) => {
 
   const { permissions } = state;
   const permissionAssign = (perm, x) => x.Invoice?.approved=="1"? true : false;
@@ -241,7 +241,7 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
     </Col>
     </Row>
     <div className='table-sm-1 mt-3' style={{maxHeight:300, overflowY:'auto'}}>
-    {!state.chargeLoad &&
+    {!state.chargeLoad && !chargesLoading &&
     <Table className='tableFixHead' bordered>
       <thead>
         <tr className='table-heading-center'>
@@ -323,64 +323,71 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
           <td style={{ padding: 3, minWidth: 100 }}> {/* charge selection */}
             <Select className='table-dropdown' showSearch value={parseInt(x.charge)} style={{ paddingLeft: 0 }}
               disabled={permissionAssign(permissions, x)}
-              onChange={(e) => {
+              onChange={async (e) => {
                 let tempChargeList = [...chargeList];
-                let check = false
-                tempChargeList[index].charge ? check = true : check = false
-                state.fields.chargeList.forEach(async (y, i) => {
-                  if (y.id == e) {
-                    tempChargeList[index] = {
-                      ...tempChargeList[index],
-                      charge: y.id,
-                      particular: y.name,
-                      basis: y.calculationType,
-                      taxPerc: y.taxApply == "Yes" ? parseFloat(y.taxPerc) : 0.00,
-                      qty:(y.calculationType!="Per Unit"||allValues.cwtClient==""||allValues.cwtClient==0)?1:allValues.cwtClient
-                    }
-                    let partyType = "";
-                    let choiceArr = ['', 'defaultRecivableParty', 'defaultPaybleParty'];// 0=null, 1=recivable, 2=payble
-                    partyType = y[choiceArr[parseInt(state.chargesTab)]];
-                    let searchPartyId;
-                    switch (partyType) {
-                        case "Client":
-                          searchPartyId = state.selectedRecord.ClientId;
-                        break;
-                        case "Local-Agent":
-                          searchPartyId = state.selectedRecord.localVendorId;
-                        break;
-                        case "Custom-Agent":
-                          searchPartyId = state.selectedRecord.customAgentId;
-                        break;
-                        case "Transport-Agent":
-                          searchPartyId = state.selectedRecord.transporterId;
-                        break;
-                        case "Forwarding-Agent":
-                          searchPartyId = state.selectedRecord.forwarderId;
-                        break;
-                        case "Overseas-Agent":
-                          searchPartyId = state.selectedRecord.overseasAgentId;
-                        break;
-                        case "Shipping-Line":
-                          searchPartyId = state.selectedRecord.shippingLineId;
-                        break;
-                        default:
-                          searchPartyId = state.selectedRecord.localVendorId;
-                        break;
-                    }
-                    let partyData = await getClients(searchPartyId);
-                    if (state.chargesTab == '1') {
-                      tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Invoice" : "Job Invoice";
-                    } else {
-                      tempChargeList[index].invoiceType =  partyData[0].types.includes("Overseas Agent") ? "Agent Bill" : "Job Bill";
-                    }
-                    if(!check){
-                      tempChargeList[index].name = partyData[0].name;
-                      tempChargeList[index].partyId = partyData[0].id;
-                      tempChargeList[index].partyType = partyType == "Client" ? "client" : "vendor";
-                    }
-                    reset({ chargeList: tempChargeList })
-                  }
-                })
+                let check = tempChargeList[index].charge ? true : false;
+                const y = state.fields.chargeList.find((y) => y.id == e);
+                if (!y) return;
+                tempChargeList[index] = {
+                  ...tempChargeList[index],
+                  charge: y.id,
+                  particular: y.name,
+                  basis: y.calculationType,
+                  taxPerc: y.taxApply == "Yes" ? parseFloat(y.taxPerc) : 0.00,
+                  qty:(y.calculationType!="Per Unit"||allValues.cwtClient==""||allValues.cwtClient==0)?1:allValues.cwtClient
+                }
+                let partyType = "";
+                let choiceArr = ['', 'defaultRecivableParty', 'defaultPaybleParty'];// 0=null, 1=recivable, 2=payble
+                partyType = y[choiceArr[parseInt(state.chargesTab)]];
+                let searchPartyId;
+                switch (partyType) {
+                    case "Client":
+                      searchPartyId = state.selectedRecord.ClientId;
+                    break;
+                    case "Local-Agent":
+                      searchPartyId = state.selectedRecord.localVendorId;
+                    break;
+                    case "Custom-Agent":
+                      searchPartyId = state.selectedRecord.customAgentId;
+                    break;
+                    case "Transport-Agent":
+                      searchPartyId = state.selectedRecord.transporterId;
+                    break;
+                    case "Forwarding-Agent":
+                      searchPartyId = state.selectedRecord.forwarderId;
+                    break;
+                    case "Overseas-Agent":
+                      searchPartyId = state.selectedRecord.overseasAgentId;
+                    break;
+                    case "Shipping-Line":
+                      searchPartyId = state.selectedRecord.shippingLineId;
+                    break;
+                    default:
+                      searchPartyId = state.selectedRecord.localVendorId;
+                    break;
+                }
+                let partyData = [];
+                try {
+                  partyData = searchPartyId ? await getClients(searchPartyId) : [];
+                } catch (err) {
+                  partyData = [];
+                }
+                if (!partyData || partyData.length === 0) {
+                  openNotification('Error', `No default ${partyType || ''} party is set on this job for this charge. Charge type applied, please select a party manually.`, 'red');
+                  reset({ chargeList: tempChargeList });
+                  return;
+                }
+                if (state.chargesTab == '1') {
+                  tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Invoice" : "Job Invoice";
+                } else {
+                  tempChargeList[index].invoiceType =  partyData[0].types.includes("Overseas Agent") ? "Agent Bill" : "Job Bill";
+                }
+                if(!check){
+                  tempChargeList[index].name = partyData[0].name;
+                  tempChargeList[index].partyId = partyData[0].id;
+                  tempChargeList[index].partyType = partyType == "Client" ? "client" : "vendor";
+                }
+                reset({ chargeList: tempChargeList })
               }}
               optionFilterProp="children"
               filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
@@ -422,21 +429,21 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
                 }else{
                   searchPartyId = state.selectedRecord.overseasAgentId
                 }
-                // let partyData = e == "PP" ? await getClients(searchPartyId) : await getVendors(searchPartyId);
-                let partyData
-                // if(e == 'PP'){
-                  // if(type == 'Recievable'){
-                    partyData = await getClients(searchPartyId)
-                  // }else{
-                    // partyData = await getVendors(searchPartyId)
-                  // }
-                // }else{
-                  // partyData = await getVendors(searchPartyId)
-                // }
+                let partyData = [];
+                try {
+                  partyData = searchPartyId ? await getClients(searchPartyId) : [];
+                } catch (err) {
+                  partyData = [];
+                }
+                if (!partyData || partyData.length === 0) {
+                  openNotification('Error', `No default party is set on this job for ${e}. PP/CC applied, please select a party manually.`, 'red');
+                  reset({ chargeList: tempChargeList });
+                  return;
+                }
                 if (state.chargesTab == '1') {
-                  tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Bill" : "Job Invoice";
+                  tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Invoice" : "Job Invoice";
                 } else {
-                  tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Invoice" : "Job Bill";
+                  tempChargeList[index].invoiceType = partyData[0].types.includes("Overseas Agent") ? "Agent Bill" : "Job Bill";
                 }
                 tempChargeList[index].name = partyData[0].name;
                 tempChargeList[index].partyId = partyData[0].id;
@@ -601,15 +608,6 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
             disabled={permissionAssign(permissions, x)}  onChange={(e)=>{
                 let tempChargeList = [...chargeList];
                 tempChargeList[index].ex_rate = e;
-                let amount = tempChargeList[index].amount*e - tempChargeList[index].discount;
-                let tax = 0.00;
-                if(tempChargeList[index].tax_apply==true){
-                  tax = (amount/100.00) * tempChargeList[index].taxPerc;
-                  tempChargeList[index].tax_amount = tax;
-                  // tempChargeList[index].net_amount =( amount + tax ) * parseFloat(tempChargeList[index].qty);
-                } else {
-                  // tempChargeList[index].net_amount = (amount * parseFloat(tempChargeList[index].qty)).toFixed(2);
-                }
                 if(tempChargeList[index].currency=="PKR"){
                   tempChargeList[index].local_amount = (tempChargeList[index].net_amount*1.00).toFixed(2);
                 } else {
@@ -629,12 +627,20 @@ const ChargesList = ({state, dispatch, type, append, reset, fields, chargeList, 
           <td></td>
           </tr>
       )})}
+      {!fields.some(x => x.type === type) &&
+        <tr>
+          <td colSpan={25} style={{textAlign:"center", padding:"3%", color:"grey"}}>
+            No charges found for this job.
+          </td>
+        </tr>
+      }
       </tbody>}
     </Table>
     }
-    {state.chargeLoad && 
+    {(state.chargeLoad || chargesLoading) &&
       <div style={{textAlign:"center", paddingTop:'5%', paddingBottom:"5%"}}>
         <Spinner/>
+        <div className='grey-txt mt-2'>Loading charges...</div>
       </div>
     }
     <Modal

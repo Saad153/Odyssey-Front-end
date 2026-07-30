@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 
 const commas = (a) => parseFloat(a).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note, reference, calculateTotal}) => {
+const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note, reference, calculateTotal, systemGenerated}) => {
     console.log("Invoice Print:", invoice)
     const [type, setType] = useState("PP")
 
@@ -59,7 +59,7 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
     
   return (
     <div className='invoice-print-root pb-5 px-5 pt-4' style={{ page: 'invoicePortrait' }}>
-      <style>{`@media print { @page invoicePortrait { size: A4 portrait; margin: 10mm; } .invoice-print-root { page: invoicePortrait; } }`}</style>
+      <style>{`@media print { @page invoicePortrait { size: A4 portrait; margin: 0; } .invoice-print-root { page: invoicePortrait; } }`}</style>
     <Row>
         {!logo && 
         <Col md={4} className='text-center'>
@@ -440,17 +440,23 @@ const InvoicePrint = ({logo, compLogo, records, bank, bankDetails, invoice, note
             </div>
         </Col>
     </Row>
-    <div style={{position:'fixed', bottom:30, width:'90vw'}}>
+    <div className='mt-5'>
         <Row className='justify-content-center'>
             <Col md={3} className='fs-10'></Col>
             <Col md={3} className='fs-10'></Col>
             <Col md={6} className='text-center'>
+                {systemGenerated ?
+                <div className='fs-11' style={{fontStyle:'italic'}}>This invoice is system generated and does not require a signature.</div>
+                :
+                <>
                 <div>__________________________</div>
                 <div className='fs-12 px-5'><b>{compLogo=="1"?"SEA NET SHIPPING & LOGISTICS":"AIR CARGO SERVICES"}</b></div>
+                </>
+                }
             </Col>
         </Row>
     </div>
-    <div style={{position:'fixed', bottom:30, width:'90vw'}}>
+    <div className='mt-3'>
         <Row className='justify-content-center'>
             <Col md={4} className='fs-10'>Printed On: <span className='mx-2'>{moment().format("DD / MMM / YYYY")}</span></Col>
             <Col md={4} className='fs-10'>Printed By: {Cookies.get("username")}</Col>

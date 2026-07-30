@@ -21,6 +21,7 @@ const SignupSchema = Yup.object().shape({
   userName: Yup.string().min(3, 'Too Short!').max(30, 'Too Long!').required('Required'),
   pass: Yup.string().min(5, 'Too Short!').max(30, 'Too Long!').required('Required'),
   phone: Yup.string().min(11, 'Must be 11 Digits!').max(11, 'Must be 11 Digits!'),
+  email: Yup.string().email('Invalid email address').max(100, 'Too Long!'),
   code: Yup.string().min(1, 'Must be 11 Digits!').max(20, 'Must be 11 Digits!').required('Required'),
 });
 
@@ -301,6 +302,10 @@ return(
 
         <Form.Item name="phone" hasFeedback={true} showValidateSuccess={true}>
           <div>Phone No.</div><Input  name="phone" placeholder="Phone Number" style={{width:200}} />
+        </Form.Item>
+
+        <Form.Item name="email" hasFeedback={true} showValidateSuccess={true}>
+          <div>Email</div><Input name="email" placeholder="Email Address" style={{width:200}} />
         </Form.Item>
 
         <Form.Item name="address" hasFeedback={true} showValidateSuccess={true}>

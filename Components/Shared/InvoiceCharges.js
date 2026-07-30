@@ -15,8 +15,10 @@ import Router from 'next/router';
 import InvoiceEditor from './InvoiceEditor';
 import PartySearch from '../Layouts/JobsLayout/Jobs/ChargesComp/PartySearch';
 import Cookies, { set } from 'js-cookie';
-import { DeleteOutlined, PrinterOutlined, RightOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PrinterOutlined, RightOutlined, MailOutlined } from '@ant-design/icons';
 import { checkEmployeeAccess } from 'functions/checkEmployeeAccess';
+import { bankDetails, calculateTotal } from './invoicePrintDefaults';
+import SendInvoiceEmailModal from './SendInvoiceEmailModal';
 
 const { TextArea } = Input;
 
@@ -53,37 +55,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
   const [compLogo, setCompLogo] = useState("1");
   const [balance, setBalance] = useState(false);
   const [note, setNote] = useState(false);
-
-  let bankDetails = {
-    one:`
-    Bank Name: Soneri Bank Ltd \n
-    Bank Branch: Shahrah-e-Faisal Br 0031 Karachi \n
-    A/c Title: AIR CARGO SERVICES \n
-    A/c #: 20001766466 \n
-    Swift Code: SONEPKKAKAR \n
-    IBAN: PK02 SONE 0003 1200 0176 6466`,
-    two:`
-    IBAN: PK91 SONE 0003 1200 0153 4198 \n
-    TITLE: SEA NET SHIPPING & LOGISTICS \n
-    BANK: SONERI BANK LIMITED  \n
-    A/c #: 20001534198 \n
-    BRANCH: SHAHRAH-E-FAISAL BRANCH 0031, KARACHI \n
-    SWIFT: SONEPKKAXXX`,
-    three:`
-    IBAN: PK08 BAHL 1054 0081 0028 1201 \n
-    A/c #: 1054-0081-002182-01-5 \n
-    TITLE: SEA NET SHIPPING & LOGISTICS \n
-    BANK: BANK AL HABIB LIMITED \n
-    BRANCH: TARIQ ROAD 1054, KARACHI \n
-    SWIFT: BAHLPKKAXXX`,
-    four:`
-    IBAN: PK73 BAHL 1054 0081 0044 1101 \n
-    A/c #: 1054-0081-004411-01-7 \n
-    TITLE: AIR CARGO SERVICES \n    
-    BANK: BANK AL HABIB LIMITED \n
-    BRANCH: TARIQ ROAD 1054, KARACHI \n
-    SWIFT: BAHLPKKAXXX`,
-  };
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   useEffect(()=>{
     if(Object.keys(data).length>0){
@@ -140,15 +112,6 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
     setShow(showing);
   }
 
-  const calculateTotal = (data) => {
-    let result = 0;
-    data?.forEach((x)=>{
-      // console.log(x)
-      let amount = x.partyType=="client"||x.partyType=="vendor"? parseFloat(x.local_amount) : parseFloat(x.amount);
-      result = x.type == 'Recievable' ? result + parseFloat(amount) : result - parseFloat(amount);
-    });
-    return Math.abs(result).toFixed(2);
-  };
   const getCurrencyInfoAdvanced = (id, heads) => {
     let tempHeads = heads.filter((x)=> x.InvoiceId==id)
     return tempHeads[0].ex_rate;
@@ -299,6 +262,7 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
     
   }
 
+
   const routeToPayRec = () => {
     console.log("Invoice>>",invoice)
     dispatchNew(incrementTab({
@@ -345,7 +309,10 @@ return (
               <div className='btn-custom-green px-3 py-1 h-screen flex items-center justify-evenly'>
                 <b><PrinterOutlined style={{fontSize:18, marginTop:3}}/></b>
               </div>
-            </Popover>        
+            </Popover>
+            <div className='btn-custom-green px-3 py-1 mx-2 h-screen flex items-center justify-evenly' style={{cursor:'pointer'}} onClick={()=>setEmailModalOpen(true)}>
+              <b><MailOutlined style={{fontSize:18, marginTop:3}}/></b>
+            </div>
             <button disabled={invoice?.approved!="0"} className='py-1 px-3 mx-2' style={{backgroundColor:invoice?.approved=="0"?'#8B0000':"grey", color:'white', borderRadius:15}} type='button' onClick={()=>deleteInvoice()}>
               <b><DeleteOutlined style={{fontSize:18, marginTop:3}}/></b>
             </button>
@@ -673,6 +640,11 @@ return (
         </div>
       </Modal>
       )}
+      <SendInvoiceEmailModal
+        open={emailModalOpen}
+        onClose={()=>setEmailModalOpen(false)}
+        invoice={invoice}
+      />
   </>
 )}
 

@@ -40,10 +40,15 @@ function MyApp({ Component, pageProps:{ session, ...pageProps }, }) {
     };
   }, []);
 
+  // Bare pages render with no sidebar/session chrome: /login (pre-auth) and
+  // the invoice print view (loaded headlessly by Puppeteer with no session).
+  const BARE_PAGES = ['/login', '/invoice-print/[id]'];
+  const isBarePage = BARE_PAGES.includes(router.pathname);
+
   return (
     <>
       {
-      router.pathname!='/login' &&
+      !isBarePage &&
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
             <MainLayout>
@@ -53,7 +58,7 @@ function MyApp({ Component, pageProps:{ session, ...pageProps }, }) {
           </QueryClientProvider>
         </Provider>
       }
-      {router.pathname =='/login' && <Component {...pageProps} /> }
+      {isBarePage && <Component {...pageProps} /> }
     </>
   )
 }

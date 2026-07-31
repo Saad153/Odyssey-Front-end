@@ -24,6 +24,8 @@ import { FaPlus } from "react-icons/fa6";
 import { getChargeHeads } from 'apis/jobs';
 import { checkEditAccess } from 'functions/checkEditAccess';
 import dynamic from 'next/dynamic';
+import openNotification from 'Components/Shared/Notification';
+import CopyFromJobModal from './CopyFromJobModal';
 
 const Weights = dynamic(() => import('./WeightComp'));
 const BLInfo = dynamic(() => import('./BLInfo'));
@@ -76,6 +78,32 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
   const Space = () => <div className='mt-2' />
   const approved1 = useSelector((state) => state.invoice);
   const [charges, setCharges] = useState(false)
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
+
+  // Only carries over the party/lane/vendor selections that genuinely repeat
+  // for the same customer — not job-specific things like job number, dates,
+  // status, references, or the vessel/voyage (that's tied to one sailing and
+  // would almost always need to change anyway).
+  const applyCopiedJob = (job) => {
+    const orEmpty = (v) => (v === null || v === undefined ? '' : v);
+    const copied = {
+      jobType: orEmpty(job.jobType), jobKind: orEmpty(job.jobKind), costCenter: orEmpty(job.costCenter),
+      subType: orEmpty(job.subType), dg: orEmpty(job.dg), freightType: orEmpty(job.freightType),
+      nomination: orEmpty(job.nomination), incoTerms: orEmpty(job.incoTerms),
+      ClientId: orEmpty(job.ClientId), shipperId: orEmpty(job.shipperId), consigneeId: orEmpty(job.consigneeId),
+      pol: orEmpty(job.pol), pod: orEmpty(job.pod), fd: orEmpty(job.fd),
+      forwarderId: orEmpty(job.forwarderId), salesRepresentatorId: orEmpty(job.salesRepresentatorId),
+      shippingLineId: orEmpty(job.shippingLineId), overseasAgentId: orEmpty(job.overseasAgentId),
+      localVendorId: orEmpty(job.localVendorId), airLineId: orEmpty(job.airLineId),
+      commodityId: orEmpty(job.commodityId),
+      transporterId: orEmpty(job.transporterId),
+      transportCheck: job.transporterId ? ['Transport'] : [],
+      customAgentId: orEmpty(job.customAgentId),
+      customCheck: job.customAgentId ? ['Custom Clearance'] : [],
+    };
+    reset({ ...allValues, ...copied });
+    openNotification('Success', `Booking info copied from ${job.jobNo}!`, 'green');
+  };
 
   // const { handleSubmit, setValue } = useForm();
   useEffect(() => {
@@ -210,6 +238,13 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
 
   return (
     <>
+      {!state.edit &&
+        <div className='d-flex justify-content-end mb-2'>
+          <button type='button' className='btn-custom' onClick={() => setCopyModalOpen(true)}>
+            Copy From Existing Job
+          </button>
+        </div>
+      }
       <Row style={{ fontSize: 12 }}>
         <Col md={2} className=''>
           <div className="mt-1">Job No.</div>
@@ -548,6 +583,13 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
       <Modal open={state.isModalOpen} onOk={handleOk} onCancel={handleCancel} maskClosable={false}>
         {approved != "1" ? "Are You Sure You Want To Approve This Job? " : "Are You Sure You Want To Unapprove This Job?"}
       </Modal>
+      <CopyFromJobModal
+        open={copyModalOpen}
+        onClose={() => setCopyModalOpen(false)}
+        type={type}
+        companyId={companyId}
+        onCopied={applyCopiedJob}
+      />
     </>
   )
 }

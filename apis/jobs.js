@@ -5,6 +5,12 @@ export function getJobValues() {
     return axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/getValues`)
     .then((x)=>x.data)
 }
+export async function searchJobsForCopy({q, type, companyId}) {
+    return await axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/seaJob/searchForCopy`, {
+        headers: { q, operation:`${type}`, companyid:`${companyId}` }
+    }).then((x)=>x.data);
+}
+
 export async function getJobById({id, type}) {
   // console.log("getJobById is running")
     if(id=="new"){

@@ -12,7 +12,10 @@ const PartySearch = ({ state, dispatch, reset, useWatch, control }) => {
   const chargeList = useWatch({ control, name: 'chargeList' });
 
   const getClients = async () => {
-    const res = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_ALL_CLIENTS);
+    // Deliberately the un-gated /getClientsForSelect endpoint, not the Setup
+    // parties list route — every employee needs to pick a party for a
+    // charge here, even if they can't reach Setup > Parties.
+    const res = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_CLIENTS_FOR_SELECT);
     console.log("Clients:", res.data.result);
     dispatch({ type: 'toggle', fieldName: 'clientParties', payload: res.data.result });
   };

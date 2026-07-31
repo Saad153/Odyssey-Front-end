@@ -72,7 +72,8 @@ function setAccesLevels(dispatch, collapsed){
       key: '2-1',
       children: 'Content of Tab Pane 2',
     }):null,
-    (levels?.includes("ClientList")||levels?.includes("admin"))?getItem('Parties ', '2-2',<></>, null, {
+    // Parties page is restricted to CEO/CFO/admin designations, not access levels (same as Employees).
+    isCeoOrCfo?getItem('Parties ', '2-2',<></>, null, {
       label: `Parties`,
       key: '2-2',
       children: `Content of Tab Pane 2`,

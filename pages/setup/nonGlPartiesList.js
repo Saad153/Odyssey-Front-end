@@ -3,6 +3,7 @@ import Non_Gl_Parties from 'Components/Layouts/Setup/Non_Gl_Parties';
 import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
 import { handleSSRAuthError } from 'functions/withAuthRedirect';
+import { hasPartyCreateDesignation } from 'functions/checkPartyCreateAccess';
 
 const nonGlParties = ({ clientData, sessionData }) => {
   return (
@@ -16,6 +17,10 @@ export default nonGlParties;
 export async function getServerSideProps({ req, res }) {
   const cookies = new Cookies(req, res);
   const token = cookies.get('token');
+
+  if (!hasPartyCreateDesignation(token)) {
+    return { redirect: { destination: '/dashboard/home', permanent: false } };
+  }
 
   try {
     const sessionRequest = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION, {

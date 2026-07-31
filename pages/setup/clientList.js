@@ -3,6 +3,7 @@ import Client from 'Components/Layouts/Setup/Client';
 import axiosClient from 'apis/axiosClient';
 import Cookies from 'cookies';
 import { handleSSRAuthError } from 'functions/withAuthRedirect';
+import { hasPartyCreateDesignation } from 'functions/checkPartyCreateAccess';
 
 const clientList = ({ sessionData, representativeData, clientData }) => {
   return (
@@ -17,6 +18,10 @@ export async function getServerSideProps({ req, res }) {
   const cookies = new Cookies(req, res);
   const token = cookies.get('token');
   const companyId = cookies.get('companyId');
+
+  if (!hasPartyCreateDesignation(token)) {
+    return { redirect: { destination: '/dashboard/home', permanent: false } };
+  }
 
   try {
     const sessionRequest = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_LOGIN_VERIFICATION, {

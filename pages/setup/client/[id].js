@@ -19,8 +19,8 @@ export async function getServerSideProps({ params, req, res }) {
   const token = cookies.get('token');
   const companyId = cookies.get('companyId');
 
-  if (params.id === 'new' && !hasPartyCreateDesignation(token)) {
-    return { redirect: { destination: '/setup/clientList', permanent: false } };
+  if (!hasPartyCreateDesignation(token)) {
+    return { redirect: { destination: '/dashboard/home', permanent: false } };
   }
 
   let clientData = {};

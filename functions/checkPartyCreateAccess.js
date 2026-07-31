@@ -4,9 +4,9 @@ import jwt_decode from 'jwt-decode';
 const ALLOWED = ['ceo', 'cfo', 'admin'];
 
 // Mirrors functions/requireDesignation.js on the backend (the actual
-// enforcement) — this is just for hiding Create buttons and blocking
-// navigation to "new" party screens so unauthorized users don't reach a
-// form that will 403 on submit anyway.
+// enforcement). Despite the name, this now gates the whole Parties feature
+// (list, view/edit, create — same as Employees) on the frontend, not just
+// creation — kept the name to avoid a broad rename across every importer.
 function hasPartyCreateDesignation(token){
   if(!token || token === "undefined"){
     return false;

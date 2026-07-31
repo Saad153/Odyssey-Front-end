@@ -18,6 +18,13 @@ import SelectComp from 'Components/Shared/Form/SelectComp';
 import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
 import openNotification from 'Components/Shared/Notification';
 import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
+import { isValidEmailList } from 'functions/emailList';
+
+const emailListSchema = () => yup.string().test(
+    'email-list',
+    'Enter valid email(s), separated by ; if more than one',
+    (value) => isValidEmailList(value)
+);
 
 const SignupSchema = yup.object().shape({
     // code: yup.string().required('Required'),
@@ -36,8 +43,8 @@ const SignupSchema = yup.object().shape({
     // zip: yup.string().required('Required'),
     //telephone1: yup.string().required('Required'),
     //telephone2: yup.string().required('Required'),
-    infoMail: yup.string().email('Must be an E-mail!'),
-    accountsMail: yup.string().email('Must be an E-mail!'),
+    infoMail: emailListSchema(),
+    accountsMail: emailListSchema(),
     types: yup.array().required('Atleast 1 Type Required!').min(1, "Atleast 1 Type Required!"),
     operations: yup.array().required('Atleast 1 Operation Required!').min(1, "Atleast 1 Operation Required!"),
 });
@@ -241,11 +248,11 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
                 <InputComp register={register} name='website' control={control} label='Website' />
             </Col>
             <Col md={3} className='py-1'>
-                <InputComp register={register} name='infoMail' control={control} label='Info Mail' />
+                <InputComp register={register} name='infoMail' control={control} label='Info Mail (separate multiple with ;)' />
                 {errors.infoMail && <div className='error-line'>{errors.infoMail.message}*</div>}
             </Col>
             <Col md={3} className='py-1'>
-                <InputComp register={register} name='accountsMail' control={control} label='Accounts Mail' />
+                <InputComp register={register} name='accountsMail' control={control} label='Accounts Mail (separate multiple with ;)' />
                 {errors.accountsMail && <div className='error-line'>{errors.accountsMail.message}*</div>}
             </Col>
             <Col md={4} className='py-1'>

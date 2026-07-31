@@ -3,15 +3,17 @@ import { Modal, Radio, Input, Spin } from 'antd';
 import Cookies from 'js-cookie';
 import axiosClient from 'apis/axiosClient';
 import openNotification from './Notification';
+import { isValidEmailList } from 'functions/emailList';
 
 const { TextArea } = Input;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
   const [loading, setLoading] = useState(false);
   const [emails, setEmails] = useState({ infoMail:'', accountsMail:'' });
   const [option, setOption] = useState(null);
   const [customEmail, setCustomEmail] = useState('');
+  const [cc, setCc] = useState('');
+  const [bcc, setBcc] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
 
@@ -20,6 +22,8 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
     setLoading(true);
     setOption(null);
     setCustomEmail('');
+    setCc('');
+    setBcc('');
     setSubject('');
     setBody('');
     axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getPartyEmails`, {
@@ -28,6 +32,8 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
       if (x.data.status === 'success') {
         setEmails(x.data.result);
         setOption(x.data.result.infoMail ? 'info' : x.data.result.accountsMail ? 'accounts' : 'custom');
+        setCc(x.data.result.defaultCc || '');
+        setBcc(x.data.result.defaultBcc || '');
         setSubject(x.data.result.defaultSubject || '');
         setBody(x.data.result.defaultBody || '');
       } else {
@@ -38,12 +44,16 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
     }).finally(() => setLoading(false));
   }, [open, invoice?.id]);
 
-  const resolvedEmail =
+  const resolvedTo =
     option === 'info' ? emails.infoMail :
     option === 'accounts' ? emails.accountsMail :
     customEmail.trim();
 
-  const canSend = resolvedEmail && EMAIL_RE.test(resolvedEmail) && subject.trim() && body.trim();
+  const toValid = isValidEmailList(resolvedTo, { requireNonEmpty:true });
+  const ccValid = isValidEmailList(cc);
+  const bccValid = isValidEmailList(bcc);
+
+  const canSend = toValid && ccValid && bccValid && subject.trim() && body.trim();
 
   // Fire-and-forget: close the modal immediately so the user can keep working,
   // and surface a notification whenever the send actually finishes in the
@@ -51,7 +61,7 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
   // just toggling `open`), so the request isn't interrupted by the close.
   const send = () => {
     if (!canSend) return;
-    const payload = { id: invoice.id, employeeId: Cookies.get('loginId'), to: resolvedEmail, subject, body };
+    const payload = { id: invoice.id, employeeId: Cookies.get('loginId'), to: resolvedTo, cc, bcc, subject, body };
     onClose();
     axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/sendEmail`, payload).then((x) => {
       if (x.data.status === 'success') {
@@ -91,18 +101,34 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
           </Radio.Group>
           {option === 'custom' && (
             <Input
-              placeholder='Enter email address'
+              placeholder='e.g. a@x.com; b@x.com'
               value={customEmail}
               onChange={(e) => setCustomEmail(e.target.value)}
               className='mt-1 mb-2'
-              status={customEmail && !EMAIL_RE.test(customEmail.trim()) ? 'error' : ''}
+              status={customEmail && !isValidEmailList(customEmail, { requireNonEmpty:true }) ? 'error' : ''}
             />
           )}
           <div className='mt-2 mb-3' style={{ fontSize:13 }}>
-            {resolvedEmail && EMAIL_RE.test(resolvedEmail)
-              ? <>This invoice will be emailed to <b>{resolvedEmail}</b>.</>
-              : <span style={{ color:'grey' }}>Select or enter a valid email address to continue.</span>}
+            {toValid
+              ? <>This invoice will be emailed to <b>{resolvedTo}</b>.</>
+              : <span style={{ color:'grey' }}>Select or enter valid email address(es) to continue.</span>}
           </div>
+
+          <div className='mb-1'><b>CC</b> <span style={{ fontSize:12, color:'grey' }}>(optional, e.g. a@x.com; b@x.com)</span></div>
+          <Input
+            value={cc}
+            onChange={(e) => setCc(e.target.value)}
+            className='mb-3'
+            status={!ccValid ? 'error' : ''}
+          />
+
+          <div className='mb-1'><b>BCC</b> <span style={{ fontSize:12, color:'grey' }}>(optional, e.g. a@x.com; b@x.com)</span></div>
+          <Input
+            value={bcc}
+            onChange={(e) => setBcc(e.target.value)}
+            className='mb-3'
+            status={!bccValid ? 'error' : ''}
+          />
 
           <div className='mb-1'><b>Subject</b></div>
           <Input

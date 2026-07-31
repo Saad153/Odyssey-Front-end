@@ -7,6 +7,7 @@ import { incrementTab } from 'redux/tabs/tabSlice';
 import axiosClient from 'apis/axiosClient';
 import { Input, Select, Pagination } from 'antd'
 import openNotification from 'Components/Shared/Notification';
+import { checkPartyCreateAccess } from 'functions/checkPartyCreateAccess';
 
 function recordsReducer(state, action){
   switch (action.type) {
@@ -139,8 +140,9 @@ const Client = ({sessionData, clientData}) => {
         onChange={(e) => onSearch(e)}
       />
     </Col>
+    {checkPartyCreateAccess() &&
     <Col md={2}>
-      <button className='btn-custom right' 
+      <button className='btn-custom right'
         onClick={()=>{
           dispatchNew(incrementTab({"label":"Client","key":"2-7","id":"new"}));
           Router.push(`/setup/client/new`);
@@ -149,6 +151,7 @@ const Client = ({sessionData, clientData}) => {
         Create
       </button>
     </Col>
+    }
     </Row>
     <hr className='my-2' />
     <Row style={{maxHeight:'69vh',overflowY:'auto', overflowX:'hidden'}}>

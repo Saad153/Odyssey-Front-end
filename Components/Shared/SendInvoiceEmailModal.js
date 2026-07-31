@@ -3,7 +3,8 @@ import { Modal, Radio, Input, Spin } from 'antd';
 import Cookies from 'js-cookie';
 import axiosClient from 'apis/axiosClient';
 import openNotification from './Notification';
-import { isValidEmailList } from 'functions/emailList';
+import { isValidEmailList, parseEmailList } from 'functions/emailList';
+import EmailTagsInput from './EmailTagsInput';
 
 const { TextArea } = Input;
 
@@ -11,9 +12,9 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
   const [loading, setLoading] = useState(false);
   const [emails, setEmails] = useState({ infoMail:'', accountsMail:'' });
   const [option, setOption] = useState(null);
-  const [customEmail, setCustomEmail] = useState('');
-  const [cc, setCc] = useState('');
-  const [bcc, setBcc] = useState('');
+  const [customEmails, setCustomEmails] = useState([]);
+  const [cc, setCc] = useState([]);
+  const [bcc, setBcc] = useState([]);
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
 
@@ -21,9 +22,9 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
     if (!open || !invoice?.id) return;
     setLoading(true);
     setOption(null);
-    setCustomEmail('');
-    setCc('');
-    setBcc('');
+    setCustomEmails([]);
+    setCc([]);
+    setBcc([]);
     setSubject('');
     setBody('');
     axiosClient.get(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/getPartyEmails`, {
@@ -32,8 +33,8 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
       if (x.data.status === 'success') {
         setEmails(x.data.result);
         setOption(x.data.result.infoMail ? 'info' : x.data.result.accountsMail ? 'accounts' : 'custom');
-        setCc(x.data.result.defaultCc || '');
-        setBcc(x.data.result.defaultBcc || '');
+        setCc(parseEmailList(x.data.result.defaultCc));
+        setBcc(parseEmailList(x.data.result.defaultBcc));
         setSubject(x.data.result.defaultSubject || '');
         setBody(x.data.result.defaultBody || '');
       } else {
@@ -47,11 +48,13 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
   const resolvedTo =
     option === 'info' ? emails.infoMail :
     option === 'accounts' ? emails.accountsMail :
-    customEmail.trim();
+    customEmails.join('; ');
+  const ccString = cc.join('; ');
+  const bccString = bcc.join('; ');
 
   const toValid = isValidEmailList(resolvedTo, { requireNonEmpty:true });
-  const ccValid = isValidEmailList(cc);
-  const bccValid = isValidEmailList(bcc);
+  const ccValid = isValidEmailList(ccString);
+  const bccValid = isValidEmailList(bccString);
 
   const canSend = toValid && ccValid && bccValid && subject.trim() && body.trim();
 
@@ -61,7 +64,7 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
   // just toggling `open`), so the request isn't interrupted by the close.
   const send = () => {
     if (!canSend) return;
-    const payload = { id: invoice.id, employeeId: Cookies.get('loginId'), to: resolvedTo, cc, bcc, subject, body };
+    const payload = { id: invoice.id, employeeId: Cookies.get('loginId'), to: resolvedTo, cc: ccString, bcc: bccString, subject, body };
     onClose();
     axiosClient.post(`${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/invoice/sendEmail`, payload).then((x) => {
       if (x.data.status === 'success') {
@@ -100,13 +103,14 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
             </Radio>
           </Radio.Group>
           {option === 'custom' && (
-            <Input
-              placeholder='e.g. a@x.com; b@x.com'
-              value={customEmail}
-              onChange={(e) => setCustomEmail(e.target.value)}
-              className='mt-1 mb-2'
-              status={customEmail && !isValidEmailList(customEmail, { requireNonEmpty:true }) ? 'error' : ''}
-            />
+            <div className='mt-1 mb-2'>
+              <EmailTagsInput
+                value={customEmails}
+                onChange={setCustomEmails}
+                placeholder='Type an email address...'
+                status={customEmails.length > 0 && !toValid ? 'error' : ''}
+              />
+            </div>
           )}
           <div className='mt-2 mb-3' style={{ fontSize:13 }}>
             {toValid
@@ -114,21 +118,15 @@ const SendInvoiceEmailModal = ({ open, onClose, invoice, onSent }) => {
               : <span style={{ color:'grey' }}>Select or enter valid email address(es) to continue.</span>}
           </div>
 
-          <div className='mb-1'><b>CC</b> <span style={{ fontSize:12, color:'grey' }}>(optional, e.g. a@x.com; b@x.com)</span></div>
-          <Input
-            value={cc}
-            onChange={(e) => setCc(e.target.value)}
-            className='mb-3'
-            status={!ccValid ? 'error' : ''}
-          />
+          <div className='mb-1'><b>CC</b> <span style={{ fontSize:12, color:'grey' }}>(optional)</span></div>
+          <div className='mb-3'>
+            <EmailTagsInput value={cc} onChange={setCc} placeholder='Type an email address...' status={!ccValid ? 'error' : ''} />
+          </div>
 
-          <div className='mb-1'><b>BCC</b> <span style={{ fontSize:12, color:'grey' }}>(optional, e.g. a@x.com; b@x.com)</span></div>
-          <Input
-            value={bcc}
-            onChange={(e) => setBcc(e.target.value)}
-            className='mb-3'
-            status={!bccValid ? 'error' : ''}
-          />
+          <div className='mb-1'><b>BCC</b> <span style={{ fontSize:12, color:'grey' }}>(optional)</span></div>
+          <div className='mb-3'>
+            <EmailTagsInput value={bcc} onChange={setBcc} placeholder='Type an email address...' status={!bccValid ? 'error' : ''} />
+          </div>
 
           <div className='mb-1'><b>Subject</b></div>
           <Input

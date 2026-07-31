@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import axiosClient from 'apis/axiosClient';
 import {Input, Select} from 'antd'
+import { checkPartyCreateAccess } from 'functions/checkPartyCreateAccess';
 
 function recordsReducer(state, action){
   switch (action.type) {
@@ -101,13 +102,15 @@ const onSearch = (event) => {
         />
       </Col>
 
+      {checkPartyCreateAccess() &&
       <Col md={2}>
-        <button className='btn-custom right' 
+        <button className='btn-custom right'
           onClick={()=>{
             // dispatchNew(incrementTab({"label":"Client","key":"2-7","id":"new"}));
             Router.push(`/setup/nonGlParties/new`);
         }}>Create</button>
       </Col>
+      }
     </Row>
     <hr className='my-2' />
     <Row style={{maxHeight:'69vh',overflowY:'auto', overflowX:'hidden'}}>

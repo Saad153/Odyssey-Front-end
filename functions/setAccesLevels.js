@@ -238,6 +238,11 @@ function setAccesLevels(dispatch, collapsed){
       key: '5-15',
       children: `Content of Tab Pane 3`,
     }):null,
+    (levels?.includes("climaxReconciliation")||levels?.includes("admin"))?getItem('Climax Reconciliation', '5-19',<></>, null, {
+      label: `Climax Reconciliation`,
+      key: '5-19',
+      children: `Content of Tab Pane 3`,
+    }):null,
     // (levels?.includes("lgVat")||levels?.includes("admin"))?getItem('LG VAT', '5-17',<></>, null, {
     //   label: `LG VAT`,
     //   key: '5-17',

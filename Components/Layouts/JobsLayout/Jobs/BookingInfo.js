@@ -148,56 +148,20 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
     reset({ ...allValues, approved: approved })
   };
 
-  const pageLinking = (pageType, value) => {
-    let route = "";
-    let obj = {};
-
-    if (pageType === "client") {
-      // Checking if id is defined and not null
-      if (value !== undefined && value !== null && value !== "") {
-        route = `/setup/client/${value}`;
-        obj = {
-          label: "Client",
-          key: "2-7",
-          id: value,
-        };
-      } else {
-        // Navigating to a default/new page if id is undefined or null
-        route = "/setup/client/new";
-        obj = {
-          label: "Client",
-          key: "2-7",
-          id: "new",
-        };
-      }
-    } else if (pageType === "vendor") {
-      // Checking if id is defined and not null
-      if (value !== undefined && value !== null && value !== "") {
-        route = `/setup/vendor/${value !== "" && value !== null ? value : "new"}`;
-        obj = {
-          label: "Vendor",
-          key: "2-8",
-          id: value !== "" && value !== null ? value : "new",
-        };
-      } else {
-        // Navigating to a default/new page if id is undefined or null
-        route = "/setup/vendor/new";
-        obj = {
-          label: "Vendor",
-          key: "2-8",
-          id: "new"
-        }
-      }
-    } else if (pageType === "vessel") {
-      route = "/setup/voyage/";
-      obj = {
-        label: "Voyages",
-        key: "2-4",
-      };
-    }
-    dispatchNew(incrementTab(obj));
-    Router.push(route);
+  // Only used for the Vessel/Voyage label now — Booking Info no longer
+  // routes to the client/vendor party screen at all. From here a user can
+  // only select a party via the dropdown; viewing, editing, creating, and
+  // deleting the party record itself all require going through Setup.
+  const pageLinking = (pageType) => {
+    if (pageType !== "vessel") return;
+    dispatchNew(incrementTab({ label:"Voyages", key:"2-4" }));
+    Router.push("/setup/voyage/");
   };
+
+  // Plain label, never a link — no routing to the party screen from here.
+  const PartyLabel = ({ className='mt-2', children }) => (
+    <div className={className}>{children}</div>
+  );
 
   useEffect(()=>{
     // console.log("Shipping Line ID:", shippingLineId, typeof(shippingLineId), state.selectedRecord.shippingLineId, typeof(state.selectedRecord.shippingLineId))
@@ -362,20 +326,19 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
       <hr className='mb-0' />
       <Row style={{ fontSize: 12 }}>
         <Col md={3} className=''>
-          <div className='custom-link mt-2' onClick={() => pageLinking("client", ClientId)} >Client *</div>
+          <PartyLabel value={ClientId}>Client *</PartyLabel>
           {errors.ClientId && <p className='text-danger'>{errors.ClientId.message}</p>}
           <SelectSearchComp register={register("ClientId", { required: "Client is required" })}
             clear={true}
             name='ClientId' control={control} label='' disabled={getStatus(approved)} width={"100%"}
             options={state.fields.party.client} />
-            {(type == "SE" || type == "AE") && <div className='custom-link mt-2' onClick={() => pageLinking("client", shipperId)}>Shipper *</div>}
+            {(type == "SE" || type == "AE") && <PartyLabel value={shipperId}>Shipper *</PartyLabel>}
           {(type == "SE" || type == "AE") && <SelectSearchComp register={register} clear={true} name='shipperId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.shipper} />}
-          <div className='custom-link mt-2'
-            onClick={() => pageLinking("client", consigneeId)} >Consignee *</div>
+          <PartyLabel value={consigneeId}>Consignee *</PartyLabel>
             {errors.consigneeId && <p className='text-danger'>{errors.consigneeId.message}</p>}
           <SelectSearchComp register={register} clear={true} name='consigneeId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.consignee} />
           <Space />
-          {(type == "SI" || type == "AI") && <div className='custom-link mt-2' onClick={() => pageLinking("client", shipperId)}>Shipper *</div>}
+          {(type == "SI" || type == "AI") && <PartyLabel value={shipperId}>Shipper *</PartyLabel>}
           {(type == "SI" || type == "AI") && <SelectSearchComp register={register} clear={true} name='shipperId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.shipper} />}
           {(type == "SE" || type == "SI") && <>
             <SelectSearchComp register={register}
@@ -423,7 +386,7 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
             />
           </>}
           <Space />
-          <div className='custom-link mt-2' onClick={() => pageLinking("client", forwarderId)} >Forwarder/Coloader *</div>
+          <PartyLabel value={forwarderId}>Forwarder/Coloader *</PartyLabel>
           <SelectSearchComp register={register}
             clear={true}
 
@@ -437,17 +400,17 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
         </Col>
         <Col md={3}><Space />
         {(type == "SE" || type == "SI") && <>
-            <div className='custom-link mt-2' onClick={() => pageLinking("client", shippingLineId)} >Sline/Carrier</div>
+            <PartyLabel value={shippingLineId}>Sline/Carrier</PartyLabel>
             <SelectSearchComp register={register}
               clear={true} name='shippingLineId' control={control} label='' disabled={getStatus(approved)} options={state.fields.vendor.sLine} width={"100%"} />
           </>}
-          <div className='custom-link mt-2' onClick={() => pageLinking("client", overseasAgentId)} >Overseas Agent *</div>
+          <PartyLabel value={overseasAgentId}>Overseas Agent *</PartyLabel>
           <SelectSearchComp register={register}
             clear={true}
 
             name='overseasAgentId' control={control} label='' disabled={getStatus(approved)} options={state.fields.vendor.overseasAgent} width={"100%"} />
 
-          <div className='custom-link mt-2' onClick={() => pageLinking("client", localVendorId)} >Local Vendor *</div>
+          <PartyLabel value={localVendorId}>Local Vendor *</PartyLabel>
           <SelectSearchComp register={register}
             clear={true}
 
@@ -455,7 +418,7 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
             disabled={getStatus(approved)} options={state.fields.vendor.localVendor} width={"100%"}
           />
           {(type == "AE" || type == "AI") && <>
-            <div className='custom-link mt-2' onClick={() => pageLinking("client", airLineId)} >Air line *</div>
+            <PartyLabel value={airLineId}>Air line *</PartyLabel>
             <SelectSearchComp register={register}
               clear={true}
 
@@ -478,7 +441,7 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
               <CheckGroupComp register={register} name='transportCheck' control={control} label='' disabled={getStatus(approved)} options={[{ label: "", value: "Transport" }]} />
             </Col>
             <Col md={3}>
-              <div className='custom-link' onClick={() => pageLinking("client", transporterId)} >Transport</div>
+              <PartyLabel value={transporterId} className=''>Transport</PartyLabel>
             </Col>
             <Col>.</Col>
           </Row>
@@ -493,7 +456,7 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
               <CheckGroupComp register={register} name='customCheck' control={control} label='' disabled={getStatus(approved)} options={[{ label: "", value: "Custom Clearance" }]} />
             </Col>
             <Col md={6}>
-              <div className='custom-link' onClick={() => pageLinking("client", customAgentId)} >Custom Clearance</div>
+              <PartyLabel value={customAgentId} className=''>Custom Clearance</PartyLabel>
             </Col>
             <Col>.</Col>
           </Row>

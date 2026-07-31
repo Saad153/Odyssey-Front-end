@@ -208,6 +208,9 @@ const MainLayout = ({children}) => {
     if(newRouter.pathname==="/reports/auditLog/report"){
       setToggleState('5-16');
     }
+    if(newRouter.pathname==="/reports/climaxReconciliation"){
+      setToggleState('5-19');
+    }
     if(newRouter.pathname==="/reports/lgVat"){
       setToggleState('5-17');
     }
@@ -384,6 +387,7 @@ const MainLayout = ({children}) => {
     ageingReportWeekly:false, 
     auditLog:false,
     auditLogReport:false,
+    climaxReconciliation:false,
     lgVat:false,
     lgVatReport:false,
     nonGlParties:false,
@@ -462,6 +466,7 @@ const MainLayout = ({children}) => {
         else if(tabs.key=='5-14'){ tempTabActive.ageingReportReport=true }
         else if(tabs.key=='5-15'){ tempTabActive.auditLog=true }
         else if(tabs.key=='5-16'){ tempTabActive.auditLogReport=true }
+        else if(tabs.key=='5-19'){ tempTabActive.climaxReconciliation=true }
         else if(tabs.key=='5-17'){ tempTabActive.lgVat=true }
         else if(tabs.key=='5-18'){ tempTabActive.lgVatReport=true }
         else if(tabs.key=='6-1'){ tempTabActive.riders=true }
@@ -585,6 +590,7 @@ const MainLayout = ({children}) => {
     else if(x.key=='5-14'){ Router.push(`/reports/ageingReport/report/${setKey(x)}`) }
     else if(x.key=='5-15'){ Router.push(`/reports/auditLog`) }
     else if(x.key=='5-16'){ Router.push(`/reports/auditLog/report/${setKey(x)}`) }
+    else if(x.key=='5-19'){ Router.push(`/reports/climaxReconciliation`) }
     else if(x.key=='5-17'){ Router.push(`/reports/lgVat`) }
     else if(x.key=='5-18'){ Router.push(`/reports/lgVat/report/${setKey(x)}`) }
     else if(x.key=='2-11'){ Router.push(`/reports/invoice/${setKey(x)}`) }

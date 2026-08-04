@@ -140,18 +140,18 @@ const Client = ({sessionData, clientData}) => {
         onChange={(e) => onSearch(e)}
       />
     </Col>
-    {checkPartyCreateAccess() &&
+    {/* Create is open to all users now; the Non-GL checkbox in the form (and
+        the backend) decide whether a ledger can be attached. */}
     <Col md={2}>
       <button className='btn-custom right'
         onClick={()=>{
-          dispatchNew(incrementTab({"label":"Client","key":"2-7","id":"new"}));
+          dispatchNew(incrementTab({"label":"Party","key":"2-7","id":"new"}));
           Router.push(`/setup/client/new`);
         }}
       >
         Create
       </button>
     </Col>
-    }
     </Row>
     <hr className='my-2' />
     <Row style={{maxHeight:'69vh',overflowY:'auto', overflowX:'hidden'}}>

@@ -17,7 +17,7 @@ import PartySearch from '../Layouts/JobsLayout/Jobs/ChargesComp/PartySearch';
 import Cookies, { set } from 'js-cookie';
 import { DeleteOutlined, PrinterOutlined, RightOutlined, MailOutlined } from '@ant-design/icons';
 import { checkEmployeeAccess } from 'functions/checkEmployeeAccess';
-import { bankDetails, calculateTotal } from './invoicePrintDefaults';
+import { bankDetails, calculateTotal, computeRoundOff } from './invoicePrintDefaults';
 import SendInvoiceEmailModal from './SendInvoiceEmailModal';
 
 const { TextArea } = Input;
@@ -118,19 +118,9 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
   };
   const roundOff = async() => {
     let tempInv = {...invoice};
-    let before = parseFloat(calculateTotal(records));
-    let after = parseFloat(parseInt(before));
-    let remaining = before - after;
-    if(remaining>0){
-        if(invoice?.roundOff=="0"){
-            if(remaining<=0.5 && remaining>0){
-                tempInv.roundOff = `-${(remaining).toFixed(2)}`;
-            }else{
-                tempInv.roundOff = `+${(1-remaining).toFixed(2)}`;
-            }
-        }else{
-            tempInv.roundOff = "0"
-        }
+    const newRoundOff = computeRoundOff(records, invoice?.roundOff);
+    if(newRoundOff !== invoice?.roundOff){
+        tempInv.roundOff = newRoundOff;
         await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_ROUNDOFF_INVOICE, {
             id:tempInv.id,
             total:tempInv.total,
@@ -148,19 +138,9 @@ const InvoiceCharges = ({data, state, dispatch, companyId, reload}) => {
   };
   const approvingRoundOff = async(tempIvoice) => {
     let tempInv = {...tempIvoice};
-    let before = parseFloat(calculateTotal(records));
-    let after = parseFloat(parseInt(before));
-    let remaining = before - after;
-    if(remaining>0){
-      if(tempIvoice?.roundOff=="0"){
-        if(remaining<=0.5 && remaining>0){
-          tempInv.roundOff = `-${(remaining).toFixed(2)}`;
-        } else {
-          tempInv.roundOff = `+${(1-remaining).toFixed(2)}`;
-        }
-      } else {
-        tempInv.roundOff = "0"
-      }
+    const newRoundOff = computeRoundOff(records, tempIvoice?.roundOff);
+    if(newRoundOff !== tempIvoice?.roundOff){
+      tempInv.roundOff = newRoundOff;
       axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_ROUNDOFF_INVOICE, {
         id:tempInv.id,
         total:tempInv.total,

@@ -4,9 +4,10 @@ import jwt_decode from 'jwt-decode';
 const ALLOWED = ['ceo', 'cfo', 'admin'];
 
 // Mirrors functions/requireDesignation.js on the backend (the actual
-// enforcement). Despite the name, this now gates the whole Parties feature
-// (list, view/edit, create — same as Employees) on the frontend, not just
-// creation — kept the name to avoid a broad rename across every importer.
+// enforcement). Every user can now create/edit parties; this designation check
+// gates only whether a party may be given a LEDGER (a parent account) — i.e.
+// whether the Non-GL checkbox can be unchecked. Kept the name to avoid a broad
+// rename across every importer. Backend enforces the same in routes/clients.
 function hasPartyCreateDesignation(token){
   if(!token || token === "undefined"){
     return false;

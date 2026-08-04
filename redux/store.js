@@ -18,6 +18,7 @@ import directJobSlice from './directJob/directJobSlice';
 import ageingSlice from './ageing/ageingSlice';
 import auditSlice from './audit/auditSlice';
 import lgSlice from './lgVat/lgSlice';
+import notificationsReducer from './notifications/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -39,6 +40,7 @@ export const store = configureStore({
     ageing: ageingSlice,
     audit: auditSlice,
     lgVat: lgSlice,
+    notifications: notificationsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(seJobValues.middleware),

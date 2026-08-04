@@ -41,3 +41,24 @@ export const calculateTotal = (data) => {
   });
   return Math.abs(result).toFixed(2);
 };
+
+// Extracted from InvoiceCharges.js's roundOff/approvingRoundOff, which both
+// duplicated this exact calculation inline. Pure function: given the charge
+// records and the invoice's current roundOff value, returns what roundOff
+// should become. Toggles between "0" and a computed +/- adjustment each time
+// it's called on a non-whole total; leaves whole totals untouched.
+export const computeRoundOff = (records, currentRoundOff) => {
+  const before = parseFloat(calculateTotal(records));
+  const after = parseFloat(parseInt(before));
+  const remaining = before - after;
+  if (remaining > 0) {
+    if (currentRoundOff == "0") {
+      if (remaining <= 0.5 && remaining > 0) {
+        return `-${(remaining).toFixed(2)}`;
+      }
+      return `+${(1 - remaining).toFixed(2)}`;
+    }
+    return "0";
+  }
+  return currentRoundOff;
+};

@@ -19,6 +19,7 @@ import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
 import openNotification from 'Components/Shared/Notification';
 import CheckGroupComp from 'Components/Shared/Form/CheckGroupComp';
 import { isValidEmailList } from 'functions/emailList';
+import { checkPartyCreateAccess } from 'functions/checkPartyCreateAccess';
 
 const emailListSchema = () => yup.string().test(
     'email-list',
@@ -47,6 +48,18 @@ const SignupSchema = yup.object().shape({
     accountsMail: emailListSchema(),
     types: yup.array().required('Atleast 1 Type Required!').min(1, "Atleast 1 Type Required!"),
     operations: yup.array().required('Atleast 1 Operation Required!').min(1, "Atleast 1 Operation Required!"),
+    // Non-GL party (name only, no ledger). When unchecked the party gets a
+    // ledger, so a Parent Account becomes required.
+    nonGl: yup.boolean(),
+    parentAccount: yup.mixed().when('nonGl', {
+        is: (val) => val === false,
+        then: yup.mixed().test(
+            'parent-required',
+            'Parent Account is required to create a ledger',
+            (v) => v !== undefined && v !== null && v !== ''
+        ),
+        otherwise: yup.mixed(),
+    }),
 });
 
 const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
@@ -60,10 +73,18 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
       resolver: yupResolver(SignupSchema),
       defaultValues: {
         ...state.values,
-        
-
+        nonGl: true,
       }    });
     const { oldRecord, Representatives } = state;
+
+    // Only CEO/CFO/admin can attach a ledger, so only they can uncheck Non-GL.
+    // Everyone else sees it checked and locked and can only make name-only
+    // parties (enforced again on the backend).
+    const canAttachLedger = checkPartyCreateAccess();
+    const nonGl = useWatch({ control, name: 'nonGl' });
+
+    // Controlled tabs so a validation error can switch to the offending tab.
+    const [activeTab, setActiveTab] = useState('1');
     const { refetch } = useQuery({
       queryKey:['values'],
       queryFn:getJobValues
@@ -99,15 +120,18 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
     })
       dispatch({type:'toggle', fieldName:'editCompanyList', payload:tempCompanyList});
       dispatch({type:'toggle', fieldName:'oldRecord', payload:tempState});
-      reset({...tempState, parentAccount:tempState.parentAccount});
+      // An existing party with a parent account already has a ledger -> not non-GL.
+      reset({...tempState, parentAccount:tempState.parentAccount, nonGl: !tempState.parentAccount});
     }
-    if(id=="new") { 
-        reset({...baseValues, parentAccount:state.parentAccount}) 
+    if(id=="new") {
+        reset({...baseValues, parentAccount:state.parentAccount, nonGl: true})
     }
     }, [state.parentAccount])
     
     //Create
     const onSubmit = async(data) => {
+        // Non-GL party: never send a parent account, so no ledger is created.
+        if (data.nonGl) data.parentAccount = '';
         let Username = Cookies.get('username')
         data.createdBy = Username;
         let pAccountName = ''
@@ -136,6 +160,8 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
     };
     //Edit funtion
     const onEdit = async(data) => {
+        // Non-GL party: never send a parent account, so no ledger is created.
+        if (data.nonGl) data.parentAccount = '';
         let history = "";
         let pAccountName = ''
         let tempAssociations = [];
@@ -163,7 +189,32 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         }, 3000);
     };
 
-    const onError = (errors) => console.log(errors);
+    // Which tab each validated field lives on + a human label, so a validation
+    // failure can name the field AND jump to its tab (the error is often on a
+    // tab the user isn't looking at, e.g. Parent Account on Account Info).
+    const FIELD_META = {
+        name:          { label: 'Name',            tab: '1' },
+        city:          { label: 'City',            tab: '1' },
+        types:         { label: 'Type(s)',         tab: '1' },
+        operations:    { label: 'Operation(s)',    tab: '1' },
+        infoMail:      { label: 'Info Mail',       tab: '1' },
+        accountsMail:  { label: 'Accounts Mail',   tab: '1' },
+        parentAccount: { label: 'Parent Account',  tab: '3' },
+    };
+
+    const onError = (formErrors) => {
+        const keys = Object.keys(formErrors || {});
+        if (!keys.length) return;
+        // Jump to the earliest tab that has an error so the field is visible.
+        const tabs = keys.map((k) => FIELD_META[k]?.tab).filter(Boolean).sort();
+        if (tabs.length) setActiveTab(tabs[0]);
+        const labels = keys.map((k) => FIELD_META[k]?.label || k);
+        openNotification(
+            'Please complete required fields',
+            `Missing or invalid: ${labels.join(', ')}`,
+            'red'
+        );
+    };
 
     function getDifference(array1, array2){
         return array1.filter(object1 => {
@@ -176,7 +227,17 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
     return (
     <div className='client-styles' style={{maxHeight:720, overflowY:'auto', overflowX:'hidden'}}>
       <form onSubmit={handleSubmit(id!="new"?onEdit:onSubmit, onError)} >
-      <Tabs defaultActiveKey="1">
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        tabBarExtraContent={{
+          right: (
+            <button type="submit" disabled={state.load?true:false} className='btn-custom'>
+              {state.load?<Spinner animation="border" size='sm' className='mx-3' />:'Submit'}
+            </button>
+          )
+        }}
+      >
         {/* Basic info tab */}
         <Tabs.TabPane tab="Basic Info" key="1">
         <Row>
@@ -319,13 +380,25 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         {/* Account info tab  */}
         <Tabs.TabPane tab="Account Info" key="3">
         <Row>
+            <Col md={12} className='py-2'>
+              <label style={{ display:'inline-flex', alignItems:'center', gap:8, cursor: canAttachLedger ? 'pointer' : 'not-allowed', userSelect:'none' }}>
+                <input type="checkbox" {...register('nonGl')} disabled={!canAttachLedger} />
+                <span style={{ fontWeight:600 }}>Non-GL (name only — no ledger)</span>
+              </label>
+              {!canAttachLedger &&
+                <div style={{ fontSize:12, color:'#888', marginTop:4 }}>
+                  Only CEO/CFO/Admin can attach a ledger. To give this party a ledger, it must be set up through Accounts.
+                </div>}
+            </Col>
             <Col md={6}>
-             <SelectSearchComp clear={true} width={"100%"} register={register} name='parentAccount' 
-                control={control} label='Parent Account:' //disabled={id=="new"?false:true}
+             <SelectSearchComp clear={true} width={"100%"} register={register} name='parentAccount'
+                control={control} label={`Parent Account:${nonGl ? '' : ' *'}`}
+                disabled={nonGl || !canAttachLedger}
                 options={state?.accountList.map((x)=>{
                     return {id:x.id, name:x.title}
-                })} 
+                })}
             />
+            {errors.parentAccount && <div className='error-line'>{errors.parentAccount.message}*</div>}
             </Col>
             <Col></Col>
             <Col md={6} className='pt-2'>
@@ -381,10 +454,6 @@ const CreateOrEdit = ({state, dispatch, baseValues, clientData, id}) => {
         </Row>
         </Tabs.TabPane>
       </Tabs>
-      <hr/>
-      <button type="submit" disabled={state.load?true:false} className='btn-custom'>
-        {state.load?<Spinner animation="border" size='sm' className='mx-3' />:'Submit'}
-      </button>
       </form>
     </div>
     )

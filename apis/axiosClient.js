@@ -27,6 +27,15 @@ axiosInstance.interceptors.response.use(
   async error => {
     const { response } = error;
 
+    // 423 Locked: backend is in licence read-only mode and rejected a write.
+    if (response?.status === 423 && typeof window !== 'undefined') {
+      const msg =
+        response.data?.message ||
+        'The system is currently read-only. Changes cannot be saved.';
+      alert(msg);
+      return Promise.reject(error);
+    }
+
     if (response?.status === 401 && typeof window !== 'undefined') {
       const data = response.data || {};
       const sessionInvalidMessages = [

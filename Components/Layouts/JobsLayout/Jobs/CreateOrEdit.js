@@ -156,6 +156,12 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
     data.localVendorId = data.localVendorId!=""?data.localVendorId:null;
     data.commodityId = data.commodityId!=""?data.commodityId:null;
     data.shippingLineId = data.shippingLineId!=""?data.shippingLineId:null;
+    // vesselId is an integer FK like every id above it - an unset dropdown
+    // leaves "" here, which Postgres rejects outright ("invalid input
+    // syntax for type integer") and the user only sees the generic "An
+    // Error occured" below, so a job simply couldn't be saved before a
+    // vessel was picked.
+    data.vesselId = data.vesselId!=""?data.vesselId:null;
     data.approved = data.approved[0]=="1"?true:false;
     data.companyId = companyId;
     data.fiscalYearId = fiscalYearId;
@@ -214,6 +220,8 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
     data.localVendorId = data.localVendorId !== undefined &&data.localVendorId!=""?data.localVendorId:null;
     data.commodityId = data.commodityId !== undefined &&data.commodityId!=""?data.commodityId:null;
     data.shippingLineId = data.shippingLineId !== undefined &&data.shippingLineId!=""?data.shippingLineId:null;
+    // See the matching note in onSubmit - same "" -> integer FK problem on edit.
+    data.vesselId = data.vesselId !== undefined && data.vesselId!=""?data.vesselId:null;
     data.approved = data.approved[0]=="1"?true:false;
     data.companyId = companyId;
   

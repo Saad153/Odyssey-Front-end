@@ -72,12 +72,14 @@ function setAccesLevels(dispatch, collapsed){
       key: '2-1',
       children: 'Content of Tab Pane 2',
     }):null,
-    // Parties page is restricted to CEO/CFO/admin designations, not access levels (same as Employees).
-    isCeoOrCfo?getItem('Parties ', '2-2',<></>, null, {
+    // Parties is open to every user (they can create name-only / non-GL
+    // parties). Only CEO/CFO/admin can attach a ledger, enforced in the form
+    // and on the backend (routes/clients createClient/editClient).
+    getItem('Parties', '2-2',<></>, null, {
       label: `Parties`,
       key: '2-2',
       children: `Content of Tab Pane 2`,
-    }):null,
+    }),
     // (levels?.includes("Parties")||levels?.includes("admin"))?getItem('Parties', '2-20',<></>, null, {
     //   label: `Parties`,
     //   key: '2-20',
@@ -304,6 +306,29 @@ function setAccesLevels(dispatch, collapsed){
       }):null,
     ]
   )
+  // Admin-only Configuration section. Gated strictly on the 'admin' designation
+  // (not the 'admin' access-level string), same intent as Employees/Parties.
+  // The leaf navigates directly (Router.push) in addition to opening a tab, so
+  // a first click always lands on the page. Server-side the /license/info route
+  // and any future config routes must also require the admin designation - the
+  // sidebar being hidden is not a security boundary on its own.
+  const config = getParentItem('Configuration', '9', <SettingOutlined />,
+  [
+    {
+      key: '9-1',
+      icon: <></>,
+      children: null,
+      label: 'Settings',
+      onClick: () => {
+        if (!collapsed) {
+          dispatch(incrementTab({ label: 'Settings', key: '9-1' }));
+          Router.push('/config');
+        }
+      },
+    },
+  ]
+  )
+
   const testReport = getParentItem('Test Report', '8', <HomeOutlined />,[
 
     // getItem('Test Reports', '8-1',<></>, null, {
@@ -515,9 +540,10 @@ function setAccesLevels(dispatch, collapsed){
   }
 
   // The 'admin' designation grants full access to everything, same as the
-  // 'admin' access-level string does, but independent of it.
+  // 'admin' access-level string does, but independent of it. Only this
+  // designation sees the Configuration section.
   if(isAdminDesignation){
-    items = [SeaJobs, importJobs, setup, accounts, reports];
+    items = [SeaJobs, importJobs, setup, accounts, reports, config];
   }
 
   // console.log(items)

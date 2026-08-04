@@ -8,6 +8,9 @@ import { Layout, Menu, Select } from 'antd';
 import Router, { useRouter } from 'next/router';
 import Cookies, { set } from 'js-cookie';
 import axiosClient from 'apis/axiosClient';
+import LicenseBanner from 'Components/Shared/LicenseBanner';
+import LicenseStatusChip from 'Components/Shared/LicenseStatusChip';
+import NotificationBell from 'Components/Shared/NotificationBell';
 import { setAccesLevels } from 'functions/setAccesLevels';
 import logout from 'functions/logout';
 import { setTab } from 'redux/tabs/tabSlice';
@@ -606,6 +609,7 @@ const MainLayout = ({children}) => {
     else if(x.key=='7-6'){ Router.push(`/airJobs/import/bl/${setKey(x)}`) } //these routes are also settled in 2nd useEffect
     else if(x.key=='7-7'){ Router.push(`/airJobs/manifestList/`) }
     else if(x.key=='7-8'){ Router.push(`/airJobs/manifest/${setKey(x)}`) } //these routes are also settled in 2nd useEffect
+    else if(x.key=='9-1'){ Router.push('/config') }
   };
 
   const removeTab = (key) => {
@@ -753,15 +757,17 @@ useEffect(() => {
         dispatch(incrementTab({ "label": "Ports of Discharge", "key": "2-10" }))
         }}>Ports</span>
     </>}
+      <span className='mx-2'><LicenseStatusChip /></span>
       <span style={{color:'black'}} className='mx-3' ><b>Welcome, </b> {username} </span>
       <span style={{float:'right', color:'black'}} className='mx-5 cur' onClick={()=>logout()}> 
         <SlLogout className='mx-2' style={{position:'relative', bottom:2}} />Logout
       </span>
-      <span style={{float:"right", color:'black'}} className='mx-5 cur' >
-        <FaRegBell size={"20"} className='mx-2' style={{position:"relative", bottom:"2"}}/>
+      <span style={{float:"right"}} className='mx-5' >
+        <NotificationBell />
       </span>
     </Header>
-    <Content style={{ margin:'24px 16px', padding:0, minHeight:280}}> 
+    <LicenseBanner />
+    <Content style={{ margin:'24px 16px', padding:0, minHeight:280}}>
     <div className='dashboard-styles'>
       <div className="bloc-tabs">
         {tabItems.map((x, index)=>{

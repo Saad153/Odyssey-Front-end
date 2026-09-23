@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Popover, Tag, Modal, Checkbox } from "antd";
 import SelectComp from 'Components/Shared/Form/SelectComp';
 import SelectSearchComp from 'Components/Shared/Form/SelectSearchComp';
@@ -8,7 +8,8 @@ import TimeComp from 'Components/Shared/Form/TimeComp';
 import { Row, Col } from 'react-bootstrap';
 import CustomBoxSelect from 'Components/Shared/Form/CustomBoxSelect';
 // import Notes from "./Notes";
-import { getAllPorts, getAllDestinations, getAllAirports } from 'apis/pickLists';
+import { getAllAirports, searchPorts, resolvePort, searchDestinations, resolveDestination } from 'apis/pickLists';
+import SelectSearchRemote from 'Components/Shared/Form/SelectSearchRemote';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementTab, removeTab } from 'redux/tabs/tabSlice';
 import { getStatus } from './states';
@@ -35,22 +36,23 @@ const Notes = dynamic(() => import('./Notes'));
 
 const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, control, errors, state, useWatch, dispatch, reset, id, type }) => {
 
-  const [ports, setPorts] = useState({ ports: [] });
+  // Airports is small (3,282 rows, ~0.2 MB) so it is still fetched whole.
+  //
+  // Ports and Destinations are NOT: 157,879 and 140,848 rows, ~12.6 MB and
+  // ~5.9 MB of JSON. Fetching those on every job open is what made the Port of
+  // Discharge and Final Destination pickers slow, and none of it was cached, so
+  // it happened again for every job. They now use SelectSearchRemote, which
+  // asks the server for the handful of rows matching what the user types.
   const [airports, setAirports] = useState([]);
-  const [destinations, setDestinations] = useState([]);
 
-  const fetchPorts = () => {
-    getAllPorts().then(rows => setPorts({ ports: rows }));
-  };
+  // Kept so AddPort's onCreated callback still has something to call; a newly
+  // created port will be found by the next search rather than needing the whole
+  // list reloaded.
+  const fetchPorts = () => {};
 
-  // Load only what's needed based on job type
   useEffect(() => {
-    if (type === "SE" || type === "SI") {
-      fetchPorts();
-    }
     if (type === "AE" || type === "AI") {
       getAllAirports().then(setAirports);
-      getAllDestinations().then(setDestinations);
     }
   }, [type]);
 
@@ -70,11 +72,48 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
   const airLineId = useWatch({ control, name: "airLineId" });
   const forwarderId = useWatch({ control, name: "forwarderId" });
   const shippingLineId = useWatch({ control, name: "shippingLineId" });
+  const pod = useWatch({ control, name: "pod" });
+  const fd = useWatch({ control, name: "fd" });
   const localVendorId = useWatch({ control, name: "localVendorId" });
   const approved = useWatch({ control, name: "approved" });
   const canceled = useWatch({ control, name: "canceled" });
   let allValues = useWatch({ control });
   const [isOpen, setIsOpen] = useState(false);
+
+  // Final Destination is the same port as Port Of Discharge on the large
+  // majority of sea jobs, so selecting POD fills FD in automatically instead
+  // of making the user pick the identical port twice. FD stays a completely
+  // ordinary editable field - this only ever writes to it while it is still
+  // empty or still holding the value POD put there, so as soon as the user
+  // picks a different Final Destination their choice is left alone.
+  //
+  // Sea only (SE/SI): there both fields are drawn from the same `ports` list,
+  // so the id copies across cleanly. On air jobs POD comes from `airports`
+  // while FD comes from `destinations` - separate tables with unrelated ids -
+  // so copying one into the other would select a nonexistent destination.
+  const previousPodRef = useRef(undefined);
+  const fdRef = useRef(fd);
+  fdRef.current = fd;
+
+  useEffect(() => {
+    const previousPod = previousPodRef.current;
+    previousPodRef.current = pod;
+
+    // The first run only records the POD already on the form. Loading an
+    // existing job must never rewrite its saved FD, which would silently
+    // change data on jobs whose FD is deliberately a different port.
+    if (previousPod === undefined) return;
+
+    if (type !== "SE" && type !== "SI") return;
+    if (!pod || pod === previousPod) return;
+
+    const currentFd = fdRef.current;
+    const fdIsUntouched = !currentFd || currentFd === previousPod;
+    if (fdIsUntouched) {
+      setValue("fd", pod, { shouldDirty: true });
+    }
+  }, [pod, type, setValue]);
+
   const Space = () => <div className='mt-2' />
   const approved1 = useSelector((state) => state.invoice);
   const [charges, setCharges] = useState(false)
@@ -341,15 +380,17 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
           {(type == "SI" || type == "AI") && <PartyLabel value={shipperId}>Shipper *</PartyLabel>}
           {(type == "SI" || type == "AI") && <SelectSearchComp register={register} clear={true} name='shipperId' control={control} label='' disabled={getStatus(approved)} width={"100%"} options={state.fields.party.shipper} />}
           {(type == "SE" || type == "SI") && <>
-            <SelectSearchComp register={register}
+            <SelectSearchRemote
               name='pol'
               clear={true}
               control={control} label='Port Of Loading' disabled={getStatus(approved)} width={"100%"}
-              options={ports.ports} /><Space />
-            <SelectSearchComp register={register}
+              search={searchPorts} resolve={resolvePort} placeholder='Type to search ports'
+            /><Space />
+            <SelectSearchRemote
               clear={true}
               name='pod' control={control} label='Port Of Discharge *' disabled={getStatus(approved)} width={"100%"}
-              options={ports.ports} />
+              search={searchPorts} resolve={resolvePort} placeholder='Type to search ports'
+            />
             <FaPlus onClick={() => setIsOpen(true)} style={{ cursor: "pointer" }} />
             <Space />
             {isOpen && <AddPort isOpen={isOpen} onClose={() => setIsOpen(false)} onCreated={fetchPorts} />}
@@ -372,17 +413,18 @@ const BookingInfo = ({ handleSubmit, setValue, onEdit, companyId, register, cont
             </>}
           </>}
           {(type == "AE" || type == "AI") && <>
-            <SelectSearchComp register={register}
+            <SelectSearchRemote
               clear={true}
               name='fd' control={control} label='Final Destination *' disabled={getStatus(approved)} width={"100%"}
-              options={destinations}
+              search={searchDestinations} resolve={resolveDestination}
+              placeholder='Type to search destinations'
             />
           </>}
           {(type == "SE" || type == "SI") && <>
-            <SelectSearchComp register={register}
+            <SelectSearchRemote
               clear={true}
               name='fd' control={control} label='Final Destination *' disabled={getStatus(approved)} width={"100%"}
-              options={ports.ports}
+              search={searchPorts} resolve={resolvePort} placeholder='Type to search ports'
             />
           </>}
           <Space />

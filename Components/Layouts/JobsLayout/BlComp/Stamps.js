@@ -42,9 +42,9 @@ const Stamps = ({ state, control, register, useWatch, handleSubmit, fields, appe
         <Radio value={1}>Print on Pre-Printed</Radio>
         <Radio value={2}>Print On Blank Paper</Radio>
       </Radio.Group>
-      <button type="button" style={{width: '100px', justifyContent: "center"}} className="btn-custom" onClick={() => {setShowModal(true)}}>
+      {/* <button type="button" style={{width: '10000px', justifyContent: "left"}} className="btn-custom" onClick={() => {setShowModal(true)}}>
         Preview BL
-      </button>
+      </button> */}
       <div style={{display:"flex", gap:"2rem"}}>
         <button type="button" onClick={() => setVisibleStamps(true)} className="btn-custom">Stamps</button>
         <Modal open={visibleStamps}

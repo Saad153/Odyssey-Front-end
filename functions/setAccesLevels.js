@@ -125,6 +125,11 @@ function setAccesLevels(dispatch, collapsed){
       key: '2-12',
       children: `Content of Tab Pane 2`,
     }):null,
+    (levels?.includes("AWBL")||levels?.includes("admin"))?getItem('AWB Numbers', '2-14',<></>, null, {
+      label: `AWB Numbers`,
+      key: '2-14',
+      children: `Content of Tab Pane 2`,
+    }):null,
     // Visible to everyone - every user selects their own working fiscal
     // year here; only CEO/CFO/admin see the create/edit/lock controls
     // once on the page (enforced in the page itself + the backend routes).

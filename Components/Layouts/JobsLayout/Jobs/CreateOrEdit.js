@@ -24,6 +24,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import PopConfirm from 'Components/Shared/PopConfirm';
 import { createNotification } from 'functions/notifications';
 import openNotification from 'Components/Shared/Notification';
+import { describeSaveError } from 'functions/saveErrorMessage';
 import FullScreenLoader from 'Components/Shared/FullScreenLoader';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -189,8 +190,31 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
               `/airJobs/import/${x.data.result.id}`
               )
         }else{
-            openNotification('Error', `An Error occured Please Try Again!`, 'red')
+            openNotification(
+              'Job Not Created',
+              describeSaveError(x.data.result, 'The job could not be created. Please try again.'),
+              'red',
+              10
+            )
         }
+      },
+      // Second argument rather than a trailing .catch() on purpose: this must
+      // only handle the request itself failing (offline, 5xx, 423 read-only).
+      // A .catch() here would also swallow anything thrown by the success
+      // branch above - a routing or tab-dispatch error would then be reported
+      // to the user as "job not created" after the job was in fact created.
+      (err)=>{
+        openNotification(
+          'Job Not Created',
+          describeSaveError(err, 'The job could not be created. Please try again.'),
+          'red',
+          10
+        )
+      })
+      // Runs on every outcome, so the Save button can never be left spinning
+      // with no message - previously a rejected request skipped the .then()
+      // entirely and the form stayed locked until the page was reloaded.
+      .finally(()=>{
         dispatch({type:'toggle', fieldName:'load', payload:false});
       })
     }, 3000);
@@ -238,6 +262,13 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
       notification: approved[0] == '1' ?  `Job No ${data.jobNo} Approved`: `Job No ${data.jobNo} Dispproved`
     }
     setTimeout(async() => {
+      // Title reflects what the user was actually trying to do, so a failed
+      // approval doesn't just say "not saved" when they pressed Approve.
+      const failureTitle = approved[0] == '1' ? 'Job Not Approved' : 'Job Not Saved';
+      const failureFallback = approved[0] == '1'
+        ? 'The job could not be approved. Please try again.'
+        : 'The job could not be saved. Please try again.';
+
       await axiosClient.post(process.env.NEXT_PUBLIC_CLIMAX_POST_EDIT_SEAJOB,{data, employeeId: Cookies.get("loginId"),}).then((x)=>{
         if(x.data.status=='success'){
           openNotification('Success', `Job Updated!`, 'green')
@@ -246,8 +277,19 @@ const CreateOrEdit = ({state, dispatch, companyId, jobData, id, type, refetch}) 
         }else if (x.data.status == 'approved') {
           openNotification('Error', `Job Already Approved!`, 'orange')
         } else {
-          openNotification('Error', `An Error occured Please Try Again!`, 'red')
+          // The backend's own message is written for users - the fiscal-year
+          // guard names the year and says how to switch to it. describeSaveError
+          // passes those through and only rewrites raw database errors.
+          openNotification(failureTitle, describeSaveError(x.data.result, failureFallback), 'red', 10)
         }
+      },
+      // See the matching note in onSubmit: second argument, not .catch(), so
+      // this only fires when the request itself failed and never masks an
+      // error thrown by the success branch above.
+      (err)=>{
+        openNotification(failureTitle, describeSaveError(err, failureFallback), 'red', 10)
+      })
+      .finally(()=>{
         dispatch({type:'toggle', fieldName:'load', payload:false});
       })
     }, 3000);

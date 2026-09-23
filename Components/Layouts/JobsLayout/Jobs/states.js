@@ -3,6 +3,8 @@ import axiosClient from "apis/axiosClient";
 import moment from "moment";
 import { delay } from "functions/delay";
 import openNotification from "../../../Shared/Notification";
+import { describeSaveError } from "functions/saveErrorMessage";
+import queryClient from "apis/queryClient";
 import Cookies from "js-cookie";
 
 const SignupSchema = yup.object().shape({
@@ -243,22 +245,56 @@ const getVendors = memoize(async(id) => {
 })
 
 const getHeadsNew = async(id, dispatch, reset) => {
-  console.log("getHeadsNew from states is running<<<")
   dispatch({type:'toggle', fieldName:'chargeLoad', payload:true})
-  await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
-    headers:{id: id, employeeId: Cookies.get("loginId")}
-  }).then(async(x)=>{
-    if(x.data.status=="success"){
+  try {
+    const x = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_SE_HEADS_NEW,{
+      headers:{id: id, employeeId: Cookies.get("loginId")}
+    });
 
-      let tempChargeHeadsArray = await calculateChargeHeadsTotal([...x.data.result], "full");
-      await reset({chargeList:[...x.data.result]});
-      dispatch({type:'set', 
+    if(x.data.status=="success"){
+      const charges = [...x.data.result];
+      const tempChargeHeadsArray = await calculateChargeHeadsTotal([...charges], "full");
+      await reset({chargeList:[...charges]});
+
+      // Put the freshly saved list into the same cache entry ChargesComp reads
+      // (["charges", {id}], filled by apis/jobs.js getChargeHeads - keep this
+      // shape identical to that function's return value).
+      //
+      // This refresh used to go straight from axios into reset(), leaving the
+      // cache holding the charge list as it was when the job was first opened.
+      // Because the app sets a ~114 day staleTime with refetchOnWindowFocus
+      // off (see apis/queryClient.js), nothing ever re-fetched it, so the next
+      // time the charges tab re-read that query it reset the form back to the
+      // pre-save list and every charge added in this session appeared to
+      // vanish - until the user pressed Save Charges, which came back through
+      // here and repopulated the form from the server.
+      queryClient.setQueryData(["charges", { id }], {
+        charges,
+        ...tempChargeHeadsArray,
+      });
+
+      dispatch({type:'set',
       payload:{
         chargeLoad:false,
         ...tempChargeHeadsArray
       }})
+    } else {
+      openNotification('Error', x.data.result || 'Could not reload the saved charges.', 'red');
+      dispatch({type:'toggle', fieldName:'chargeLoad', payload:false})
     }
-  });
+  } catch (error) {
+    // chargeLoad gates the Save Charges / Approve buttons. It was only ever
+    // cleared on the success path, so a failed reload left it stuck true and
+    // the user could not save again without reloading the whole page.
+    console.error(error);
+    openNotification(
+      'Error',
+      describeSaveError(error, 'Could not reload the saved charges.'),
+      'red',
+      10
+    );
+    dispatch({type:'toggle', fieldName:'chargeLoad', payload:false})
+  }
 }
 
 const saveHeads = async(charges, state, dispatch, reset) => {

@@ -1,11 +1,9 @@
 import React from 'react';
 import InputComp from '../../../Shared/Form/InputComp';
-import SelectSearchComp from '../../../Shared/Form/SelectSearchComp';
 import DateComp from '../../../Shared/Form/DateComp';
 import TimeComp from '../../../Shared/Form/TimeComp';
 import RadioComp from '../../../Shared/Form/RadioComp';
 import { Col, Row, Spinner } from 'react-bootstrap';
-import ports from "jsonData/ports";
 
 
 const CreateOrEdit = ({state, dispatch, baseValues, register, control, useWatch}) => {
@@ -24,14 +22,15 @@ const CreateOrEdit = ({state, dispatch, baseValues, register, control, useWatch}
         <Col md={3}>
         <InputComp register={register} name='voyage' control={control} label='Voyage #' width={150} />
         </Col>
-        <Col md={3}>
-        <SelectSearchComp register={register} name='pol' control={control} label='POL' width={'100%'}
-          options={ports.ports} allowClear={true}/>
-        </Col>
-        <Col md={3}>
-        <SelectSearchComp register={register} name='pod' control={control} label='POD' width={'100%'}
-          options={ports.ports} allowClear={true}/>
-        </Col>
+        {/* POL / POD are no longer collected here - a voyage is identified by
+            its vessel and voyage number, and the ports are captured on the job
+            itself. Neither column was ever required (both are nullable, and the
+            great majority of existing voyages have them null), so nothing that
+            reads them needs to change. The values already stored on older
+            voyages are left untouched and still show in the list's Ports
+            column; because react-hook-form keeps values seeded by reset() even
+            for fields that are no longer rendered, editing one of those
+            voyages preserves its ports rather than blanking them. */}
         <Col md={12}><hr className='my-2' />
             <Row className='mt-3' >
                 <Col md={2} className='py-3'><b>Import :</b></Col>

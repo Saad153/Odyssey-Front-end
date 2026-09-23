@@ -1,7 +1,8 @@
 import { Row, Col, Table } from 'react-bootstrap';
 import React, { useEffect, useReducer, useState } from 'react';
 import Router from 'next/router';
-import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons';
+import { DeleteOutlined, HistoryOutlined, SwapOutlined } from '@ant-design/icons';
+import ReplacePartyModal from './ReplacePartyModal';
 import { useDispatch } from 'react-redux';
 import { incrementTab } from 'redux/tabs/tabSlice';
 import axiosClient from 'apis/axiosClient';
@@ -58,6 +59,9 @@ const Client = ({sessionData, clientData}) => {
   const dispatchNew = useDispatch();
   const [ state, dispatch ] = useReducer(recordsReducer, initialState);
   const { records, allClients } = state;
+  // The party being replaced. Opening the modal is what triggers the impact
+  // check, so nothing is fetched until someone actually asks.
+  const [replaceParty, setReplaceParty] = useState(null);
   const [searchBy , setSearchBy] = useState("name", "types");
 
   const pageSize = 30; // rows per page
@@ -167,6 +171,7 @@ const Client = ({sessionData, clientData}) => {
             <th>Types</th>
             <th>Address</th>
             <th>Status</th>
+            <th>Replace</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -202,6 +207,15 @@ const Client = ({sessionData, clientData}) => {
               dispatchNew(incrementTab({"label":"Party","key":"2-7","id":x.id}));
               Router.push(`/setup/client/${x.id}`);
             }}>{x.active?<b className='green-txt'>Active</b>:<b className='red-txt'>Disabled</b>}</td>
+            {/* Replace is available whatever the party's status: a party that
+                should never have existed still has jobs pointing at it, and the
+                modal itself refuses when accounting records are involved. */}
+            <td style={{ textAlign: 'center', verticalAlign: 'middle', height: '40px' }}
+              onClick={() => setReplaceParty(x)}
+              title={`Replace ${x.name} with another party`}
+            >
+              <SwapOutlined style={{ fontSize: '16px', color: '#0096ff', cursor: 'pointer' }} />
+            </td>
             <td style={{ textAlign: 'center', verticalAlign: 'middle', height: '40px' }}
               onClick={()=>{
                 if(!x.active){
@@ -230,6 +244,16 @@ const Client = ({sessionData, clientData}) => {
           showSizeChanger={false}
         />
       </div>
+
+      <ReplacePartyModal
+        open={!!replaceParty}
+        party={replaceParty}
+        parties={allClients}
+        onClose={() => setReplaceParty(null)}
+        // A replaced party is gone from the list, so the simplest correct
+        // refresh is to re-request the page's server-side props.
+        onDone={() => Router.replace('/setup/clientList')}
+      />
   </div>
   )
 }

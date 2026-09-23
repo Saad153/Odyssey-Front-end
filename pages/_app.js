@@ -9,16 +9,10 @@ import Loader from 'Components/Shared/Loader';
 import Router, { useRouter  } from 'next/router';
 import { store } from 'redux/store';
 import { Provider } from 'react-redux';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
+import queryClient from 'apis/queryClient';
 import '../styles/globals.css';
 import '../styles/ageingReport.css';
-
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { 
-    staleTime: 9_900_600_000,
-    refetchOnWindowFocus: false,
-   }}
-})
 
 function MyApp({ Component, pageProps:{ session, ...pageProps }, }) {
 

@@ -25,10 +25,17 @@ jest.mock('redux/BlCreation/blCreationSlice', () => ({
   addBlCreationId: jest.fn((payload) => ({ type: 'bl/addBlCreationId', payload })),
 }))
 
+// Ports and Destinations are no longer fetched whole (157k / 140k rows); the
+// job screen searches them on the server as the user types, so the mock has to
+// cover the search/resolve pair as well as the remaining full fetch.
 jest.mock('apis/pickLists', () => ({
   getAllPorts: jest.fn(() => Promise.resolve([])),
   getAllDestinations: jest.fn(() => Promise.resolve([])),
   getAllAirports: jest.fn(() => Promise.resolve([])),
+  searchPorts: jest.fn(() => Promise.resolve([])),
+  resolvePort: jest.fn(() => Promise.resolve(null)),
+  searchDestinations: jest.fn(() => Promise.resolve([])),
+  resolveDestination: jest.fn(() => Promise.resolve(null)),
 }))
 
 jest.mock('apis/jobs', () => ({
@@ -49,6 +56,7 @@ jest.mock('Components/Layouts/JobsLayout/Jobs/Notes', () => () => null)
 
 jest.mock('Components/Shared/Form/SelectComp', () => () => null)
 jest.mock('Components/Shared/Form/SelectSearchComp', () => () => null)
+jest.mock('Components/Shared/Form/SelectSearchRemote', () => () => null)
 jest.mock('Components/Shared/Form/CheckGroupComp', () => () => null)
 jest.mock('Components/Shared/Form/DateComp', () => () => null)
 jest.mock('Components/Shared/Form/TimeComp', () => () => null)

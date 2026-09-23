@@ -20,6 +20,43 @@ export async function getAllPorts() {
   return (data?.result || []).map(formatPortOption);
 }
 
+// ----- Type-ahead sources for the job screen -----
+//
+// getAllPorts / getAllDestinations return every row: 157,879 ports (~12.6 MB)
+// and 140,848 destinations (~5.9 MB). The job screen used to fetch both on
+// every open, which is what made those pickers slow. These fetch only what the
+// user is actually looking at.
+//
+// Built from MAIN_URL rather than new .env entries, so nothing has to be kept
+// in step across .env and .env.development.
+const portsBase = () => `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/ports`;
+const destinationsBase = () => `${process.env.NEXT_PUBLIC_CLIMAX_MAIN_URL}/destinations`;
+
+export async function searchPorts(search) {
+  const { data } = await axiosClient.get(`${portsBase()}/search`, { params: { search } });
+  return (data?.result || []).map(formatPortOption);
+}
+
+// Labels the port a saved job already holds - its code is stored, not its name.
+export async function resolvePort(portId) {
+  if (!portId) return null;
+  const { data } = await axiosClient.get(`${portsBase()}/search`, { params: { id: portId } });
+  const row = (data?.result || [])[0];
+  return row ? formatPortOption(row) : null;
+}
+
+export async function searchDestinations(search) {
+  const { data } = await axiosClient.get(`${destinationsBase()}/search`, { params: { search } });
+  return (data?.result || []).map(formatDestinationOption);
+}
+
+export async function resolveDestination(name) {
+  if (!name) return null;
+  const { data } = await axiosClient.get(`${destinationsBase()}/search`, { params: { id: name } });
+  const row = (data?.result || [])[0];
+  return row ? formatDestinationOption(row) : null;
+}
+
 export async function getPorts({ page = 1, limit = 50, search = "" } = {}) {
   const { data } = await axiosClient.get(process.env.NEXT_PUBLIC_CLIMAX_GET_PORTS, {
     params: { page, limit, search },

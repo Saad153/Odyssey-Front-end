@@ -1,8 +1,18 @@
 // setAccesLevels() builds the whole sidebar menu tree and is too large to
 // cover exhaustively. This focuses narrowly on the designation-based gating
-// (isCeoOrCfo / isAdminDesignation) that controls the 'Employees' and
-// 'Parties' entries under the 'Setup' section - recently changed so Parties
-// is gated the same way Employees already was.
+// (isCeoOrCfo / isAdminDesignation) under the 'Setup' section:
+//
+//   'Employees' (2-1) is gated to CEO / CFO / admin.
+//   'Parties'   (2-2) is open to EVERY user, including one with no token.
+//
+// Parties was briefly gated alongside Employees, and these tests asserted
+// that. It isn't any more: every user can create and edit parties, and the
+// restriction moved to whether a party may be given a ledger - the Non-GL
+// checkbox in the party's account info. That gate lives in
+// functions/checkPartyCreateAccess.js (enforced on the backend by
+// routes/clients + functions/requireDesignation.js) and is covered by
+// __tests__/checkPartyCreateAccess.test.js, not here. The assertions below
+// deliberately pin Parties as visible so it doesn't get re-gated by accident.
 //
 // setAccesLevels reads the token from js-cookie itself (not a function
 // param) and keeps module-level state (`firstCall`/`tempToken`) across
@@ -49,29 +59,32 @@ describe('setAccesLevels designation gating (Employees / Parties)', () => {
     }
   )
 
-  test('an ordinary employee designation does not see Employees or Parties under Setup', () => {
+  test('an ordinary employee designation sees Parties but not Employees', () => {
     Cookies.get.mockReturnValue('valid.jwt.token')
     jwt_decode.mockReturnValue({ designation: 'employee', access: 'Commodity' })
 
     const items = setAccesLevels(jest.fn(), false)
     const setup = findParent(items, '2')
 
-    // Setup is always present (Fiscal Years is visible to everyone), but its
-    // Employees/Parties slots must be null for a non-privileged designation.
+    // Setup is always present (Fiscal Years is visible to everyone). Employees
+    // stays closed to a non-privileged designation; Parties is open to all -
+    // what such a user can't do is untick Non-GL to attach a ledger.
     expect(setup).toBeTruthy()
     expect(findChild(setup, '2-1')).toBeFalsy()
-    expect(findChild(setup, '2-2')).toBeFalsy()
+    expect(findChild(setup, '2-2')).toMatchObject({ label: 'Parties' })
   })
 
-  test('missing/undecodable designation does not see Employees or Parties (defaults closed, not open)', () => {
+  test('missing/undecodable designation keeps Employees closed but still sees Parties', () => {
     Cookies.get.mockReturnValue('valid.jwt.token')
     jwt_decode.mockReturnValue({ access: 'Commodity' }) // no designation field
 
     const items = setAccesLevels(jest.fn(), false)
     const setup = findParent(items, '2')
 
+    // Employees defaults closed rather than open when the designation can't be
+    // read. Parties is unconditional, so it is present here too.
     expect(findChild(setup, '2-1')).toBeFalsy()
-    expect(findChild(setup, '2-2')).toBeFalsy()
+    expect(findChild(setup, '2-2')).toMatchObject({ label: 'Parties' })
   })
 
   test('admin designation grants full menu access independent of the access-level string', () => {
@@ -97,6 +110,9 @@ describe('setAccesLevels designation gating (Employees / Parties)', () => {
 
     expect(setup).toBeTruthy()
     expect(findChild(setup, '2-1')).toBeFalsy()
-    expect(findChild(setup, '2-2')).toBeFalsy()
+    // Parties is built unconditionally, so it survives even a missing token.
+    // Nothing is reachable without a session anyway - the backend rejects
+    // every request, and setAccesLevels triggers a logout on this path.
+    expect(findChild(setup, '2-2')).toMatchObject({ label: 'Parties' })
   })
 })

@@ -357,6 +357,7 @@ return(
   <Select.Option value={'Ports'} disabled={isAdminSelected}>Ports</Select.Option>
   <Select.Option value={'Destinations'} disabled={isAdminSelected}>Destinations</Select.Option>
   <Select.Option value={'Airports'} disabled={isAdminSelected}>Airports</Select.Option>
+  <Select.Option value={'AWBL'} disabled={isAdminSelected}>AWB Numbers</Select.Option>
   <Select.Option value={'ChartOfAccount'} disabled={isAdminSelected}>Chart of Account</Select.Option>
   <Select.Option value={'Invoice/Bills'} disabled={isAdminSelected}>Invoice</Select.Option>
   <Select.Option value={'Payment/Reciept'} disabled={isAdminSelected}>Payment/Reciept</Select.Option>

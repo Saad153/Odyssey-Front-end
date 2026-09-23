@@ -18,6 +18,8 @@ import axiosClient from 'apis/axiosClient';
 import ItemDetail from "./ItemDetail";
 import ChargesDetail from "./ChargesDetail";
 import { getJobValues, getJobById } from 'apis/jobs';
+import { assignAwbl } from 'apis/awbl';
+import { describeSaveError } from 'functions/saveErrorMessage';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
@@ -36,9 +38,49 @@ const BlComp = ({id, blData, partiesData, type}) => {
     }),
   })
   console.log("job data: ", data)
-  const { register, control, handleSubmit, reset, formState: { errors }, } = useForm({
+  const { register, control, handleSubmit, reset, setValue, formState: { errors }, } = useForm({
     defaultValues: state.values,
   });
+  // The job this BL belongs to - carries the airline whose AWB stock the
+  // MAWB dropdown draws from, and the job id the number gets claimed for.
+  const jobInfo = data?.result;
+
+  // Air jobs only: the MAWB is chosen from registered stock, so once the BL
+  // has saved we claim that number for this job and release whatever the job
+  // held before. Sea jobs never set awblId and drop straight out.
+  //
+  // Deliberately run after the BL save rather than inside it: the BL routes
+  // are large and shared with sea jobs, and a stock bookkeeping error should
+  // never be able to fail an otherwise good BL save.
+  const syncAwbl = async (data) => {
+    if (type !== "AE" && type !== "AI") return;
+    const jobId = jobInfo?.id;
+    if (!jobId) return;
+
+    // Absence is not an instruction to release. awblId is undefined until
+    // either the stock list resolves and preselects the number this job holds,
+    // or the user picks/clears one ('' means an explicit clear). Treating
+    // undefined as "release" meant a BL saved before that fetch returned - or
+    // after it failed - would hand a correctly assigned AWB back to the pool,
+    // where a second job could then take the number this BL is still printing.
+    if (data.awblId === undefined) return;
+    try {
+      const res = await assignAwbl({ awblId: data.awblId || null, jobId });
+      if (res.status !== "success") {
+        openNotification(
+          "AWB Not Reserved",
+          res.result || "The BL saved, but the AWB number could not be reserved.",
+          "red", 10
+        );
+      }
+    } catch (err) {
+      openNotification(
+        "AWB Not Reserved",
+        describeSaveError(err, "The BL saved, but the AWB number could not be reserved."),
+        "red", 10
+      );
+    }
+  };
   const allValues = useWatch({ control });
   const { fields, append, remove } = useFieldArray({
     name: "stamps",
@@ -100,6 +142,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
       
       if (x.data.status == "success") {
         openNotification("Success", "BL Created Successfully", "green");
+        await syncAwbl(data);
         dispatchNew(
           incrementTab({
             label: `${data.operation} BL`,
@@ -178,6 +221,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
           set("load", false);
         } else {
           openNotification("Success", "Bl Edited Successfully", "green");
+          await syncAwbl(data);
           set("load", false);
         }
       })
@@ -230,7 +274,7 @@ const BlComp = ({id, blData, partiesData, type}) => {
           }
           >
             <Tabs.TabPane tab={(type=="SE"||type=="SI")?"BL Info.":"AWB Info"} key="1">
-              <BlInfo control={control} id={id} register={register} state={state} useWatch={useWatch} dispatch={dispatch} reset={reset} type={type} currentJobValue={currentJobValue} />
+              <BlInfo control={control} id={id} register={register} state={state} useWatch={useWatch} dispatch={dispatch} reset={reset} type={type} currentJobValue={currentJobValue} setValue={setValue} jobInfo={jobInfo} />
             </Tabs.TabPane>
             <Tabs.TabPane tab={(type=="SE"||type=="SI")?"Container Info":"Item Detail"} key="2">
               {(type=="SE"|| type=="SI") && <ContainerInfo control={control} id={id} register={register} 

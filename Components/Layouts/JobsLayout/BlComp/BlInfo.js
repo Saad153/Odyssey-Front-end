@@ -5,12 +5,12 @@ import InputComp from 'Components/Shared/Form/InputComp';
 import DateComp from 'Components/Shared/Form/DateComp';
 import React, { useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { useSelector } from "react-redux";
 import { Modal, Select } from 'antd';
 import JobSearch from './JobSearch';
+import { getAvailableAwbl } from 'apis/awbl';
 import moment from 'moment';
 
-const BlInfo = ({control, id, register, state, useWatch, dispatch, reset, type, currentJobValue}) => {
+const BlInfo = ({control, id, register, state, useWatch, dispatch, reset, type, currentJobValue, setValue, jobInfo}) => {
 
     const set = (a, b) => dispatch({type:'toggle', fieldName:a, payload:b})
     const allValues = useWatch({control});
@@ -24,6 +24,37 @@ const BlInfo = ({control, id, register, state, useWatch, dispatch, reset, type, 
         }
         retrieveData();
     },[])
+
+    /* ---------------- MAWB from registered AWB stock (air jobs) ----------------
+     * On air jobs the master number is picked from stock registered under
+     * Setup > AWB Numbers rather than typed, so a number can only ever be used
+     * once. Sea jobs are untouched and keep the free-text MBL field.
+     */
+    const isAir = type == "AE" || type == "AI";
+    const awblId = useWatch({control, name:'awblId'});
+    const mblValue = useWatch({control, name:'mbl'});
+    const [awblOptions, setAwblOptions] = useState([]);
+
+    useEffect(() => {
+        if(!isAir || !jobInfo?.id) return;
+        let cancelled = false;
+
+        // Returns the unused numbers for this airline PLUS whichever number
+        // this job already holds - otherwise a saved job's own AWB would be
+        // missing from its dropdown (it counts as used by then) and re-saving
+        // would clear it.
+        getAvailableAwbl({
+            airlineId: jobInfo.airLineId,
+            jobId: jobInfo.id,
+        }).then((res) => {
+            if(cancelled || res.status != "success") return;
+            setAwblOptions(res.result);
+            const held = res.result.find((x) => String(x.SEJobId) === String(jobInfo.id));
+            if(held) setValue('awblId', held.id);
+        }).catch(() => {});
+
+        return () => { cancelled = true; };
+    }, [isAir, jobInfo?.id, jobInfo?.airLineId])
 
     const findNotifyParty = (id,content) => {
         state.partiesData.forEach((x)=>{
@@ -64,9 +95,43 @@ const BlInfo = ({control, id, register, state, useWatch, dispatch, reset, type, 
             </Col>
             <Col md={12}>
                 <div className='mt-2'></div>
-                <InputComp register={register} name='mbl' control={control} width={150} 
-                    label={(type=="SE"||type=="SI")?'MBL #*':"MAWB #*" }
-                />
+                {!isAir &&
+                    <InputComp register={register} name='mbl' control={control} width={150}
+                        label={'MBL #*'}
+                    />
+                }
+                {isAir && <>
+                    <div className="">MAWB #*</div>
+                    <Select showSearch allowClear style={{ width: 190 }} size='small'
+                        value={awblId || undefined}
+                        placeholder={
+                            !jobInfo?.airLineId ? 'Set the airline on the job first'
+                            : awblOptions.length ? 'Select a registered AWB'
+                            : 'No unused AWBs for this airline'
+                        }
+                        optionFilterProp='label'
+                        options={awblOptions.map((o) => ({ value: o.id, label: o.name }))}
+                        onChange={(value) => {
+                            const picked = awblOptions.find((o) => o.id === value);
+                            // mbl stays the stored field so every existing BL print,
+                            // manifest and report keeps reading the number exactly as
+                            // before - the dropdown only controls what goes into it.
+                            //
+                            // '' (not null/undefined) on clear: undefined means "the
+                            // user never touched this and the stock list may not even
+                            // have loaded", and the save path leaves stock alone in
+                            // that case. Only this explicit clear should release.
+                            setValue('awblId', value ?? '');
+                            setValue('mbl', picked ? picked.name : '');
+                        }}
+                    />
+                    {!awblId && mblValue &&
+                        <div style={{ fontSize: 11, color: '#ad6800' }}>
+                            Currently {mblValue} — entered before AWB registration. Pick a
+                            registered number to replace it.
+                        </div>
+                    }
+                </>}
             </Col>
         </Row>
         </Col>
